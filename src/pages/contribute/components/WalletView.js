@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
 import ETH from 'cryptocurrency-icons/svg/color/eth.svg';
-import MetaMaskContext from '../../../components/MetaMask';
+import { OnboardContext } from '../../../components/OnboardProvider';
 import CSTK from '../../../assets/cstk.svg';
 import TandC from './TandC';
 
@@ -14,16 +14,28 @@ const coinLogos = [
   // { symbol: "BAT", src: BAT },
 ];
 
-const Comp = ({ agreedtandc, showtandc, account, balances, getBalancesFor, userIsWhiteListed }) => {
-  const { accounts } = useContext(MetaMaskContext);
+const Comp = ({
+  agreedtandc,
+  showtandc,
+  balances,
+  getBalancesFor,
+  getUserState,
+  userIsWhiteListed,
+}) => {
+  const { web3, address, onboard, network, isReady } = useContext(OnboardContext);
 
   // TODO: this should be moved to the store IMO
   React.useEffect(() => {
-    if (accounts && accounts[0]) {
-      getBalancesFor(accounts[0]);
+    if (isReady) {
+      getBalancesFor(address);
     }
-  }, [accounts, getBalancesFor]);
+  }, [isReady, address, getBalancesFor]);
 
+  React.useEffect(() => {
+    if (web3 && address) {
+      getUserState(address);
+    }
+  }, [onboard, web3, address, network, getUserState]);
   // TODO: Will be pulled form the state, just for now
   const defaultCoins = [
     {
@@ -41,7 +53,7 @@ const Comp = ({ agreedtandc, showtandc, account, balances, getBalancesFor, userI
     // },
   ];
 
-  const coins = (balances && balances[account] && balances[account]) || defaultCoins;
+  const coins = (balances && balances[address] && balances[address]) || defaultCoins;
 
   // DAI balance
   const daiBalance = coins
@@ -53,21 +65,23 @@ const Comp = ({ agreedtandc, showtandc, account, balances, getBalancesFor, userI
         return coinIcon.symbol === coin.symbol;
       });
       return (
-        <div key={coin.symbol} className="title is-6 level mb-04">
-          <div className="level-left mb-04">
-            <span>Total available balance</span>
-            <span className="icon info-icon-small is-small has-text-info">
-              <i className="fas fa-info-circle" />
-            </span>
+        isReady && (
+          <div key={coin.symbol} className="title is-6 level mb-04">
+            <div className="level-left mb-04">
+              <span>Total available balance</span>
+              <span className="icon info-icon-small is-small has-text-info">
+                <i className="fas fa-info-circle" />
+              </span>
+            </div>
+            <div className="level-right has-text-right">
+              {coin.status || coin.balanceFormatted || '~'} {coin.symbol}{' '}
+              <span className="icon is-small has-text-light">
+                &nbsp;
+                <img src={logo.src} alt={coin.symbol} />
+              </span>
+            </div>
           </div>
-          <div className="level-right has-text-right">
-            {coin.status || coin.balanceFormatted || '~'} {coin.symbol}{' '}
-            <span className="icon is-small has-text-light">
-              &nbsp;
-              <img src={logo.src} alt={coin.symbol} />
-            </span>
-          </div>
-        </div>
+        )
       );
     });
 
@@ -87,7 +101,7 @@ const Comp = ({ agreedtandc, showtandc, account, balances, getBalancesFor, userI
           </span>{' '}
           {coin.symbol}
         </div>
-        {balances && balances[account] ? (
+        {balances && balances[address] ? (
           <div className="subtitle level-right">
             {coin.balanceFormatted} {coin.symbol}
           </div>
@@ -101,7 +115,7 @@ const Comp = ({ agreedtandc, showtandc, account, balances, getBalancesFor, userI
     return accum;
   }, []);
 
-  if (showtandc && accounts && accounts[0]) {
+  if (showtandc && address) {
     return <TandC />;
   }
 
@@ -136,7 +150,7 @@ const Comp = ({ agreedtandc, showtandc, account, balances, getBalancesFor, userI
       <br />
       <p className="title is-text-overflow mb-2">Total Available Balance</p>
 
-      {account ? (
+      {address && isReady ? (
         <>
           {daiBalance}
           {otherBalances}
@@ -154,26 +168,27 @@ const Comp = ({ agreedtandc, showtandc, account, balances, getBalancesFor, userI
   );
 };
 
-const mapStateToProps = ({ showtandc, account, balances, agreedtandc, userIsWhiteListed }) => {
+const mapStateToProps = ({ showtandc, balances, agreedtandc, userIsWhiteListed }) => {
   return {
     showtandc,
     agreedtandc,
-    account,
     balances,
     userIsWhiteListed,
   };
 };
 
-const mapDispachToProps = dispatch => {
+const mapDispatchToProps = dispatch => {
   return {
     // onSetAgreed: () => dispatch({ type: "AGREE_TANDC" }),
     getBalancesFor: address => {
       dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address });
-      dispatch({ type: 'GET_USER_IS_WHITELISTED', address });
+    },
+    getUserState: address => {
       dispatch({ type: 'READ_SHOW_TANDC', address });
+      dispatch({ type: 'GET_USER_IS_WHITELISTED', address });
     },
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
   };
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

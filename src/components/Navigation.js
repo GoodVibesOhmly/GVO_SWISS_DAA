@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import MetaMaskButton from './MetaMaskButton';
+import WalletButton from './WalletButton';
+import ChangeWallet from './ChangeWallet';
 import csLogo from '../assets/headerlogo.svg';
 import './Navigation.sass';
 
-const Comp = ({ web3available, agreedtandc, onSetAgreedtandc }) => {
+const Comp = () => {
   const location = useLocation();
   const [activeNavItem, setActiveNavItem] = useState(1);
 
@@ -63,7 +64,8 @@ const Comp = ({ web3available, agreedtandc, onSetAgreedtandc }) => {
             <div className="navbar-end">
               <div className="tabs is-right">
                 <div className="navbar-item">
-                  <MetaMaskButton />
+                  <ChangeWallet />
+                  <WalletButton />
                 </div>
               </div>
             </div>

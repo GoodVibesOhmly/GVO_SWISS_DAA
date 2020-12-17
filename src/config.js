@@ -14,6 +14,10 @@ const configs = {
     ratio: 2, // how much CSTK you get for 1 DAI
     givethBridgeAddress: '0x279277482F13aeF92914317a0417DD591145aDc9',
     targetProjectId: 514,
+    onboardApiKey: '818d425c-a8f6-4c11-bbbe-52eb6058877e',
+    networkId: 3, // Ropsten
+    rpcUrl: 'https://rinkeby.infura.io/v3/d5e29c9b9a9d4116a7348113f57770a8',
+    appUrl: 'http://localhost:3000',
   },
 
   production: {

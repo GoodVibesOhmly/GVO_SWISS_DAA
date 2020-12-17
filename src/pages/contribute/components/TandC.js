@@ -1,13 +1,11 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
-import MetaMaskContext from '../../../components/MetaMask';
+import { OnboardContext } from '../../../components/OnboardProvider';
 import tandcData from '../../../assets/tandc.json';
 import './TandC.sass';
 
 const Comp = ({ onSetAgreedtandc }) => {
-  const { web3, accounts } = useContext(MetaMaskContext);
-
-  console.log('accounts', accounts);
+  const { web3, account } = useContext(OnboardContext);
 
   const [agreetandc, setAgreetandc] = React.useState(false);
   const [box3, setBox3] = React.useState(false);
@@ -25,7 +23,7 @@ const Comp = ({ onSetAgreedtandc }) => {
     );
   }, [setEnableSubmit, enableSubmit, agreetandc, box3]);
 
-  if (!accounts || !accounts[0]) {
+  if (!web3) {
     return <div>Waiting for web3 provider</div>;
   }
 
@@ -40,7 +38,7 @@ const Comp = ({ onSetAgreedtandc }) => {
       if (!signature) {
         return setSignError('No signature received.');
       }
-      onSetAgreedtandc(message, signature, accounts[0]);
+      onSetAgreedtandc(message, signature, account);
     });
   };
 
@@ -148,7 +146,7 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispachToProps = dispatch => {
+const mapDispatchToProps = dispatch => {
   return {
     onSetAgreedtandc: (message, signature, address) =>
       dispatch({ type: 'AGREE_TANDC', message, signature, address }),
@@ -156,4 +154,4 @@ const mapDispachToProps = dispatch => {
   };
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

@@ -5,12 +5,11 @@ import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
 import arrow from '../../../assets/arrow.svg';
 import CSTK from '../../../assets/cstk.svg';
 import DonateModal from './DonateModal';
+import { OnboardContext } from '../../../components/OnboardProvider';
 
 const config = require('../../../config');
 
 const Comp = () => {
-  // const { accounts } = useContext(MetaMaskContext);
-
   const [amountDAI, setAmountDAI] = React.useState(0);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
   const [showDonateModal, setShowDonateModal] = React.useState(false);
@@ -33,9 +32,11 @@ const Comp = () => {
     }
   }, [amountDAI]);
 
+  const { isReady } = React.useContext(OnboardContext);
+
   return (
     <>
-      {showDonateModal && (
+      {showDonateModal && isReady && (
         <DonateModal onClose={() => setShowDonateModal(false)} amount={amountDAI} />
       )}
       ;
@@ -151,11 +152,11 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispachToProps = dispatch => {
+const mapDispatchToProps = dispatch => {
   return {
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
   };
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

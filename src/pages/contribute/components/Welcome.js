@@ -27,17 +27,14 @@ const Comp = () => {
   );
 };
 
-const mapStateToProps = state => {
-  return {
-    ...state.accounts,
-    web3available: state.web3available,
-  };
+const mapStateToProps = () => {
+  return {};
 };
 
-const mapDispachToProps = dispatch => {
+const mapDispatchToProps = dispatch => {
   return {
     onSetAgreed: () => dispatch({ type: 'AGREE_TANDC' }),
   };
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

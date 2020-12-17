@@ -97,7 +97,6 @@ const reducer = (state = initialState, action) => {
     case 'WEB3_AVAILABLE':
       return {
         ...state,
-        account: action.account,
         web3: action.web3,
       };
     case 'READ_FUNDING_CONTRACT':
@@ -163,6 +162,7 @@ const reducer = (state = initialState, action) => {
       };
     case 'GET_BALANCES_FOR_ADDRESS_SUCCESS':
       delete state.BB_GET_BALANCES_FOR_ADDRESS;
+      // eslint-disable-next-line no-case-declarations
       const addressBalances = action.res.map(item => {
         item.balanceFormatted = parseFloat(state.web3.utils.fromWei(item.balance, 'ether')).toFixed(
           2,
@@ -219,6 +219,7 @@ const reducer = (state = initialState, action) => {
   }
 };
 
+// eslint-disable-next-line no-shadow
 const getBalances = async (web3, address, coins) => {
   return Promise.all([
     ...coins.map(coin => {

@@ -1,33 +1,23 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
-import MetaMaskContext from '../../../components/MetaMask';
 import './Contribute.sass';
-import MetaMaskButton from '../../../components/MetaMaskButton';
+import WalletButton from '../../../components/WalletButton';
 import GovernanceRights from '../../../assets/governanceRights.svg';
 import Access from '../../../assets/access.svg';
 import Membership from '../../../assets/membership.svg';
 import Slider from '../../../components/Slider';
 import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
+import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({
-  web3,
-  agreedtandc,
-  onSetAgreedtandc,
-  setShowTandC,
-  personalCap,
-  numerator,
-  denominator,
-  softCap,
-  hardCap,
-  totalReceived,
-}) => {
+const Comp = ({ agreedtandc }) => {
   const viewStates = Object.freeze({
     INIT: 1,
     WAITINGTOCONTRIBUTE: 2,
     STARTDONATING: 3,
   });
 
+  const { web3, onboard, isReady } = useContext(OnboardContext);
   const [viewState, setViewState] = React.useState(viewStates.INIT);
 
   const changeViewState = (from, to) => {
@@ -53,7 +43,11 @@ const Comp = ({
     }
   }, [web3, agreedtandc, viewState, viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE]);
 
-  const { accounts } = useContext(MetaMaskContext);
+  React.useEffect(() => {
+    if (!isReady && viewState === viewStates.STARTDONATING) {
+      setViewState(viewStates.WAITINGTOCONTRIBUTE);
+    }
+  }, [isReady, viewState, viewStates.STARTDONATING, viewStates.WAITINGTOCONTRIBUTE]);
 
   return (
     <div className="tile is-child">
@@ -84,7 +78,14 @@ const Comp = ({
                   {viewState === viewStates.WAITINGTOCONTRIBUTE && (
                     <button
                       onClick={() => {
-                        changeViewState(viewStates.WAITINGTOCONTRIBUTE, viewStates.STARTDONATING);
+                        onboard.walletCheck().then(readyToTransact => {
+                          if (readyToTransact) {
+                            changeViewState(
+                              viewStates.WAITINGTOCONTRIBUTE,
+                              viewStates.STARTDONATING,
+                            );
+                          }
+                        });
                       }}
                       className="button is-success is-medium"
                     >
@@ -106,12 +107,12 @@ const Comp = ({
 
           {viewState === viewStates.STARTDONATING && <ContributeForm />}
 
-          {(!accounts || !accounts[0]) && (
+          {!web3 && (
             <div className="enable has-text-centered">
               <p className="title">
                 Want to contribute to Commons Stack? Connect your wallet below.
               </p>
-              <MetaMaskButton className="is-outlined" clickMessage="Connect Wallet" />
+              <WalletButton className="is-outlined" clickMessage="Connect Wallet" />
             </div>
           )}
           <div className="is-divider mt-2 mb-2" />
@@ -176,7 +177,6 @@ const Comp = ({
 const mapStateToProps = state => {
   return {
     agreedtandc: state.agreedtandc,
-    web3: state.web3,
     personalCap: state.personalCap,
     numerator: state.numerator,
     denominator: state.denominator,
@@ -186,11 +186,11 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispachToProps = dispatch => {
+const mapDispatchToProps = dispatch => {
   return {
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
   };
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { connect } from 'react-redux';
 import ERC20Contract from 'erc20-contract-js';
 import config from '../../../config';
 import GivethBridge from '../../../blockchain/contracts/GivethBridge';
 import './DonateModal.sass';
-import MetaMaskContext from '../../../components/MetaMask';
+import { OnboardContext } from '../../../components/OnboardProvider';
 import AllowanceHelper from '../../../blockchain/allowanceHelper';
 
 const ALLOWANCE_STATES = {
@@ -14,8 +13,8 @@ const ALLOWANCE_STATES = {
 };
 
 const DonateModal = props => {
-  const { onClose, account, amount } = props;
-  const { web3 } = useContext(MetaMaskContext);
+  const { onClose, amount } = props;
+  const { web3, address, network } = useContext(OnboardContext);
   const { ENOUGH, NOT_ENOUGH, TO_APPROVE } = ALLOWANCE_STATES;
 
   const toBN = value => new web3.utils.BN(value);
@@ -29,12 +28,25 @@ const DonateModal = props => {
   const [allowanceState, setAllowanceState] = useState(ENOUGH);
 
   const { DAITokenAddress, givethBridgeAddress } = config;
-  const daiTokenContract = new ERC20Contract(web3, DAITokenAddress);
-  const givethBridge = new GivethBridge(web3, givethBridgeAddress);
+  let daiTokenContract;
+  let givethBridge;
+
+  daiTokenContract = new ERC20Contract(web3, DAITokenAddress);
+  givethBridge = new GivethBridge(web3, givethBridgeAddress);
+  useEffect(() => {
+    setLoading(true);
+    daiTokenContract = new ERC20Contract(web3, DAITokenAddress);
+    givethBridge = new GivethBridge(web3, givethBridgeAddress);
+    setLoading(false);
+  }, [web3]);
+
+  useEffect(() => {
+    if (network !== config.networkId) onClose();
+  }, [network]);
 
   const updateAllowance = async () => {
     return daiTokenContract
-      .allowance(account, givethBridgeAddress)
+      .allowance(address, givethBridgeAddress)
       .call()
       .then(value => setAllowance(value));
   };
@@ -43,7 +55,7 @@ const DonateModal = props => {
     setLoading(true);
     if (web3) {
       daiTokenContract
-        .allowance(account, givethBridgeAddress)
+        .allowance(address, givethBridgeAddress)
         .call()
         .then(value => {
           setAllowance(value);
@@ -53,10 +65,12 @@ const DonateModal = props => {
           console.error(e);
         });
     }
-  }, [web3, account, amount]);
+    // eslint-disable-next-line
+  }, [web3, address, amount]);
 
   useEffect(() => {
     setAllowanceState(amountBN.gt(toBN(allowance)) ? NOT_ENOUGH : ENOUGH);
+    // eslint-disable-next-line
   }, [allowance, amount, NOT_ENOUGH, ENOUGH]);
 
   if (!web3) return null;
@@ -64,7 +78,7 @@ const DonateModal = props => {
   const approve = async () => {
     await setAllowanceState(TO_APPROVE);
     try {
-      await AllowanceHelper.approveERC20tokenTransfer(daiTokenContract, account);
+      await AllowanceHelper.approveERC20tokenTransfer(daiTokenContract, address);
       updateAllowance();
     } catch (e) {
       console.error(e);
@@ -73,7 +87,7 @@ const DonateModal = props => {
   };
 
   const donate = () => {
-    givethBridge.donateAndCreateGiver(account, config.targetProjectId, DAITokenAddress, amountWei);
+    givethBridge.donateAndCreateGiver(address, config.targetProjectId, DAITokenAddress, amountWei);
     onClose();
   };
 
@@ -112,14 +126,4 @@ const DonateModal = props => {
   );
 };
 
-const mapStateToProps = state => {
-  return {
-    account: state.account,
-  };
-};
-
-const mapDispachToProps = () => {
-  return {};
-};
-
-export default connect(mapStateToProps, mapDispachToProps)(DonateModal);
+export default DonateModal;

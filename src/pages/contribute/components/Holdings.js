@@ -1,5 +1,4 @@
 import React from 'react';
-// import MetaMaskContext from "../../../components/MetaMask";
 import { connect } from 'react-redux';
 import BN from 'bn.js';
 // import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
@@ -12,6 +11,7 @@ import BN from 'bn.js';
 //     { symbol: "ETH", src: ETH }
 // ];
 
+// eslint-disable-next-line no-unused-vars
 const Comp = ({ account, readFundingContract, cstackBalance, rcstackBalance }) => {
   // const { accounts } = useContext(
   //     MetaMaskContext,
@@ -80,10 +80,10 @@ const mapStateToProps = ({ account, cstackBalance, rcstackBalance }) => {
   };
 };
 
-const mapDispachToProps = dispatch => {
+const mapDispatchToProps = dispatch => {
   return {
     readFundingContract: value => dispatch({ type: 'READ_FUNDING_CONTRACT', value }),
   };
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import sigUtil from 'eth-sig-util';
-import MetaMaskButton from '../../../components/MetaMaskButton';
-import MetaMaskContext from '../../../components/MetaMask';
+import WalletButton from '../../../components/WalletButton';
 import * as util from '../../../util/techcontroller';
+import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({ web3available }) => {
-  const { web3 } = useContext(MetaMaskContext);
+const Comp = () => {
+  const { web3 } = useContext(OnboardContext);
 
   const [isWhitelistAdmin, setIsWhitelistAdmin] = React.useState(false);
   const [loginSignature, setLoginSignature] = React.useState(false);
@@ -19,15 +19,15 @@ const Comp = ({ web3available }) => {
     }
   }, [web3]);
 
-  if (!web3available || !web3) {
+  if (!web3) {
     return (
       <section className="section">
         <div className="container">
           <h1 className="title">Welcome to the TECH token admin page</h1>
           <h2 className="subtitle">
-            Please connect to <strong>Metamask</strong> to continue. Click the button below...
+            Please connect your <strong>Wallet</strong> to continue. Click the button below...
           </h2>
-          <MetaMaskButton />
+          <WalletButton />
         </div>
       </section>
     );
@@ -98,17 +98,16 @@ const Comp = ({ web3available }) => {
   );
 };
 
+// eslint-disable-next-line no-unused-vars
 const mapStateToProps = state => {
-  return {
-    web3available: state.web3available,
-    // web3: state.web3
-  };
+  return {};
 };
 
-const mapDispachToProps = dispatch => {
+// eslint-disable-next-line no-unused-vars
+const mapDispatchToProps = dispatch => {
   return {
     // onSetweb3available: () => dispatch({ type: "AGREE_TANDC" }),
   };
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

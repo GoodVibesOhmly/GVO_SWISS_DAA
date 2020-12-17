@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
+// eslint-disable-next-line no-unused-vars
 const Comp = ({ agreed, onSetAgreed }) => {
   //     const TomatoButton = styled(Button)`
   // background: tomato;
@@ -27,16 +28,18 @@ const Comp = ({ agreed, onSetAgreed }) => {
   );
 };
 
+// eslint-disable-next-line no-unused-vars
 const mapStateToProps = state => {
   return {
     // agreed: state.agreed,
   };
 };
 
-const mapDispachToProps = dispatch => {
+// eslint-disable-next-line no-unused-vars
+const mapDispatchToProps = dispatch => {
   return {
     // onSetAgreed: () => dispatch({ type: "AGREE_TANDC" }),
   };
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

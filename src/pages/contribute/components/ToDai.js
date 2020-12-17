@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
-import MetaMaskContext from '../../../components/MetaMask';
+import { OnboardContext } from '../../../components/OnboardProvider';
 
 const Aggregator = require('@chainlink/contracts/abi/v0.4/AggregatorInterface.json');
 
 const Comp = ({ balance, coin }) => {
   const [convertedBalance, setConvertedBalance] = React.useState(false);
 
-  const { web3 } = useContext(MetaMaskContext);
+  const { web3 } = useContext(OnboardContext);
 
   if (!balance || !coin) {
     return;
@@ -55,12 +55,14 @@ const Comp = ({ balance, coin }) => {
   );
 };
 
+// eslint-disable-next-line no-unused-vars
 const mapStateToProps = state => {
   return {};
 };
 
-const mapDispachToProps = dispatch => {
+// eslint-disable-next-line no-unused-vars
+const mapDispatchToProps = dispatch => {
   return {};
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

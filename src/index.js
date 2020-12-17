@@ -11,6 +11,7 @@ import reducer from './store/techdapp';
 // import { blackBoxMiddleware } from '@oqton/redux-black-box';
 import * as serviceWorker from './serviceWorker';
 import App from './App';
+import { OnboardProvider } from './components/OnboardProvider';
 
 const composeEnhancers =
   typeof window === 'object' && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
@@ -31,7 +32,9 @@ const store = createStore(reducer, enhancer);
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <OnboardProvider>
+      <App />
+    </OnboardProvider>
   </Provider>,
   document.getElementById('root'),
 );
