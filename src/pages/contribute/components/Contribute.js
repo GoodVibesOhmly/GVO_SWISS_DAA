@@ -8,13 +8,20 @@ import Membership from '../../../assets/membership.svg';
 import Slider from '../../../components/Slider';
 import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
+import {
+  TwitterShareButton,
+  TelegramShareButton,
+  TwitterIcon,
+  TelegramIcon
+} from 'react-share';
 import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({ agreedtandc }) => {
+const Comp = ({ agreedtandc, agreedstatutes, personalCap }) => {
   const viewStates = Object.freeze({
     INIT: 1,
     WAITINGTOCONTRIBUTE: 2,
     STARTDONATING: 3,
+    FINISHEDDONATING: 4,
   });
 
   const { web3, onboard, isReady } = useContext(OnboardContext);
@@ -29,19 +36,21 @@ const Comp = ({ agreedtandc }) => {
     }
   };
 
+  const _changeViewState = (from, to) => {
+    // make sure you can only transition from a known state to another known state
+    if (viewState === from) {
+      setViewState(to);
+    } else {
+      console.log(`Cannot transition to this VS`);
+    }
+  };
+
   React.useEffect(() => {
-    const _changeViewState = (from, to) => {
-      // make sure you can only transition from a known state to another known state
-      if (viewState === from) {
-        setViewState(to);
-      } else {
-        console.log(`Cannot transition to this VS`);
-      }
-    };
-    if (web3 && agreedtandc) {
+    // if (web3 && agreedtandc && agreedstatutes && personalCap ) {
+    if (web3 && agreedtandc && agreedstatutes) { // TODO : remove this
       _changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
     }
-  }, [web3, agreedtandc, viewState, viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE]);
+  }, [web3, agreedtandc, agreedstatutes, viewState, viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE]);
 
   React.useEffect(() => {
     if (!isReady && viewState === viewStates.STARTDONATING) {
@@ -105,7 +114,43 @@ const Comp = ({ agreedtandc }) => {
             </a>
           </p>
 
-          {viewState === viewStates.STARTDONATING && <ContributeForm />}
+          {viewState === viewStates.STARTDONATING && (<><ContributeForm onClose={() => {
+            _changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
+          }} /></>)}
+          {/* {viewState === viewStates.FINISHEDDONATING && (<> */}
+          <div className="enable has-text-left">
+            <div className="contribmain">
+
+              <p className="subtitle is-size-2">Thank you for the contribution!</p>
+              <div className="level">
+                <div className="level-item">5000 CSTK</div>
+                <div class="level-right">
+                  <div className="level-item">
+                    <div>
+                      <a href="#" onClick={() => {
+                        _changeViewState(viewStates.FINISHEDDONATING, viewStates.WAITINGTOCONTRIBUTE);
+
+                      }}>CLOSE</a><br /><br /><br />
+                      <TwitterShareButton
+                        url="https://commonsstack.org"
+                        title="I funded the CS!"
+                      >
+                        <TwitterIcon size={32} round />
+                      </TwitterShareButton>
+                      <TelegramShareButton
+                        url="https://commonsstack.org"
+                        title="I funded the CS!"
+                      >
+
+                        <TelegramIcon size={32} round />
+                      </TelegramShareButton>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* </>)} */}
 
           {!web3 && (
             <div className="enable has-text-centered">
@@ -132,9 +177,9 @@ const Comp = ({ agreedtandc }) => {
 
                       <p className="subtitle">
                         <span>Governance Rights</span>
-                        <span className="icon info-icon-small is-small has-text-info">
-                          <i className="fas fa-info-circle" />
-                        </span>
+                        {/* <span className="icon info-icon-small is-small has-text-info">
+                        <span class="has-tooltip-arrow" data-tooltip="Tooltip content"><i className="fas fa-info-circle" /></span>
+                        </span> */}
                       </p>
                     </div>
                   </div>
@@ -145,9 +190,9 @@ const Comp = ({ agreedtandc }) => {
                       <img src={Access} alt="Access to Future ABC Hatch Phases" />
                       <p className="subtitle">
                         <span>Access to Future ABC Hatch Phases</span>
-                        <span className="icon info-icon-small is-small has-text-info">
+                        {/* <span className="icon info-icon-small is-small has-text-info">
                           <i className="fas fa-info-circle" />
-                        </span>
+                        </span> */}
                       </p>
                     </div>
                   </div>
@@ -158,9 +203,9 @@ const Comp = ({ agreedtandc }) => {
                       <img src={Membership} alt="Membership in Swiss Commons Stack Associations" />
                       <p className="subtitle">
                         <span>Membership in Swiss Commons Stack Associations</span>
-                        <span className="icon info-icon-small is-small has-text-info">
+                        {/* <span className="icon info-icon-small is-small has-text-info">
                           <i className="fas fa-info-circle" />
-                        </span>
+                        </span> */}
                       </p>
                     </div>
                   </div>
@@ -177,6 +222,7 @@ const Comp = ({ agreedtandc }) => {
 const mapStateToProps = state => {
   return {
     agreedtandc: state.agreedtandc,
+    agreedstatutes: state.agreedstatutes,
     personalCap: state.personalCap,
     numerator: state.numerator,
     denominator: state.denominator,

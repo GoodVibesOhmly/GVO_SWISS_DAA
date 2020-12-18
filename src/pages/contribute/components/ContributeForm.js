@@ -6,13 +6,14 @@ import arrow from '../../../assets/arrow.svg';
 import CSTK from '../../../assets/cstk.svg';
 import DonateModal from './DonateModal';
 import { OnboardContext } from '../../../components/OnboardProvider';
-
 const config = require('../../../config');
 
-const Comp = () => {
-  const [amountDAI, setAmountDAI] = React.useState(0);
+const Comp = ({onClose}) => {
+  const [amountDAI, setAmountDAI] = React.useState(500);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
   const [showDonateModal, setShowDonateModal] = React.useState(false);
+  // const [showThankYouModal, setShowThankYouModal] = React.useState(false);
+  const [donationButtonEnabled, setDonationButtonEnabled] = React.useState(false);
 
   const [DAIError, setDAIError] = React.useState();
 
@@ -20,7 +21,9 @@ const Comp = () => {
     try {
       const amountDAIFloat = parseFloat(amountDAI);
       if (Number.isNaN(amountDAIFloat)) {
-        setDAIError('please enter a number');
+        if (amountDAI && amountDAI !== "") {
+          setDAIError('please enter a number');
+        }
         setAmountDAI(amountDAIFloat);
         setAmountCSTK(0);
       } else {
@@ -32,14 +35,23 @@ const Comp = () => {
     }
   }, [amountDAI]);
 
+  React.useEffect(() => {
+    setDonationButtonEnabled(amountCSTK !== 0);
+  }, [amountCSTK]);
+
+
+
   const { isReady } = React.useContext(OnboardContext);
 
   return (
     <>
       {showDonateModal && isReady && (
-        <DonateModal onClose={() => setShowDonateModal(false)} amount={amountDAI} />
+        <DonateModal onClose={() => {
+          setShowDonateModal(false)
+          onClose();
+          // setShowThankYouModal(true)
+        }} amount={amountDAI} />
       )}
-      ;
       <div className="enable has-text-left">
         <div className="contribmain">
           <p className="subtitle mb-2">I WANT TO CONTRIBUTE</p>
@@ -128,6 +140,7 @@ const Comp = () => {
 
           <button
             className="button is-success is-fullwidth is-medium"
+            disabled={!donationButtonEnabled}
             onClick={() => setShowDonateModal(true)}
           >
             Make Contribution

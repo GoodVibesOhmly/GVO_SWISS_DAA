@@ -5,17 +5,24 @@ import GivethBridge from '../../../blockchain/contracts/GivethBridge';
 import './DonateModal.sass';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import AllowanceHelper from '../../../blockchain/allowanceHelper';
+import spinner from "../../../assets/spinner.svg";
+import Success from './Success';
 
-const ALLOWANCE_STATES = {
-  ENOUGH: 'ENOUGH',
-  NOT_ENOUGH: 'NOT_ENOUGH',
-  TO_APPROVE: 'TO_APPROVE',
+const VIEW_STATES = {
+  READY_TO_APPROVE: 'READY_TO_APPROVE',
+  APPROVING: 'APPROVING',
+  APPROVE_FAILED: 'APPROVE_FAILED',
+  ENOUGH_ALLOWANCE: 'ENOUGH_ALLOWANCE',
+  DONATING: 'DONATING',
+  DONATING_FAILED: 'DONATING_FAILED',
+  DONATING_SUCCESS: 'DONATING_SUCCESS',
 };
 
 const DonateModal = props => {
   const { onClose, amount } = props;
   const { web3, address, network } = useContext(OnboardContext);
-  const { ENOUGH, NOT_ENOUGH, TO_APPROVE } = ALLOWANCE_STATES;
+  const { ENOUGH_ALLOWANCE, READY_TO_APPROVE,
+    APPROVING, APPROVE_FAILED, DONATING, DONATING_FAILED, DONATING_SUCCESS } = VIEW_STATES;
 
   const toBN = value => new web3.utils.BN(value);
 
@@ -25,7 +32,7 @@ const DonateModal = props => {
 
   const [allowance, setAllowance] = useState('0');
   const [loading, setLoading] = useState(true);
-  const [allowanceState, setAllowanceState] = useState(ENOUGH);
+  const [viewState, setViewState] = useState();
 
   const { DAITokenAddress, givethBridgeAddress } = config;
   let daiTokenContract;
@@ -69,45 +76,133 @@ const DonateModal = props => {
   }, [web3, address, amount]);
 
   useEffect(() => {
-    setAllowanceState(amountBN.gt(toBN(allowance)) ? NOT_ENOUGH : ENOUGH);
+    setViewState(amountBN.gt(toBN(allowance)) ? READY_TO_APPROVE : ENOUGH_ALLOWANCE);
     // eslint-disable-next-line
-  }, [allowance, amount, NOT_ENOUGH, ENOUGH]);
+  }, [allowance, amount, READY_TO_APPROVE, ENOUGH_ALLOWANCE]);
 
   if (!web3) return null;
 
   const approve = async () => {
-    await setAllowanceState(TO_APPROVE);
+    setViewState(APPROVING);
     try {
       await AllowanceHelper.approveERC20tokenTransfer(daiTokenContract, address);
       updateAllowance();
     } catch (e) {
+      setViewState(APPROVE_FAILED);
       console.error(e);
       updateAllowance();
     }
   };
 
-  const donate = () => {
-    givethBridge.donateAndCreateGiver(address, config.targetProjectId, DAITokenAddress, amountWei);
-    onClose();
+  const donate = async () => {
+    setViewState(DONATING);
+    try {
+      await givethBridge.donateAndCreateGiver(address, config.targetProjectId, DAITokenAddress, amountWei);
+      setViewState(DONATING_SUCCESS);
+    } catch (e) {
+      setViewState(DONATING_FAILED);
+    }
+  };
+
+  const content_READY_TO_APPROVE = (
+    <>
+      <p>You first need to approve access to your DAI balance and then donate</p>
+      <p>Allowance needed: {amount} DAI</p>
+      <p>Current Allowance: {web3.utils.fromWei(allowance, "ether")} DAI</p>
+    </>
+  )
+
+  const content_APPROVING = (
+    <>
+      <figure class="image is-32x32">
+        <img src={spinner} />
+      </figure>
+      <p>approving...</p>
+    </>
+  )
+
+  const content_APPROVE_FAILED = (
+    <>
+      <p>approve failed!</p>
+    </>
+  )
+
+  const content_ENOUGH_ALLOWANCE = (
+    <>
+      <p>Ready to send donation</p>
+      <p>Press the conate button to execute the donation</p>
+    </>
+  )
+
+
+  const content_DONATING = (
+    <>
+      <figure class="image is-32x32">
+        <img src={spinner} />
+      </figure>
+      <p>waiting for donation transction to complete...</p>
+    </>
+  )
+
+  const content_DONATING_FAILED = (
+    <>
+      <p>donating failed :(</p>
+    </>
+  )
+
+  const content_DONATING_SUCCESS = (
+    <>
+      <Success/>
+    </>
+  )
+
+
+  const modalContent = () => {
+    switch (viewState) {
+      case "READY_TO_APPROVE":
+        return content_READY_TO_APPROVE;
+      default:
+        return null;
+    }
   };
 
   return (
     <div className="donate-modal modal is-active">
       <div className="modal-background" onClick={onClose} />
       <div className="modal-card">
+
         <header className="modal-card-head">
           <p className="modal-card-title">Contribute</p>
           <button className="delete" aria-label="close" onClick={onClose} />
         </header>
         <section className="modal-card-body">
-          <p>Amount: {amount}</p>
-          <p>Allowance: {web3.utils.fromWei(allowance)}</p>
+
+
+          {/* {modalContent()} */}
+
+          {/* This is to show all states in one screen  - should be replaces  bythe function above modalContent() 
+          in the final version after Kay has done his work ! */}
+          <hr />
+          {content_READY_TO_APPROVE}
+          <hr />
+          {content_APPROVING}
+          <hr />
+          {content_APPROVE_FAILED}
+          <hr />
+          {content_ENOUGH_ALLOWANCE}
+          <hr />
+          {content_DONATING}
+          <hr />
+          {content_DONATING_FAILED}
+          <hr />
+          {content_DONATING_SUCCESS}
+
         </section>
         <footer className="modal-card-foot">
-          {!loading && allowanceState !== ENOUGH && (
+          {!loading && viewState !== ENOUGH_ALLOWANCE && (
             <button
               className="button is-primary"
-              disabled={allowanceState === TO_APPROVE}
+              disabled={viewState !== ENOUGH_ALLOWANCE}
               onClick={approve}
             >
               Approve
@@ -115,7 +210,7 @@ const DonateModal = props => {
           )}
           <button
             className={`button is-success ${loading ? 'is-loading' : ''}`}
-            disabled={allowanceState !== ENOUGH}
+            disabled={viewState !== ENOUGH_ALLOWANCE}
             onClick={donate}
           >
             Donate
