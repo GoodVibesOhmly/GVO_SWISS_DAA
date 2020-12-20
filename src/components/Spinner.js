@@ -1,9 +1,9 @@
-import React from "react";
+import React from 'react';
 
-const Spinner = ({}) => {
+const Spinner = () => {
   return (
-    <div class="loader-wrapper">
-      <div class="loader is-loading"></div>
+    <div className="loader-wrapper">
+      <div className="loader is-loading" />
     </div>
   );
 };

@@ -1,17 +1,11 @@
-import React, { useContext } from "react";
-import { connect } from "react-redux";
-import MetaMaskContext from "../../../components/MetaMask";
-import tandcData from "../../../assets/tandc.json";
-import "./TandC.sass";
+import React, { useContext } from 'react';
+import { connect } from 'react-redux';
+import { OnboardContext } from '../../../components/OnboardProvider';
+import tandcData from '../../../assets/tandc.json';
+import './TandC.sass';
 
-const Comp = ({
-  onSetAgreedtandc,
-}) => {
-  const { web3, accounts} = useContext(
-    MetaMaskContext
-  );
-
-  console.log("accounts", accounts);
+const Comp = ({ onSetAgreedtandc }) => {
+  const { web3, account } = useContext(OnboardContext);
 
   const [agreetandc, setAgreetandc] = React.useState(false);
   const [box3, setBox3] = React.useState(false);
@@ -22,57 +16,36 @@ const Comp = ({
   React.useEffect(() => {
     setEnableSubmit(agreetandc && box3);
     console.log(
-      "Check all ??",
-      agreetandc ? "true" : "false",
-      box3 ? "true" : "false",
-      enableSubmit ? "true" : "false"
+      'Check all ??',
+      agreetandc ? 'true' : 'false',
+      box3 ? 'true' : 'false',
+      enableSubmit ? 'true' : 'false',
     );
   }, [setEnableSubmit, enableSubmit, agreetandc, box3]);
 
-  if (!accounts || !accounts[0]) {
+  if (!web3) {
     return <div>Waiting for web3 provider</div>;
   }
 
-  const signIt = (message) => {
-    const msgParams = [
-      {
-        type: "string", // Any valid solidity type
-        name: "Commons Stack signature", // Any string label you want
-        value: message, // The value to sign
-      },
-    ];
+  const signIt = message => {
     const from = web3.currentProvider.selectedAddress;
 
-    web3.currentProvider.sendAsync(
-      {
-        method: "eth_signTypedData",
-        params: [msgParams, from],
-        from: from,
-      },
-      function (err, result) {
-        debugger;
-        if (err) {
-          return setSignError("Signature failed.");
-        }
-        // if (err) return console.error(err)
-        if (result.error) {
-          return setSignError(`Signature error. ${result.error.message}`);
-          // return console.error()
-        }
-
-        if (!result.result) {
-          return setSignError("No signature received.");
-        }
-
-        onSetAgreedtandc(result.result);
+    web3.eth.personal.sign(message, from, '', (err, signature) => {
+      if (err) {
+        return setSignError('Signature failed.');
       }
-    );
+
+      if (!signature) {
+        return setSignError('No signature received.');
+      }
+      onSetAgreedtandc(message, signature, account);
+    });
   };
 
   return (
     <>
       <div className="tandc modal is-active">
-        <div className="modal-background"></div>
+        <div className="modal-background" />
         <div className="modal-card">
           <header className="modal-card-head">
             <p className="modal-card-title">Terms And Conditions</p>
@@ -84,18 +57,19 @@ const Comp = ({
               aria-label="close"
             ></button> */}
           </header>
-          <div class="is-divider"></div>
+          <div className="is-divider" />
           <section className="modal-card-body">
-            <p class="tandccontent">{tandcData.data}</p>
+            <p className="tandccontent">{tandcData.data}</p>
 
             <div className="field">
               <div className="control">
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                 <label className="checkbox">
                   <input
                     name="agreetandc"
                     type="checkbox"
                     checked={agreetandc}
-                    onChange={(e) => {
+                    onChange={e => {
                       setAgreetandc(e.target.checked);
                     }}
                   />
@@ -103,38 +77,22 @@ const Comp = ({
                 </label>
               </div>
             </div>
-            {/* 
-                        <div className="field">
-                            <div className="control">
-                                <label className="checkbox">
-                                    <input
-                                        name="box2"
-                                        type="checkbox"
-                                        checked={box2}
-                                        onChange={(e) => { setBox2(e.target.checked) }}
-                                    />
-                                    and to this
-                            </label>
-                            </div>
-                        </div> */}
             <div className="field">
               <div className="control">
+                {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                 <label className="checkbox">
                   <input
                     name="box3"
                     type="checkbox"
                     checked={box3}
-                    onChange={(e) => {
+                    onChange={e => {
                       setBox3(e.target.checked);
                     }}
                   />
                   <span>
-                    I agree to cryptographically sign a copy of these Terms and
-                    Conditions by signing its IPFS hash{" "}
-                    <a
-                      target="_new"
-                      href={`https://ipfs.io/ipfs/${tandcData.hash}`}
-                    >
+                    I agree to cryptographically sign a copy of these Terms and Conditions by
+                    signing its IPFS hash{' '}
+                    <a target="_new" href={`https://ipfs.io/ipfs/${tandcData.hash}`}>
                       {tandcData.hash}
                     </a>
                   </span>
@@ -142,30 +100,30 @@ const Comp = ({
               </div>
             </div>
           </section>
-          <div class="is-divider"></div>
+          <div className="is-divider" />
           <footer className="modal-card-foot">
-            <div class="tile is-ancestor">
-              <div class="tile is-vertical ">
-                <div class="level">
-                  <div class="level-left">
-                    <span class="icon has-text-info is-medium">
-                      <i class="fas fa-info-circle"></i>
+            <div className="tile is-ancestor">
+              <div className="tile is-vertical ">
+                <div className="level">
+                  <div className="level-left">
+                    <span className="icon has-text-info is-medium">
+                      <i className="fas fa-info-circle" />
                     </span>
                     <span className="is-size-7">
-                      Be sure to connect the right wallet which will be
-                      whitelisted and from which you will make contribution
+                      Be sure to connect the right wallet which will be whitelisted and from which
+                      you will make contribution
                     </span>
-                    {signError && <p class="help is-danger">{signError}</p>}
+                    {signError && <p className="help is-danger">{signError}</p>}
                   </div>
                 </div>
               </div>
-              <div class="tile is-vertical ">
-                <div class="">
+              <div className="tile is-vertical ">
+                <div className="">
                   <button
                     disabled={!enableSubmit}
                     onClick={() => {
                       signIt(
-                        `I agree with Terms and Conditions corresponding to IPFS hash ${tandcData.hash}`
+                        `I agree with Terms and Conditions corresponding to IPFS hash ${tandcData.hash}`,
                       );
                     }}
                     className="button is-pulled-right is-outlined is-success"
@@ -182,19 +140,18 @@ const Comp = ({
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     agreedtandc: state.agreedtandc,
-    web3available: state.web3available,
   };
 };
 
-const mapDispachToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    onSetAgreedtandc: (signature) =>
-      dispatch({ type: "AGREE_TANDC", signature }),
-    setShowTandC: (value) => dispatch({ type: "SET_SHOW_TANDC", value }),
+    onSetAgreedtandc: (message, signature, address) =>
+      dispatch({ type: 'AGREE_TANDC', message, signature, address }),
+    setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
   };
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

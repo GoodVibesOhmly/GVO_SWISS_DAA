@@ -1,94 +1,128 @@
-import React, { useContext } from "react";
-import { connect } from "react-redux";
-import MetaMaskContext from "../../../components/MetaMask";
-import "./Contribute.sass";
-import MetaMaskButton from "../../../components/MetaMaskButton";
-import BN from "bn.js";
-import GovernanceRights from "../../../assets/governanceRights.svg";
-import Access from "../../../assets/access.svg";
-import Membership from "../../../assets/membership.svg";
-import Slider from "../../../components/Slider";
+import React, { useContext } from 'react';
+import { connect } from 'react-redux';
+import './Contribute.sass';
+import WalletButton from '../../../components/WalletButton';
+import GovernanceRights from '../../../assets/governanceRights.svg';
+import Access from '../../../assets/access.svg';
+import Membership from '../../../assets/membership.svg';
+import Slider from '../../../components/Slider';
+import Cstk from '../../../assets/cstk.svg';
+import ContributeForm from './ContributeForm';
+import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({
-  web3available,
-  agreedtandc,
-  onSetAgreedtandc,
-  setShowTandC,
-  personalCap,
-  numerator,
-  denominator,
-  softCap,
-  hardCap,
-  totalReceived,
-}) => {
-  const { accounts } = useContext(MetaMaskContext);
+const Comp = ({ agreedtandc }) => {
+  const viewStates = Object.freeze({
+    INIT: 1,
+    WAITINGTOCONTRIBUTE: 2,
+    STARTDONATING: 3,
+  });
 
-  const _ratio =
-    numerator && denominator ? (numerator / denominator).toFixed(2) : null;
+  const { web3, onboard, isReady } = useContext(OnboardContext);
+  const [viewState, setViewState] = React.useState(viewStates.INIT);
 
-  const _personalCap =
-    personalCap && personalCap.div(new BN("1000000000000000000")).toString(10);
+  const changeViewState = (from, to) => {
+    // make sure you can only transition from a known state to another known state
+    if (viewState === from) {
+      setViewState(to);
+    } else {
+      console.log(`Cannot transition to this VS`);
+    }
+  };
+
+  React.useEffect(() => {
+    const _changeViewState = (from, to) => {
+      // make sure you can only transition from a known state to another known state
+      if (viewState === from) {
+        setViewState(to);
+      } else {
+        console.log(`Cannot transition to this VS`);
+      }
+    };
+    if (web3 && agreedtandc) {
+      _changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
+    }
+  }, [web3, agreedtandc, viewState, viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE]);
+
+  React.useEffect(() => {
+    if (!isReady && viewState === viewStates.STARTDONATING) {
+      setViewState(viewStates.WAITINGTOCONTRIBUTE);
+    }
+  }, [isReady, viewState, viewStates.STARTDONATING, viewStates.WAITINGTOCONTRIBUTE]);
 
   return (
     <div className="tile is-child">
-      <div className="menu contrib level has-text-centered">
-        <div className="level-item active">
-          <span>Iteration 1</span>
-        </div>
-        <div className="level-item">
-          <span>Iteration 2</span>
-        </div>
-        <div className="level-item">
-          <span>Iteration 3</span>
-        </div>
-        <div className="level-item">
-          <span>Iteration 4</span>
-        </div>
-        <div className="level-item">
-          <span>Iteration 5</span>
-        </div>
-      </div>
       <article className=" notification is-primary">
         <div className="contribmain">
-          <nav className="level">
-            <div className="level-item has-text-centered">
-              <div>
-                <p className="heading">Your personal cap</p>
-                <p className="title">{_personalCap}</p>
+          <p className="subtitle mb-2">YOUR MEMBERSHIP SCORE</p>
+
+          <div className="level">
+            <div className="level-left">
+              <div className="level-item">
+                <article className="media">
+                  <figure className="media-left">
+                    <p className="image is-64x64">
+                      <img alt="CSTK logo" src={Cstk} />
+                    </p>
+                  </figure>
+                  <div className="media-content">
+                    <div className="content">
+                      <p className="heading is-size-2 has-text-weight-bold">0 CSTK</p>
+                    </div>
+                  </div>
+                </article>
               </div>
             </div>
-            <div className="level-item has-text-centered">
-              <div>
-                <p className="heading">Current issuance rate</p>
-                {_ratio && <p className="title">{_ratio} CSTK / DAI</p>}
+            <div className="level-right">
+              <div className="level-item">
+                <span>
+                  {viewState === viewStates.WAITINGTOCONTRIBUTE && (
+                    <button
+                      onClick={() => {
+                        onboard.walletCheck().then(readyToTransact => {
+                          if (readyToTransact) {
+                            changeViewState(
+                              viewStates.WAITINGTOCONTRIBUTE,
+                              viewStates.STARTDONATING,
+                            );
+                          }
+                        });
+                      }}
+                      className="button is-success is-medium"
+                    >
+                      Make Contribution
+                    </button>
+                  )}
+                </span>
               </div>
             </div>
-          </nav>
+          </div>
+
+          <br />
           <p>
-            You can contribute with DAI or any of 10 confirmed ERC-20 tokens
-            through our automated converter built on top of 1inch.exchange
+            You can pay membership dues with DAI only. You can acquire DAI on{' '}
+            <a rel="noopener noreferrer" target="_blank" href="https://1inch.exchange">
+              1inch.exchange
+            </a>
           </p>
 
-          {(!accounts || !accounts[0]) && (
+          {viewState === viewStates.STARTDONATING && <ContributeForm />}
+
+          {!web3 && (
             <div className="enable has-text-centered">
               <p className="title">
                 Want to contribute to Commons Stack? Connect your wallet below.
               </p>
-              <MetaMaskButton
-                className="is-outlined"
-                clickMessage="Connect Wallet"
-              />
+              <WalletButton className="is-outlined" clickMessage="Connect Wallet" />
             </div>
           )}
-          <div className="is-divider mt-2 mb-2"></div>
+          <div className="is-divider mt-2 mb-2" />
           <Slider />
-          <div className="is-divider mt-2 mb-2"></div>
+          <div className="is-divider mt-2 mb-2" />
           <div className="title-level">
             <div className="level-left">
-              <p className="subtitle mb-2">
-                FOR YOUR CONTRIBUTION YOU WILL ALSO RECEIVE:
-              </p>
+              <p className="subtitle mb-2">FOR YOUR CONTRIBUTION YOU WILL ALSO RECEIVE:</p>
             </div>
+
             <div className="level">
               <div className="items-container">
                 <div className="level-item">
@@ -98,8 +132,8 @@ const Comp = ({
 
                       <p className="subtitle">
                         <span>Governance Rights</span>
-                        <span class="icon info-icon-small is-small has-text-info">
-                          <i class="fas fa-info-circle"></i>
+                        <span className="icon info-icon-small is-small has-text-info">
+                          <i className="fas fa-info-circle" />
                         </span>
                       </p>
                     </div>
@@ -108,14 +142,11 @@ const Comp = ({
                 <div className="level-item">
                   <div className="title-level">
                     <div className="item-container">
-                      <img
-                        src={Access}
-                        alt="Access to Future ABC Hatch Phases"
-                      />
+                      <img src={Access} alt="Access to Future ABC Hatch Phases" />
                       <p className="subtitle">
                         <span>Access to Future ABC Hatch Phases</span>
-                        <span class="icon info-icon-small is-small has-text-info">
-                          <i class="fas fa-info-circle"></i>
+                        <span className="icon info-icon-small is-small has-text-info">
+                          <i className="fas fa-info-circle" />
                         </span>
                       </p>
                     </div>
@@ -124,16 +155,11 @@ const Comp = ({
                 <div className="level-item">
                   <div className="title-level">
                     <div className="item-container">
-                      <img
-                        src={Membership}
-                        alt="Membership in Swiss Commons Stack Associations"
-                      />
+                      <img src={Membership} alt="Membership in Swiss Commons Stack Associations" />
                       <p className="subtitle">
-                        <span>
-                          Membership in Swiss Commons Stack Associations
-                        </span>
-                        <span class="icon info-icon-small is-small has-text-info">
-                          <i class="fas fa-info-circle"></i>
+                        <span>Membership in Swiss Commons Stack Associations</span>
+                        <span className="icon info-icon-small is-small has-text-info">
+                          <i className="fas fa-info-circle" />
                         </span>
                       </p>
                     </div>
@@ -148,10 +174,9 @@ const Comp = ({
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     agreedtandc: state.agreedtandc,
-    web3available: state.web3available,
     personalCap: state.personalCap,
     numerator: state.numerator,
     denominator: state.denominator,
@@ -161,12 +186,11 @@ const mapStateToProps = (state) => {
   };
 };
 
-const mapDispachToProps = (dispatch) => {
+const mapDispatchToProps = dispatch => {
   return {
-    onSetAgreedtandc: (signature) =>
-      dispatch({ type: "AGREE_TANDC", signature }),
-    setShowTandC: (value) => dispatch({ type: "SET_SHOW_TANDC", value }),
+    onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
+    setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
   };
 };
 
-export default connect(mapStateToProps, mapDispachToProps)(Comp);
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

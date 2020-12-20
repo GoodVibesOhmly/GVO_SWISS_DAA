@@ -1,7 +1,8 @@
-import Dashboard from "./components/Dashboard";
-const rootPath = "/whitelist";
+import Dashboard from './components/Dashboard';
+
+const rootPath = '/whitelist';
 
 export default {
-    rootPath,
-    RootComponent: Dashboard
+  rootPath,
+  RootComponent: Dashboard,
 };

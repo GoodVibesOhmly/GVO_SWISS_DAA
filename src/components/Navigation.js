@@ -1,19 +1,20 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
-import MetaMaskButton from "./MetaMaskButton";
-import csLogo from "../assets/headerlogo.svg";
-import "./Navigation.sass";
+import React, { useState, useEffect } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import WalletButton from './WalletButton';
+import ChangeWallet from './ChangeWallet';
+import csLogo from '../assets/headerlogo.svg';
+import './Navigation.sass';
 
-const Comp = ({ web3available, agreedtandc, onSetAgreedtandc }) => {
+const Comp = () => {
   const location = useLocation();
   const [activeNavItem, setActiveNavItem] = useState(1);
 
   useEffect(() => {
     switch (location.pathname) {
-      case "/":
+      case '/':
         setActiveNavItem(1);
         break;
-      case "/contribute":
+      case '/contribute':
         setActiveNavItem(2);
         break;
       // case "/help":
@@ -33,15 +34,15 @@ const Comp = ({ web3available, agreedtandc, onSetAgreedtandc }) => {
               <img src={csLogo} alt="Logo" />
             </a>
             <span className="navbar-burger burger" data-target="navbarMenu">
-              <span></span>
-              <span></span>
-              <span></span>
+              <span />
+              <span />
+              <span />
             </span>
           </div>
 
           <div id="navMenu" className="navbar-menu">
             <div className="navbar-start">
-              <div
+              {/* <div
                 className={
                   activeNavItem === 1 ? "navbar-item is-active" : "navbar-item"
                 }
@@ -49,21 +50,13 @@ const Comp = ({ web3available, agreedtandc, onSetAgreedtandc }) => {
                 <Link to="/">
                   <span>About contribution</span>
                 </Link>
-              </div>
-              <div
-                className={
-                  activeNavItem === 2 ? "navbar-item is-active" : "navbar-item"
-                }
-              >
+              </div> */}
+              <div className={activeNavItem === 2 ? 'navbar-item is-active' : 'navbar-item'}>
                 <Link to="/contribute">
-                  <span>Contribute</span>
+                  <span>Membership</span>
                 </Link>
               </div>
-              <div
-                className={
-                  activeNavItem === 3 ? "navbar-item is-active" : "navbar-item"
-                }
-              >
+              <div className={activeNavItem === 3 ? 'navbar-item is-active' : 'navbar-item'}>
                 <span>Need help?</span>
               </div>
             </div>
@@ -71,7 +64,8 @@ const Comp = ({ web3available, agreedtandc, onSetAgreedtandc }) => {
             <div className="navbar-end">
               <div className="tabs is-right">
                 <div className="navbar-item">
-                  <MetaMaskButton />
+                  <ChangeWallet />
+                  <WalletButton />
                 </div>
               </div>
             </div>

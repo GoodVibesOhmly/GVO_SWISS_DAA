@@ -1,54 +1,46 @@
-import React from "react";
+import React, { useContext } from 'react';
 // import { Redirect } from "react-router-dom";
 // import styled from "styled-components";
-import { connect } from "react-redux";
-import MetaMaskButton from "../../../components/MetaMaskButton";
+import { connect } from 'react-redux';
+import WalletButton from '../../../components/WalletButton';
+import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({ web3available }) => {
+const Comp = () => {
+  const { web3 } = useContext(OnboardContext);
+  if (!web3) {
+    return (
+      <section className="section">
+        <div className="container">
+          <h1 className="title">Welcome to the TECH token admin page</h1>
+          <h2 className="subtitle">
+            Please connect your <strong>Wallet</strong> to continue. Click the button below...
+          </h2>
+          <WalletButton />
+        </div>
+      </section>
+    );
+  }
 
-    if (!web3available) {
-        return (
-            <section className="section">
-                <div className="container">
-                    <h1 className="title">Welcome to the TECH token admin page</h1>
-                    <h2 className="subtitle">Please connect to <strong>Metamask</strong> to continue. Click the button below...</h2>
-                    <MetaMaskButton />
-                </div>
-            </section>
-        )
-    }
+  return (
+    <>
+      <section className="section">
+        <div className="container">
+          <h1 className="title">Welcome to the whitelist admin page</h1>
+        </div>
+      </section>
 
-
-
-
-    return (<>
-        <section className="section">
-            <div className="container">
-                <h1 className="title">Welcome to the whitelist admin page</h1>                
-            </div>
-        </section>
-        
-        {/* <TomatoButton onClick={onSetweb3available}>click to agree</TomatoButton> */}
-    </>);
+      {/* <TomatoButton onClick={onSetweb3available}>click to agree</TomatoButton> */}
+    </>
+  );
 };
 
-
-const mapStateToProps = state => {
-
-    return {
-        web3available: state.web3available,
-        // web3: state.web3
-    };
+const mapStateToProps = () => {
+  return {};
 };
 
-const mapDispachToProps = dispatch => {
-    return {
-        // onSetweb3available: () => dispatch({ type: "AGREE_TANDC" }),
-    };
+// eslint-disable-next-line no-unused-vars
+const mapDispatchToProps = dispatch => {
+  return {};
 };
 
-export default connect(
-    mapStateToProps,
-    mapDispachToProps
-)(Comp);
-
+export default connect(mapStateToProps, mapDispatchToProps)(Comp);

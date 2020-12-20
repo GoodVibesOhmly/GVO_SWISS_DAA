@@ -29,6 +29,7 @@ $modal-content-width: 65%
     mix-blend-mode: normal
     opacity: 0.4
 
+
 .info-icon-small .svg-inline--fa.fa-w-16
     width: 0.7rem !important
 
@@ -89,7 +90,7 @@ $modal-content-width: 65%
     text-overflow: ellipsis
     white-space: nowrap
 
-.button.is-success
+.button.is-success2
     margin-left: 2em
     background: #293540
     color: $button-color
@@ -97,3 +98,16 @@ $modal-content-width: 65%
     &:hover
         background: $button-color
 // border-radius: 3px;
+
+.input,  .select select
+    background-color: #202B35
+    color: white
+    border-color: #172028
+
+.input[disabled],  .select select[disabled]
+    background-color: #202B35
+    color: white
+    border-color: #172028
+
+.select:not(.is-multiple):not(.is-loading)::after
+    border-color: $blue
