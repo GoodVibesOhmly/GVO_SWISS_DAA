@@ -2,8 +2,8 @@ const axios = require('axios');
 const config = require('../config');
 
 export default {
-  getSignature: address => {
-    return axios.get(`${config.apiGateway.URL}/signature/${address}`);
+  getSignature: (address,type) => {
+    return axios.get(`${config.apiGateway.URL}/signature/${address}_${type}`);
   },
 
   getUserWhiteListed: async address => {
@@ -11,8 +11,9 @@ export default {
     return !!res && !!res.data && !!res.data.whitelisted;
   },
 
-  postSignature: (message, signature, address) => {
+  postSignature: (message, signature, address, type) => {
     return axios.post(`${config.apiGateway.URL}/signature`, {
+      type,
       message,
       address,
       signature,

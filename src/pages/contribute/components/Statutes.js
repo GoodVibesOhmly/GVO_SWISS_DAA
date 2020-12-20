@@ -1,27 +1,27 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import { OnboardContext } from '../../../components/OnboardProvider';
-import tandcData from '../../../assets/tandc.json';
+import statutesData from '../../../assets/statutes.json';
 import './TandC.sass';
 
-const Comp = ({ onSetAgreedtandc }) => {
+const Comp = ({ onSetAgreedstatutes }) => {
   const { web3, address } = useContext(OnboardContext);
 
-  const [agreetandc, setAgreetandc] = React.useState(false);
+  const [agreestatutes, setAgreestatutes] = React.useState(false);
   const [box3, setBox3] = React.useState(false);
   const [enableSubmit, setEnableSubmit] = React.useState(false);
 
   const [signError, setSignError] = React.useState();
 
   React.useEffect(() => {
-    setEnableSubmit(agreetandc && box3);
+    setEnableSubmit(agreestatutes && box3);
     console.log(
       'Check all ??',
-      agreetandc ? 'true' : 'false',
+      agreestatutes ? 'true' : 'false',
       box3 ? 'true' : 'false',
       enableSubmit ? 'true' : 'false',
     );
-  }, [setEnableSubmit, enableSubmit, agreetandc, box3]);
+  }, [setEnableSubmit, enableSubmit, agreestatutes, box3]);
 
   if (!web3) {
     return <div>Waiting for web3 provider</div>;
@@ -38,7 +38,7 @@ const Comp = ({ onSetAgreedtandc }) => {
       if (!signature) {
         return setSignError('No signature received.');
       }
-      onSetAgreedtandc(message, signature, address);
+      onSetAgreedstatutes(message, signature, address);
     });
   };
 
@@ -48,32 +48,32 @@ const Comp = ({ onSetAgreedtandc }) => {
         <div className="modal-background" />
         <div className="modal-card">
           <header className="modal-card-head">
-            <p className="modal-card-title">Terms And Conditions</p>
+            <p className="modal-card-title">Statutes</p>
             {/* <button
               className="delete"
               onClick={() => {
-                setShowTandC(false);
+                setShowstatutes(false);
               }}
               aria-label="close"
             ></button> */}
           </header>
           <div className="is-divider" />
           <section className="modal-card-body">
-            <p className="tandccontent">{tandcData.data}</p>
+            <p className="statutescontent">{statutesData.data}</p>
 
             <div className="field">
               <div className="control">
                 {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
                 <label className="checkbox">
                   <input
-                    name="agreetandc"
+                    name="agreestatutes"
                     type="checkbox"
-                    checked={agreetandc}
+                    checked={agreestatutes}
                     onChange={e => {
-                      setAgreetandc(e.target.checked);
+                      setAgreestatutes(e.target.checked);
                     }}
                   />
-                  I agree to these terms and conditions
+                  I agree to these statutes
                 </label>
               </div>
             </div>
@@ -90,10 +90,10 @@ const Comp = ({ onSetAgreedtandc }) => {
                     }}
                   />
                   <span>
-                    I agree to cryptographically sign a copy of these Terms and Conditions by
+                    I agree to cryptographically sign a copy of these statutes by
                     signing its IPFS hash{' '}
-                    <a target="_new" href={`https://ipfs.io/ipfs/${tandcData.hash}`}>
-                      {tandcData.hash}
+                    <a target="_new" href={`https://ipfs.io/ipfs/${statutesData.hash}`}>
+                      {statutesData.hash}
                     </a>
                   </span>
                 </label>
@@ -123,7 +123,7 @@ const Comp = ({ onSetAgreedtandc }) => {
                     disabled={!enableSubmit}
                     onClick={() => {
                       signIt(
-                        `I agree with Terms and Conditions corresponding to IPFS hash ${tandcData.hash}`,
+                        `I agree with statutes corresponding to IPFS hash ${statutesData.hash}`,
                       );
                     }}
                     className="button is-pulled-right is-outlined is-success"
@@ -142,15 +142,14 @@ const Comp = ({ onSetAgreedtandc }) => {
 
 const mapStateToProps = state => {
   return {
-    agreedtandc: state.agreedtandc,
+    agreedstatutes: state.agreedstatutes,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    onSetAgreedtandc: (message, signature, address) =>
-      dispatch({ type: 'AGREE_TANDC', message, signature, address }),
-    setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
+    onSetAgreedstatutes: (message, signature, address) =>
+      dispatch({ type: 'AGREE_STATUTES', message, signature, address })
   };
 };
 
