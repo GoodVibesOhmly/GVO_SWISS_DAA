@@ -1,6 +1,7 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import './Contribute.sass';
+import { TwitterShareButton, TelegramShareButton, TwitterIcon, TelegramIcon } from 'react-share';
 import WalletButton from '../../../components/WalletButton';
 import GovernanceRights from '../../../assets/governanceRights.svg';
 import Access from '../../../assets/access.svg';
@@ -8,15 +9,9 @@ import Membership from '../../../assets/membership.svg';
 import Slider from '../../../components/Slider';
 import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
-import {
-  TwitterShareButton,
-  TelegramShareButton,
-  TwitterIcon,
-  TelegramIcon
-} from 'react-share';
 import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({ agreedtandc, agreedstatutes, personalCap }) => {
+const Comp = ({ agreedtandc, agreedstatutes, balances }) => {
   const viewStates = Object.freeze({
     INIT: 1,
     WAITINGTOCONTRIBUTE: 2,
@@ -24,7 +19,7 @@ const Comp = ({ agreedtandc, agreedstatutes, personalCap }) => {
     FINISHEDDONATING: 4,
   });
 
-  const { web3, onboard, isReady } = useContext(OnboardContext);
+  const { web3, onboard, isReady, address } = useContext(OnboardContext);
   const [viewState, setViewState] = React.useState(viewStates.INIT);
 
   const changeViewState = (from, to) => {
@@ -36,23 +31,44 @@ const Comp = ({ agreedtandc, agreedstatutes, personalCap }) => {
     }
   };
 
-  const _changeViewState = (from, to) => {
-    // make sure you can only transition from a known state to another known state
-    if (viewState === from) {
-      setViewState(to);
-    } else {
-      console.log(`Cannot transition to this VS`);
-    }
-  };
+  const [cstkBalance, setCstkbalance] = useState('');
 
-  React.useEffect(() => {
+  useEffect(() => {
+    let balance = '0';
+    if (balances && balances[address]) {
+      const userBalance = balances[address];
+      const cstk = userBalance.find(b => b.symbol === 'CSTK');
+      if (cstk) {
+        balance = cstk.balanceFormatted;
+      }
+    }
+    setCstkbalance(balance);
+  }, [balances, address]);
+
+  useEffect(() => {
+    const _changeViewState = (from, to) => {
+      // make sure you can only transition from a known state to another known state
+      if (viewState === from) {
+        setViewState(to);
+      } else {
+        console.log(`Cannot transition to this VS`);
+      }
+    };
     // if (web3 && agreedtandc && agreedstatutes && personalCap ) {
-    if (web3 && agreedtandc && agreedstatutes) { // TODO : remove this
+    if (web3 && agreedtandc && agreedstatutes) {
+      // TODO : remove this
       _changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
     }
-  }, [web3, agreedtandc, agreedstatutes, viewState, viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE]);
+  }, [
+    web3,
+    agreedtandc,
+    agreedstatutes,
+    viewState,
+    viewStates.INIT,
+    viewStates.WAITINGTOCONTRIBUTE,
+  ]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isReady && viewState === viewStates.STARTDONATING) {
       setViewState(viewStates.WAITINGTOCONTRIBUTE);
     }
@@ -75,7 +91,7 @@ const Comp = ({ agreedtandc, agreedstatutes, personalCap }) => {
                   </figure>
                   <div className="media-content">
                     <div className="content">
-                      <p className="heading is-size-2 has-text-weight-bold">0 CSTK</p>
+                      <p className="heading is-size-2 has-text-weight-bold">{cstkBalance} CSTK</p>
                     </div>
                   </div>
                 </article>
@@ -114,34 +130,43 @@ const Comp = ({ agreedtandc, agreedstatutes, personalCap }) => {
             </a>
           </p>
 
-          {viewState === viewStates.STARTDONATING && (<><ContributeForm onClose={() => {
-            _changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
-          }} /></>)}
+          {viewState === viewStates.STARTDONATING && (
+            <>
+              <ContributeForm
+                onClose={() => {
+                  changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
+                }}
+              />
+            </>
+          )}
           {/* {viewState === viewStates.FINISHEDDONATING && (<> */}
           <div className="enable has-text-left">
             <div className="contribmain">
-
               <p className="subtitle is-size-2">Thank you for the contribution!</p>
               <div className="level">
                 <div className="level-item">5000 CSTK</div>
-                <div class="level-right">
+                <div className="level-right">
                   <div className="level-item">
                     <div>
-                      <a href="#" onClick={() => {
-                        _changeViewState(viewStates.FINISHEDDONATING, viewStates.WAITINGTOCONTRIBUTE);
-
-                      }}>CLOSE</a><br /><br /><br />
-                      <TwitterShareButton
-                        url="https://commonsstack.org"
-                        title="I funded the CS!"
+                      <button
+                        className="button is-text text-color-white"
+                        href="#"
+                        onClick={() => {
+                          changeViewState(
+                            viewStates.FINISHEDDONATING,
+                            viewStates.WAITINGTOCONTRIBUTE,
+                          );
+                        }}
                       >
+                        CLOSE
+                      </button>
+                      <br />
+                      <br />
+                      <br />
+                      <TwitterShareButton url="https://commonsstack.org" title="I funded the CS!">
                         <TwitterIcon size={32} round />
                       </TwitterShareButton>
-                      <TelegramShareButton
-                        url="https://commonsstack.org"
-                        title="I funded the CS!"
-                      >
-
+                      <TelegramShareButton url="https://commonsstack.org" title="I funded the CS!">
                         <TelegramIcon size={32} round />
                       </TelegramShareButton>
                     </div>
@@ -229,6 +254,7 @@ const mapStateToProps = state => {
     softCap: state.softCap,
     hardCap: state.hardCap,
     totalReceived: state.totalReceived,
+    balances: state.balances,
   };
 };
 
