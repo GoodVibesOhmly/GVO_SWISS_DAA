@@ -5,13 +5,14 @@ import { TwitterShareButton, TelegramShareButton, TwitterIcon, TelegramIcon } fr
 import WalletButton from '../../../components/WalletButton';
 import GovernanceRights from '../../../assets/governanceRights.svg';
 import Access from '../../../assets/access.svg';
+import GreyLogo from '../../../assets/greylogo.svg';
 import Membership from '../../../assets/membership.svg';
 import Slider from '../../../components/Slider';
 import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({ agreedtandc, agreedstatutes, balances, hasDonated, onCloseContributeThanks }) => {
+const Comp = ({ agreedtandc, agreedstatutes, userIsWhiteListed, balances, hasDonated, onCloseContributeThanks }) => {
   const viewStates = Object.freeze({
     INIT: 1,
     WAITINGTOCONTRIBUTE: 2,
@@ -23,11 +24,12 @@ const Comp = ({ agreedtandc, agreedstatutes, balances, hasDonated, onCloseContri
   const [viewState, setViewState] = React.useState(viewStates.INIT);
 
   const changeViewState = (from, to) => {
+    if (viewState === to) return;
     // make sure you can only transition from a known state to another known state
     if (viewState === from) {
       setViewState(to);
     } else {
-      console.log(`Cannot transition to this VS`);
+      console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
     }
   };
 
@@ -47,16 +49,15 @@ const Comp = ({ agreedtandc, agreedstatutes, balances, hasDonated, onCloseContri
 
   useEffect(() => {
     const _changeViewState = (from, to) => {
+      if (viewState === to) return;
       // make sure you can only transition from a known state to another known state
       if (viewState === from) {
         setViewState(to);
       } else {
-        console.log(`Cannot transition to this VS`);
+        console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
       }
     };
-    // if (web3 && agreedtandc && agreedstatutes && personalCap ) {
-    if (web3 && agreedtandc && agreedstatutes) {
-      // TODO : remove this
+    if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
       _changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
     }
   }, [
@@ -129,6 +130,34 @@ const Comp = ({ agreedtandc, agreedstatutes, balances, hasDonated, onCloseContri
               </div>
             </div>
           </div>
+
+          {viewState === viewStates.INIT && (
+            <div>
+              <div className="tile is-child">
+                <article className=" notification is-primary has-text-centered">
+                  <div>
+                    <img alt="CS Egg" src={GreyLogo} />
+                  </div>
+                  <div>You’re not yet a member of the Trusted Seed</div>
+                  <div>
+                    Sorry, but your address is not whitelisted. In order to be able to receive CSTK
+                    tokens you need to apply to become a member of the Trusted Seed. Application may
+                    take up to a week. Or you may need to switch to your other wallet.
+                  </div>
+                  <p className="control">
+                    <a
+                      rel="noreferrer"
+                      target="_blank"
+                      href="https://www.google.com"
+                      className="button is-success"
+                    >
+                      Apply for the whitelist
+                    </a>
+                  </p>
+                </article>
+              </div>
+            </div>
+          )}
 
           <br />
           <p>
@@ -222,7 +251,7 @@ const Comp = ({ agreedtandc, agreedstatutes, balances, hasDonated, onCloseContri
                       <p className="subtitle">
                         <span>Governance Rights</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">
-                        <span class="has-tooltip-arrow" data-tooltip="Tooltip content"><i className="fas fa-info-circle" /></span>
+                        <span className="has-tooltip-arrow" data-tooltip="Tooltip content"><i className="fas fa-info-circle" /></span>
                         </span> */}
                       </p>
                     </div>
@@ -267,7 +296,7 @@ const mapStateToProps = state => {
   return {
     agreedtandc: state.agreedtandc,
     agreedstatutes: state.agreedstatutes,
-    personalCap: state.personalCap,
+    userIsWhiteListed: state.userIsWhiteListed,
     numerator: state.numerator,
     denominator: state.denominator,
     softCap: state.softCap,
