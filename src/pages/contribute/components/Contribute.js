@@ -11,7 +11,7 @@ import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({ agreedtandc, agreedstatutes, balances }) => {
+const Comp = ({ agreedtandc, agreedstatutes, balances, hasDonated, onCloseContributeThanks }) => {
   const viewStates = Object.freeze({
     INIT: 1,
     WAITINGTOCONTRIBUTE: 2,
@@ -74,6 +74,14 @@ const Comp = ({ agreedtandc, agreedstatutes, balances }) => {
     }
   }, [isReady, viewState, viewStates.STARTDONATING, viewStates.WAITINGTOCONTRIBUTE]);
 
+  useEffect(() => {
+    if (hasDonated) {
+      changeViewState(viewState.FINISHEDDONATING, viewState.WAITINGTOCONTRIBUTE);
+    } else {
+      changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
+    }
+  }, [hasDonated, changeViewState]);
+
   return (
     <div className="tile is-child">
       <article className=" notification is-primary">
@@ -134,48 +142,59 @@ const Comp = ({ agreedtandc, agreedstatutes, balances }) => {
             <>
               <ContributeForm
                 onClose={() => {
-                  changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
+                  // if (hasDonated) {
+                  //   changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
+                  // }
                 }}
               />
             </>
           )}
-          {/* {viewState === viewStates.FINISHEDDONATING && (<> */}
-          <div className="enable has-text-left">
-            <div className="contribmain">
-              <p className="subtitle is-size-2">Thank you for the contribution!</p>
-              <div className="level">
-                <div className="level-item">5000 CSTK</div>
-                <div className="level-right">
-                  <div className="level-item">
-                    <div>
-                      <button
-                        className="button is-text text-color-white"
-                        href="#"
-                        onClick={() => {
-                          changeViewState(
-                            viewStates.FINISHEDDONATING,
-                            viewStates.WAITINGTOCONTRIBUTE,
-                          );
-                        }}
-                      >
-                        CLOSE
-                      </button>
-                      <br />
-                      <br />
-                      <br />
-                      <TwitterShareButton url="https://commonsstack.org" title="I funded the CS!">
-                        <TwitterIcon size={32} round />
-                      </TwitterShareButton>
-                      <TelegramShareButton url="https://commonsstack.org" title="I funded the CS!">
-                        <TelegramIcon size={32} round />
-                      </TelegramShareButton>
+          {viewState === viewStates.FINISHEDDONATING && (
+            <>
+              <div className="enable has-text-left">
+                <div className="contribmain">
+                  <p className="subtitle is-size-2">Thank you for the contribution!</p>
+                  <div className="level">
+                    <div className="level-item">5000 CSTK</div>
+                    <div className="level-right">
+                      <div className="level-item">
+                        <div>
+                          <button
+                            className="button is-text text-color-white"
+                            href="#"
+                            onClick={() => {
+                              onCloseContributeThanks();
+                              changeViewState(
+                                viewStates.FINISHEDDONATING,
+                                viewStates.WAITINGTOCONTRIBUTE,
+                              );
+                            }}
+                          >
+                            CLOSE
+                          </button>
+                          <br />
+                          <br />
+                          <br />
+                          <TwitterShareButton
+                            url="https://commonsstack.org"
+                            title="I funded the CS!"
+                          >
+                            <TwitterIcon size={32} round />
+                          </TwitterShareButton>
+                          <TelegramShareButton
+                            url="https://commonsstack.org"
+                            title="I funded the CS!"
+                          >
+                            <TelegramIcon size={32} round />
+                          </TelegramShareButton>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-          {/* </>)} */}
+            </>
+          )}
 
           {!web3 && (
             <div className="enable has-text-centered">
@@ -255,6 +274,7 @@ const mapStateToProps = state => {
     hardCap: state.hardCap,
     totalReceived: state.totalReceived,
     balances: state.balances,
+    hasDonated: state.hasDonated,
   };
 };
 
@@ -262,6 +282,7 @@ const mapDispatchToProps = dispatch => {
   return {
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
+    onCloseContributeThanks: () => dispatch({ type: 'CLOSE_CONTRIBUTE_THANKS' }),
   };
 };
 

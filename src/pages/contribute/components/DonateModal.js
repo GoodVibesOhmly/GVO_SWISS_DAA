@@ -1,222 +1,343 @@
-import React, { useContext, useEffect, useState, useRef } from 'react';
+import React, { useContext, useEffect, useReducer } from 'react';
+import { connect } from 'react-redux';
 import ERC20Contract from 'erc20-contract-js';
+import Web3 from 'web3';
 import config from '../../../config';
 import GivethBridge from '../../../blockchain/contracts/GivethBridge';
 import './DonateModal.sass';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import AllowanceHelper from '../../../blockchain/allowanceHelper';
-import spinner from "../../../assets/spinner.svg";
+import spinner from '../../../assets/spinner.svg';
 import Success from './Success';
 
+const { DAITokenAddress, givethBridgeAddress } = config;
+
 const VIEW_STATES = {
-  READY_TO_APPROVE: 'READY_TO_APPROVE',
-  APPROVING: 'APPROVING',
-  APPROVE_FAILED: 'APPROVE_FAILED',
-  ENOUGH_ALLOWANCE: 'ENOUGH_ALLOWANCE',
-  DONATING: 'DONATING',
-  DONATING_FAILED: 'DONATING_FAILED',
-  DONATING_SUCCESS: 'DONATING_SUCCESS',
+  VIEW_LOADING: 'LOADING',
+  VIEW_READY_TO_APPROVE: 'READY_TO_APPROVE',
+  VIEW_APPROVING: 'APPROVING',
+  VIEW_APPROVE_FAILED: 'APPROVE_FAILED',
+  VIEW_ENOUGH_ALLOWANCE: 'ENOUGH_ALLOWANCE',
+  VIEW_DONATING: 'DONATING',
+  VIEW_DONATING_FAILED: 'DONATING_FAILED',
+  VIEW_DONATING_SUCCESS: 'DONATING_SUCCESS',
+};
+
+const {
+  VIEW_DONATING_SUCCESS,
+  VIEW_ENOUGH_ALLOWANCE,
+  VIEW_DONATING_FAILED,
+  VIEW_READY_TO_APPROVE,
+  VIEW_LOADING,
+  VIEW_APPROVING,
+  VIEW_APPROVE_FAILED,
+  VIEW_DONATING,
+} = VIEW_STATES;
+
+const ACTIONS = {
+  ACTION_INIT: 'INIT',
+  ACTION_UPDATE_AMOUNT: 'UPDATE_AMOUNT',
+  ACTION_UPDATE_ALLOWANCE: 'UPDATE_ALLOWANCE',
+  ACTION_APPROVE_ALLOWANCE: 'APPROVE_ALLOWANCE',
+  ACTION_CLEAR_ALLOWANCE: 'CLEAR_ALLOWANCE',
+  ACTION_ALLOWANCE_FAIL: 'ALLOWANCE_FAIL',
+  ACTION_CLEAR_ALLOWANCE_SUCCESS: 'CLEAR_ALLOWANCE_SUCCESS',
+  ACTION_APPROVE_ALLOWANCE_SUCCESS: 'APPROVE_ALLOWANCE_SUCCESS',
+  ACTION_APPROVE_ALLOWANCE_FAIL: 'APPROVE_ALLOWANCE_FAIL',
+  ACTION_DONATE: 'DONATE',
+  ACTION_DONATE_FAIL: 'DONATE_FAIL',
+  ACTION_DONATE_SUCCESS: 'DONATE_SUCCESS',
+};
+
+const {
+  ACTION_DONATE,
+  ACTION_DONATE_FAIL,
+  ACTION_UPDATE_ALLOWANCE,
+  ACTION_APPROVE_ALLOWANCE,
+  ACTION_APPROVE_ALLOWANCE_FAIL,
+  ACTION_APPROVE_ALLOWANCE_SUCCESS,
+  ACTION_INIT,
+  ACTION_UPDATE_AMOUNT,
+  ACTION_DONATE_SUCCESS,
+  ACTION_ALLOWANCE_FAIL,
+} = ACTIONS;
+
+const pureWeb3 = new Web3();
+const toWei = value => pureWeb3.utils.toWei(value.toString());
+const toBN = value => new pureWeb3.utils.BN(value);
+
+const reducerWrapper = (_state, _action) => {
+  // console.log('reducer:');
+  // console.log('action:', _action);
+  const reducer = (state, action) => {
+    const { type, web3, amount, allowance } = action;
+    switch (type) {
+      case ACTION_INIT:
+        return {
+          ...state,
+          viewState: VIEW_LOADING,
+          daiTokenContract: web3 && new ERC20Contract(web3, DAITokenAddress),
+          givethBridge: web3 && new GivethBridge(web3, givethBridgeAddress),
+        };
+
+      case ACTION_UPDATE_AMOUNT: {
+        let { viewState } = state;
+        const amountWei = toWei(amount);
+        const amountBN = toBN(amountWei);
+
+        if (state.viewState !== VIEW_LOADING) {
+          viewState = amountBN.gt(toBN(state.allowance))
+            ? VIEW_READY_TO_APPROVE
+            : VIEW_ENOUGH_ALLOWANCE;
+        }
+        return {
+          ...state,
+          amount,
+          viewState,
+        };
+      }
+
+      case ACTION_UPDATE_ALLOWANCE: {
+        const amountBN = toBN(toWei(state.amount));
+        return {
+          ...state,
+          allowance,
+          viewState: amountBN.gt(toBN(allowance)) ? VIEW_READY_TO_APPROVE : VIEW_ENOUGH_ALLOWANCE,
+        };
+      }
+
+      case ACTION_DONATE:
+        return {
+          ...state,
+          viewState: VIEW_DONATING,
+        };
+
+      case ACTION_DONATE_SUCCESS:
+        return {
+          ...state,
+          viewState: VIEW_DONATING_SUCCESS,
+        };
+
+      case ACTION_DONATE_FAIL:
+        return {
+          ...state,
+          viewState: VIEW_DONATING_FAILED,
+        };
+
+      case ACTION_APPROVE_ALLOWANCE:
+        return {
+          ...state,
+          viewState: VIEW_APPROVING,
+        };
+
+      case ACTION_APPROVE_ALLOWANCE_FAIL:
+        return {
+          ...state,
+          viewState: VIEW_DONATING_FAILED,
+        };
+
+      default:
+        // throw new Error(`Action is not supported: ${action}`);
+        return state;
+    }
+  };
+  const newState = reducer(_state, _action);
+  // console.log('state:', newState);
+  return newState;
 };
 
 const DonateModal = props => {
-  const { onClose, amount } = props;
+  const { onClose, amount, onDonate } = props;
   const { web3, address, network } = useContext(OnboardContext);
-  const { ENOUGH_ALLOWANCE, READY_TO_APPROVE,
-    APPROVING, APPROVE_FAILED, DONATING, DONATING_FAILED, DONATING_SUCCESS } = VIEW_STATES;
 
-  const toBN = value => new web3.utils.BN(value);
+  const [state, dispatch] = useReducer(reducerWrapper, {
+    viewState: VIEW_LOADING,
+    daiTokenContract: new ERC20Contract(web3, DAITokenAddress),
+    givethBridge: new GivethBridge(web3, givethBridgeAddress),
+    amount,
+    allowance: 0,
+  });
 
-  // Amount in wei in BN type
-  const amountWei = web3.utils.toWei(amount.toString());
-  const amountBN = toBN(amountWei);
+  // const toBN = value => new web3.utils.BN(value);
+  //
+  // // Amount in wei in BN type
+  // const amountWei = web3.utils.toWei(amount.toString());
+  // const amountBN = toBN(amountWei);
 
-  const [allowance, setAllowance] = useState('0');
-  const [loading, setLoading] = useState(true);
-  const [viewState, setViewState] = useState();
-
-  const { DAITokenAddress, givethBridgeAddress } = config;
-  const daiTokenContract = useRef(new ERC20Contract(web3, DAITokenAddress));
-  const givethBridge = useRef(new GivethBridge(web3, givethBridgeAddress));
+  const { allowance, daiTokenContract, givethBridge, viewState } = state;
+  const updateAllowance = async () => {
+    return daiTokenContract
+      .allowance(address, givethBridgeAddress)
+      .call()
+      .then(value => dispatch({ type: ACTION_UPDATE_ALLOWANCE, allowance: value }))
+      .catch(e => dispatch({ type: ACTION_ALLOWANCE_FAIL, e }));
+  };
+  useEffect(() => {
+    const _updateAllowance = async () => {
+      return daiTokenContract
+        .allowance(address, givethBridgeAddress)
+        .call()
+        .then(value => dispatch({ type: ACTION_UPDATE_ALLOWANCE, allowance: value }))
+        .catch(e => dispatch({ type: ACTION_ALLOWANCE_FAIL, e }));
+    };
+    dispatch({ type: ACTION_INIT, web3 });
+    _updateAllowance();
+  }, [web3, address]);
 
   useEffect(() => {
-    setLoading(true);
-    daiTokenContract.current = new ERC20Contract(web3, DAITokenAddress);
-    givethBridge.current = new GivethBridge(web3, givethBridgeAddress);
-    setLoading(false);
-  }, [web3, DAITokenAddress, givethBridgeAddress]);
+    dispatch({ type: ACTION_UPDATE_AMOUNT, amount });
+  }, [amount]);
 
   useEffect(() => {
     if (network !== config.networkId) onClose();
   }, [network, onClose]);
 
-  const updateAllowance = async () => {
-    return daiTokenContract.current
-      .allowance(address, givethBridgeAddress)
-      .call()
-      .then(value => setAllowance(value));
-  };
-
-  useEffect(() => {
-    setLoading(true);
-    if (web3) {
-      daiTokenContract.current
-        .allowance(address, givethBridgeAddress)
-        .call()
-        .then(value => {
-          setAllowance(value);
-          setLoading(false);
-        })
-        .catch(e => {
-          console.error(e);
-        });
-    }
-    // eslint-disable-next-line
-  }, [web3, address, amount]);
-
-  useEffect(() => {
-    setViewState(amountBN.gt(toBN(allowance)) ? READY_TO_APPROVE : ENOUGH_ALLOWANCE);
-    // eslint-disable-next-line
-  }, [allowance, amount, READY_TO_APPROVE, ENOUGH_ALLOWANCE]);
-
   if (!web3) return null;
 
   const approve = async () => {
-    setViewState(APPROVING);
+    dispatch({ type: ACTION_APPROVE_ALLOWANCE });
+
+    // setViewState(APPROVING);
     try {
-      await AllowanceHelper.approveERC20tokenTransfer(daiTokenContract.current, address);
-      updateAllowance();
+      await AllowanceHelper.approveERC20tokenTransfer(daiTokenContract, address);
+      dispatch({ type: ACTION_APPROVE_ALLOWANCE_SUCCESS });
     } catch (e) {
-      setViewState(APPROVE_FAILED);
-      console.error(e);
+      dispatch({ type: ACTION_APPROVE_ALLOWANCE_FAIL });
+    } finally {
       updateAllowance();
     }
   };
 
   const donate = async () => {
-    setViewState(DONATING);
+    dispatch({ type: ACTION_DONATE });
     try {
-      await givethBridge.donateAndCreateGiver(address, config.targetProjectId, DAITokenAddress, amountWei);
-      setViewState(DONATING_SUCCESS);
+      await givethBridge.donateAndCreateGiver(
+        address,
+        config.targetProjectId,
+        DAITokenAddress,
+        toWei(amount),
+      );
+      dispatch({ type: ACTION_DONATE_SUCCESS });
+      onDonate();
     } catch (e) {
-      setViewState(DONATING_FAILED);
+      dispatch({ type: ACTION_DONATE_FAIL });
     }
   };
 
-  const content_READY_TO_APPROVE = (
+  const contents = {};
+
+  contents[VIEW_LOADING] = (
+    <>
+      <figure className="image is-32x32">
+        <img alt="spinner" src={spinner} />
+      </figure>
+      <p>Loading...</p>
+    </>
+  );
+
+  contents[VIEW_READY_TO_APPROVE] = (
     <>
       <p>You first need to approve access to your DAI balance and then donate</p>
       <p>Allowance needed: {amount} DAI</p>
-      <p>Current Allowance: {web3.utils.fromWei(allowance, "ether")} DAI</p>
+      <p>Current Allowance: {allowance} DAI</p>
     </>
-  )
+  );
 
-  const content_APPROVING = (
+  contents[VIEW_APPROVING] = (
     <>
-      <figure class="image is-32x32">
-        <img src={spinner} />
+      <figure className="image is-32x32">
+        <img alt="spinner" src={spinner} />
       </figure>
-      <p>approving...</p>
+      <p>Approving...</p>
     </>
-  )
+  );
 
-  const content_APPROVE_FAILED = (
+  contents[VIEW_APPROVE_FAILED] = (
     <>
       <p>approve failed!</p>
     </>
-  )
+  );
 
-  const content_ENOUGH_ALLOWANCE = (
+  contents[VIEW_ENOUGH_ALLOWANCE] = (
     <>
       <p>Ready to send donation</p>
       <p>Press the conate button to execute the donation</p>
     </>
-  )
+  );
 
-
-  const content_DONATING = (
+  contents[VIEW_DONATING] = (
     <>
-      <figure class="image is-32x32">
-        <img src={spinner} />
+      <figure className="image is-32x32">
+        <img alt="spinner" src={spinner} />
       </figure>
       <p>waiting for donation transction to complete...</p>
     </>
-  )
+  );
 
-  const content_DONATING_FAILED = (
+  contents[VIEW_DONATING_FAILED] = (
     <>
       <p>donating failed :(</p>
     </>
-  )
+  );
 
-  const content_DONATING_SUCCESS = (
+  contents[VIEW_DONATING_SUCCESS] = (
     <>
-      <Success/>
+      <Success />
     </>
-  )
+  );
 
+  const enableDonateButton = [VIEW_ENOUGH_ALLOWANCE, VIEW_DONATING_FAILED].includes(viewState);
+  const showDonateButton = [VIEW_ENOUGH_ALLOWANCE, VIEW_DONATING_FAILED, VIEW_DONATING].includes(
+    viewState,
+  );
 
-  const modalContent = () => {
-    switch (viewState) {
-      case "READY_TO_APPROVE":
-        return content_READY_TO_APPROVE;
-      default:
-        return null;
-    }
-  };
+  const enableApproveButton = viewState === VIEW_READY_TO_APPROVE;
+  const showApproveButton = [VIEW_APPROVING, VIEW_READY_TO_APPROVE].includes(viewState);
 
   return (
     <div className="donate-modal modal is-active">
       <div className="modal-background" onClick={onClose} />
       <div className="modal-card">
-
         <header className="modal-card-head">
           <p className="modal-card-title">Contribute</p>
           <button className="delete" aria-label="close" onClick={onClose} />
         </header>
         <section className="modal-card-body">
-
-
-          {/* {modalContent()} */}
-
-          {/* This is to show all states in one screen  - should be replaces  bythe function above modalContent() 
+          {/* This is to show all states in one screen  - should be replaces  bythe function above modalContent()
           in the final version after Kay has done his work ! */}
-          <hr />
-          {content_READY_TO_APPROVE}
-          <hr />
-          {content_APPROVING}
-          <hr />
-          {content_APPROVE_FAILED}
-          <hr />
-          {content_ENOUGH_ALLOWANCE}
-          <hr />
-          {content_DONATING}
-          <hr />
-          {content_DONATING_FAILED}
-          <hr />
-          {content_DONATING_SUCCESS}
-
+          {contents[viewState]}
         </section>
         <footer className="modal-card-foot">
-          {!loading && viewState !== ENOUGH_ALLOWANCE && (
+          {showApproveButton && (
             <button
-              className="button is-primary"
-              disabled={viewState !== ENOUGH_ALLOWANCE}
+              className={`button is-primary ${viewState === VIEW_APPROVING ? 'is-loading' : ''}`}
+              disabled={!enableApproveButton}
               onClick={approve}
             >
               Approve
             </button>
           )}
-          <button
-            className={`button is-success ${loading ? 'is-loading' : ''}`}
-            disabled={viewState !== ENOUGH_ALLOWANCE}
-            onClick={donate}
-          >
-            Donate
-          </button>
+          {showDonateButton && (
+            <button
+              className={`button is-success ${viewState === VIEW_DONATING ? 'is-loading' : ''}`}
+              disabled={!enableDonateButton}
+              onClick={donate}
+            >
+              Donate
+            </button>
+          )}
         </footer>
       </div>
     </div>
   );
 };
 
-export default DonateModal;
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onDonate: () => dispatch({ type: 'USER_HAS_DONATED' }),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(DonateModal);

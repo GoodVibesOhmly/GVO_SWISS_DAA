@@ -267,6 +267,16 @@ const reducer = (state = initialState, action) => {
         ...state,
         userIsWhiteListed: true,
       };
+    case 'USER_HAS_DONATED':
+      return {
+        ...state,
+        hasDonated: true,
+      };
+    case 'CLOSE_CONTRIBUTE_THANKS':
+      return {
+        ...state,
+        hasDonated: false,
+      };
     default:
       return state;
   }
