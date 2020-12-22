@@ -186,6 +186,7 @@ const DonateModal = props => {
     };
     dispatch({ type: ACTION_INIT, web3 });
     _updateAllowance();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [web3, address]);
 
   useEffect(() => {

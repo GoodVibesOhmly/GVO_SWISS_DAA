@@ -12,12 +12,19 @@ import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({ agreedtandc, agreedstatutes, userIsWhiteListed, balances, hasDonated, onCloseContributeThanks }) => {
+const Comp = ({
+  agreedtandc,
+  agreedstatutes,
+  userIsWhiteListed,
+  balances,
+  hasDonated,
+  onCloseContributeThanks,
+}) => {
   const viewStates = Object.freeze({
-    INIT: 1,
-    WAITINGTOCONTRIBUTE: 2,
-    STARTDONATING: 3,
-    FINISHEDDONATING: 4,
+    INIT: 'INIT',
+    WAITINGTOCONTRIBUTE: 'WAITINGTOCONTRIBUTE',
+    STARTDONATING: 'STARTDONATING',
+    FINISHEDDONATING: 'FINISHEDDONATING',
   });
 
   const { web3, onboard, isReady, address } = useContext(OnboardContext);
@@ -48,22 +55,17 @@ const Comp = ({ agreedtandc, agreedstatutes, userIsWhiteListed, balances, hasDon
   }, [balances, address]);
 
   useEffect(() => {
-    const _changeViewState = (from, to) => {
-      if (viewState === to) return;
-      // make sure you can only transition from a known state to another known state
-      if (viewState === from) {
-        setViewState(to);
-      } else {
-        console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
-      }
-    };
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
-      _changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
+      changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
+    } else {
+      changeViewState(viewStates.WAITINGTOCONTRIBUTE, viewStates.INIT);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     web3,
     agreedtandc,
     agreedstatutes,
+    userIsWhiteListed,
     viewState,
     viewStates.INIT,
     viewStates.WAITINGTOCONTRIBUTE,
@@ -77,11 +79,12 @@ const Comp = ({ agreedtandc, agreedstatutes, userIsWhiteListed, balances, hasDon
 
   useEffect(() => {
     if (hasDonated) {
-      changeViewState(viewState.FINISHEDDONATING, viewState.WAITINGTOCONTRIBUTE);
+      changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
     } else {
-      changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
+      changeViewState(viewStates.FINISHEDDONATING, viewStates.WAITINGTOCONTRIBUTE);
     }
-  }, [hasDonated, changeViewState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasDonated]);
 
   return (
     <div className="tile is-child">
