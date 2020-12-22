@@ -23,7 +23,7 @@ const Comp = ({
   getUserState,
   userIsWhiteListed,
 }) => {
-  const { web3, address, onboard, network, isReady } = useContext(OnboardContext);
+  const { web3, address, isReady } = useContext(OnboardContext);
 
   // TODO: this should be moved to the store IMO
   React.useEffect(() => {
@@ -36,7 +36,8 @@ const Comp = ({
     if (web3 && address) {
       getUserState(address);
     }
-  }, [onboard, web3, address, network, getUserState]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, getUserState]);
   // TODO: Will be pulled form the state, just for now
   const defaultCoins = [
     {
