@@ -5,6 +5,7 @@ import BN from 'bn.js';
 import Spinner from './Spinner';
 import './Slider.sass';
 
+// eslint-disable-next-line no-unused-vars
 const Slider = ({ softCap, hardCap, totalReceived, loading }) => {
   // const getProgressBarStyles = ({ _softCap, _hardCap, _totalReceived }) => {
   //     let fill, shadow, full;
@@ -61,7 +62,7 @@ const Slider = ({ softCap, hardCap, totalReceived, loading }) => {
   );
 };
 
-const mapStateToProps = (state) => {
+const mapStateToProps = state => {
   return {
     softCap: state.softCap,
     hardCap: state.hardCap,

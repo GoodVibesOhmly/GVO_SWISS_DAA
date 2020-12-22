@@ -2,7 +2,7 @@ const axios = require('axios');
 const config = require('../config');
 
 export default {
-  getSignature: (address,type) => {
+  getSignature: (address, type) => {
     return axios.get(`${config.apiGateway.URL}/signature/${address}_${type}`);
   },
 
