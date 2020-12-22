@@ -66,7 +66,11 @@ const pureWeb3 = new Web3();
 const toWei = value => pureWeb3.utils.toWei(value.toString());
 const toBN = value => new pureWeb3.utils.BN(value);
 
+const initialViewState = VIEW_LOADING;
 const reducerWrapper = (_state, _action) => {
+  // To test views uncomment below line and change and change initialViewState value above
+  // return _state;
+
   // console.log('reducer:');
   // console.log('action:', _action);
   const reducer = (state, action) => {
@@ -151,7 +155,7 @@ const DonateModal = props => {
   const { web3, address, network } = useContext(OnboardContext);
 
   const [state, dispatch] = useReducer(reducerWrapper, {
-    viewState: VIEW_LOADING,
+    viewState: initialViewState,
     daiTokenContract: new ERC20Contract(web3, DAITokenAddress),
     givethBridge: new GivethBridge(web3, givethBridgeAddress),
     amount,
