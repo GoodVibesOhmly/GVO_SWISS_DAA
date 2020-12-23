@@ -100,7 +100,7 @@ const Comp = ({
     viewStates.WAITINGTOCONTRIBUTE,
     viewStates.STARTDONATING,
   ]);
-  
+
   return (
     <div className="tile is-child">
       <article className=" notification is-primary">
