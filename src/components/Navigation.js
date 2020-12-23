@@ -66,7 +66,7 @@ const Comp = () => {
                 }
               >
                 <a
-                  href='mailto:support@commonsstack.org'
+                  href='mailto:info@commonsstack.foundation'
                   subject='I have a problem getting CSTK tokens'
                   className='support-link'
                 >
