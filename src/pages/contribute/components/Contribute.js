@@ -12,7 +12,14 @@ import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({ agreedtandc, agreedstatutes, userIsWhiteListed, balances, hasDonated, onCloseContributeThanks }) => {
+const Comp = ({
+  agreedtandc,
+  agreedstatutes,
+  userIsWhiteListed,
+  balances,
+  hasDonated,
+  onCloseContributeThanks,
+}) => {
   const viewStates = Object.freeze({
     INIT: 1,
     WAITINGTOCONTRIBUTE: 2,
