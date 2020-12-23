@@ -69,6 +69,7 @@ const Comp = ({
     viewState,
     viewStates.INIT,
     viewStates.WAITINGTOCONTRIBUTE,
+    userIsWhiteListed,
   ]);
 
   useEffect(() => {
@@ -78,13 +79,27 @@ const Comp = ({
   }, [isReady, viewState, viewStates.STARTDONATING, viewStates.WAITINGTOCONTRIBUTE]);
 
   useEffect(() => {
+    const _changeViewState = (from, to) => {
+      if (viewState === to) return;
+      // make sure you can only transition from a known state to another known state
+      if (viewState === from) {
+        setViewState(to);
+      } else {
+        console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
+      }
+    };
     if (hasDonated) {
-      changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
+      _changeViewState(viewState.FINISHEDDONATING, viewState.WAITINGTOCONTRIBUTE);
     } else {
-      changeViewState(viewStates.FINISHEDDONATING, viewStates.WAITINGTOCONTRIBUTE);
+      _changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasDonated]);
+  }, [
+    viewState,
+    hasDonated,
+    viewState.FINISHEDDONATING,
+    viewState.WAITINGTOCONTRIBUTE,
+    viewState.STARTDONATING,
+  ]);
 
   return (
     <div className="tile is-child">
