@@ -90,8 +90,8 @@ const Comp = ({ onSetAgreedstatutes }) => {
                     }}
                   />
                   <span>
-                    I agree to cryptographically sign a copy of these statutes by
-                    signing its IPFS hash{' '}
+                    I agree to cryptographically sign a copy of these statutes by signing its IPFS
+                    hash{' '}
                     <a target="_new" href={`https://ipfs.io/ipfs/${statutesData.hash}`}>
                       {statutesData.hash}
                     </a>
@@ -149,7 +149,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     onSetAgreedstatutes: (message, signature, address) =>
-      dispatch({ type: 'AGREE_STATUTES', message, signature, address })
+      dispatch({ type: 'AGREE_STATUTES', message, signature, address }),
   };
 };
 
