@@ -71,8 +71,8 @@ const reducerWrapper = (_state, _action) => {
   // To test views uncomment below line and change and change initialViewState value above
   // return _state
 
-  // console.log('reducer:');
-  // console.log('action:', _action);
+  console.log('reducer:');
+  console.log('action:', _action);
   const reducer = (state, action) => {
     const { type, web3, amount, allowance } = action;
     switch (type) {
@@ -146,7 +146,7 @@ const reducerWrapper = (_state, _action) => {
     }
   };
   const newState = reducer(_state, _action);
-  // console.log('state:', newState);
+  console.log('state:', newState);
   return newState;
 };
 
@@ -177,17 +177,10 @@ const DonateModal = props => {
       .catch(e => dispatch({ type: ACTION_ALLOWANCE_FAIL, e }));
   };
   useEffect(() => {
-    const _updateAllowance = async () => {
-      return daiTokenContract
-        .allowance(address, givethBridgeAddress)
-        .call()
-        .then(value => dispatch({ type: ACTION_UPDATE_ALLOWANCE, allowance: value }))
-        .catch(e => dispatch({ type: ACTION_ALLOWANCE_FAIL, e }));
-    };
+    console.log('web3 is changed');
     dispatch({ type: ACTION_INIT, web3 });
-    _updateAllowance();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [web3, address, daiTokenContract]);
+    updateAllowance();
+  }, [address]);
 
   useEffect(() => {
     dispatch({ type: ACTION_UPDATE_AMOUNT, amount });
