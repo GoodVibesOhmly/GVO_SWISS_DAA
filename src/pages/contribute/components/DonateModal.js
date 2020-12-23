@@ -177,10 +177,17 @@ const DonateModal = props => {
       .catch(e => dispatch({ type: ACTION_ALLOWANCE_FAIL, e }));
   };
   useEffect(() => {
+    const _updateAllowance = async () => {
+      return daiTokenContract
+        .allowance(address, givethBridgeAddress)
+        .call()
+        .then(value => dispatch({ type: ACTION_UPDATE_ALLOWANCE, allowance: value }))
+        .catch(e => dispatch({ type: ACTION_ALLOWANCE_FAIL, e }));
+    };
     console.log('web3 is changed');
     dispatch({ type: ACTION_INIT, web3 });
-    updateAllowance();
-  }, [address, web3, updateAllowance]);
+    _updateAllowance();
+  }, [address, web3, daiTokenContract]);
 
   useEffect(() => {
     dispatch({ type: ACTION_UPDATE_AMOUNT, amount });
