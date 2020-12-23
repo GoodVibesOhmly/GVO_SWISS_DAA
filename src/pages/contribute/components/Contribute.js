@@ -67,6 +67,7 @@ const Comp = ({ agreedtandc, agreedstatutes, userIsWhiteListed, balances, hasDon
     viewState,
     viewStates.INIT,
     viewStates.WAITINGTOCONTRIBUTE,
+    userIsWhiteListed,
   ]);
 
   useEffect(() => {
@@ -81,7 +82,13 @@ const Comp = ({ agreedtandc, agreedstatutes, userIsWhiteListed, balances, hasDon
     } else {
       changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
     }
-  }, [hasDonated, changeViewState]);
+  }, [
+    hasDonated,
+    changeViewState,
+    viewState.FINISHEDDONATING,
+    viewState.WAITINGTOCONTRIBUTE,
+    viewState.STARTDONATING,
+  ]);
 
   return (
     <div className="tile is-child">

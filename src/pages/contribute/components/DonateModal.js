@@ -186,7 +186,7 @@ const DonateModal = props => {
     };
     dispatch({ type: ACTION_INIT, web3 });
     _updateAllowance();
-  }, [web3, address]);
+  }, [web3, address, daiTokenContract]);
 
   useEffect(() => {
     dispatch({ type: ACTION_UPDATE_AMOUNT, amount });
