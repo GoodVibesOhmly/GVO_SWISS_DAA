@@ -59,6 +59,7 @@ const Comp = ({
       changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
     } else {
       changeViewState(viewStates.WAITINGTOCONTRIBUTE, viewStates.INIT);
+      changeViewState(viewStates.STARTDONATING, viewStates.INIT);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -89,9 +90,9 @@ const Comp = ({
       }
     };
     if (hasDonated) {
-      _changeViewState(viewState.FINISHEDDONATING, viewState.WAITINGTOCONTRIBUTE);
+      _changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
     } else {
-      _changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
+      _changeViewState(viewStates.FINISHEDDONATING, viewStates.WAITINGTOCONTRIBUTE);
     }
   }, [
     viewState,
@@ -179,7 +180,7 @@ const Comp = ({
 
           <br />
           <p>
-            You can pay membership dues with DAI only. You can acquire DAI on{' '}
+            You can pay membership dues with DAI only. You can acquire DAI i.e. on{' '}
             <a rel="noopener noreferrer" target="_blank" href="https://1inch.exchange">
               1inch.exchange
             </a>
@@ -189,9 +190,9 @@ const Comp = ({
             <>
               <ContributeForm
                 onClose={() => {
-                  // if (hasDonated) {
-                  //   changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
-                  // }
+                  if (hasDonated) {
+                    changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
+                  }
                 }}
               />
             </>
