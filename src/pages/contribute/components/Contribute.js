@@ -97,9 +97,9 @@ const Comp = ({
   }, [
     viewState,
     hasDonated,
-    viewState.FINISHEDDONATING,
-    viewState.WAITINGTOCONTRIBUTE,
-    viewState.STARTDONATING,
+    viewStates.FINISHEDDONATING,
+    viewStates.WAITINGTOCONTRIBUTE,
+    viewStates.STARTDONATING,
   ]);
 
   return (
