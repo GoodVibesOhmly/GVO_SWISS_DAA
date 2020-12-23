@@ -77,14 +77,22 @@ const Comp = ({ agreedtandc, agreedstatutes, userIsWhiteListed, balances, hasDon
   }, [isReady, viewState, viewStates.STARTDONATING, viewStates.WAITINGTOCONTRIBUTE]);
 
   useEffect(() => {
+    const _changeViewState = (from, to) => {
+      if (viewState === to) return;
+      // make sure you can only transition from a known state to another known state
+      if (viewState === from) {
+        setViewState(to);
+      } else {
+        console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
+      }
+    };
     if (hasDonated) {
-      changeViewState(viewState.FINISHEDDONATING, viewState.WAITINGTOCONTRIBUTE);
+      _changeViewState(viewState.FINISHEDDONATING, viewState.WAITINGTOCONTRIBUTE);
     } else {
-      changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
+      _changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
     }
   }, [
     hasDonated,
-    changeViewState,
     viewState.FINISHEDDONATING,
     viewState.WAITINGTOCONTRIBUTE,
     viewState.STARTDONATING,
