@@ -12,19 +12,12 @@ import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({
-  agreedtandc,
-  agreedstatutes,
-  userIsWhiteListed,
-  balances,
-  hasDonated,
-  onCloseContributeThanks,
-}) => {
+const Comp = ({ agreedtandc, agreedstatutes, userIsWhiteListed, balances, hasDonated, onCloseContributeThanks }) => {
   const viewStates = Object.freeze({
-    INIT: 'INIT',
-    WAITINGTOCONTRIBUTE: 'WAITINGTOCONTRIBUTE',
-    STARTDONATING: 'STARTDONATING',
-    FINISHEDDONATING: 'FINISHEDDONATING',
+    INIT: 1,
+    WAITINGTOCONTRIBUTE: 2,
+    STARTDONATING: 3,
+    FINISHEDDONATING: 4,
   });
 
   const { web3, onboard, isReady, address } = useContext(OnboardContext);
@@ -55,20 +48,26 @@ const Comp = ({
   }, [balances, address]);
 
   useEffect(() => {
+    const _changeViewState = (from, to) => {
+      if (viewState === to) return;
+      // make sure you can only transition from a known state to another known state
+      if (viewState === from) {
+        setViewState(to);
+      } else {
+        console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
+      }
+    };
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
-      changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
-    } else {
-      changeViewState(viewStates.WAITINGTOCONTRIBUTE, viewStates.INIT);
+      _changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     web3,
     agreedtandc,
     agreedstatutes,
-    userIsWhiteListed,
     viewState,
     viewStates.INIT,
     viewStates.WAITINGTOCONTRIBUTE,
+    userIsWhiteListed,
   ]);
 
   useEffect(() => {
@@ -78,13 +77,27 @@ const Comp = ({
   }, [isReady, viewState, viewStates.STARTDONATING, viewStates.WAITINGTOCONTRIBUTE]);
 
   useEffect(() => {
+    const _changeViewState = (from, to) => {
+      if (viewState === to) return;
+      // make sure you can only transition from a known state to another known state
+      if (viewState === from) {
+        setViewState(to);
+      } else {
+        console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
+      }
+    };
     if (hasDonated) {
-      changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
+      _changeViewState(viewState.FINISHEDDONATING, viewState.WAITINGTOCONTRIBUTE);
     } else {
-      changeViewState(viewStates.FINISHEDDONATING, viewStates.WAITINGTOCONTRIBUTE);
+      _changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasDonated]);
+  }, [
+    viewState,
+    hasDonated,
+    viewState.FINISHEDDONATING,
+    viewState.WAITINGTOCONTRIBUTE,
+    viewState.STARTDONATING,
+  ]);
 
   return (
     <div className="tile is-child">
