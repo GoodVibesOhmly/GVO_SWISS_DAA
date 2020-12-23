@@ -92,6 +92,7 @@ const Comp = ({ agreedtandc, agreedstatutes, userIsWhiteListed, balances, hasDon
       _changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
     }
   }, [
+    viewState,
     hasDonated,
     viewState.FINISHEDDONATING,
     viewState.WAITINGTOCONTRIBUTE,
