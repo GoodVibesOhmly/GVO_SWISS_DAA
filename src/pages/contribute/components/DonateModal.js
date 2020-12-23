@@ -187,7 +187,8 @@ const DonateModal = props => {
     console.log('web3 is changed');
     dispatch({ type: ACTION_INIT, web3 });
     _updateAllowance();
-  }, [address, web3, daiTokenContract]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address]);
 
   useEffect(() => {
     dispatch({ type: ACTION_UPDATE_AMOUNT, amount });
