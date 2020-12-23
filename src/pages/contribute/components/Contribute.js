@@ -59,6 +59,7 @@ const Comp = ({
       changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
     } else {
       changeViewState(viewStates.WAITINGTOCONTRIBUTE, viewStates.INIT);
+      changeViewState(viewStates.STARTDONATING, viewStates.INIT);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -174,9 +175,9 @@ const Comp = ({
             <>
               <ContributeForm
                 onClose={() => {
-                  // if (hasDonated) {
-                  //   changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
-                  // }
+                  if (hasDonated) {
+                    changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
+                  }
                 }}
               />
             </>
