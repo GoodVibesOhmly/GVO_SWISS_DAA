@@ -21,10 +21,10 @@ const Comp = ({
   onCloseContributeThanks,
 }) => {
   const viewStates = Object.freeze({
-    INIT: 1,
-    WAITINGTOCONTRIBUTE: 2,
-    STARTDONATING: 3,
-    FINISHEDDONATING: 4,
+    INIT: 'INIT',
+    WAITINGTOCONTRIBUTE: 'WAITINGTOCONTRIBUTE',
+    STARTDONATING: 'STARTDONATING',
+    FINISHEDDONATING: 'FINISHEDDONATING',
   });
 
   const { web3, onboard, isReady, address } = useContext(OnboardContext);
@@ -55,25 +55,21 @@ const Comp = ({
   }, [balances, address]);
 
   useEffect(() => {
-    const _changeViewState = (from, to) => {
-      if (viewState === to) return;
-      // make sure you can only transition from a known state to another known state
-      if (viewState === from) {
-        setViewState(to);
-      } else {
-        console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
-      }
-    };
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
-      _changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
+      changeViewState(viewStates.INIT, viewStates.WAITINGTOCONTRIBUTE);
+    } else {
+      changeViewState(viewStates.WAITINGTOCONTRIBUTE, viewStates.INIT);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     web3,
     agreedtandc,
     agreedstatutes,
+    userIsWhiteListed,
     viewState,
     viewStates.INIT,
     viewStates.WAITINGTOCONTRIBUTE,
+    userIsWhiteListed,
   ]);
 
   useEffect(() => {
@@ -83,12 +79,27 @@ const Comp = ({
   }, [isReady, viewState, viewStates.STARTDONATING, viewStates.WAITINGTOCONTRIBUTE]);
 
   useEffect(() => {
+    const _changeViewState = (from, to) => {
+      if (viewState === to) return;
+      // make sure you can only transition from a known state to another known state
+      if (viewState === from) {
+        setViewState(to);
+      } else {
+        console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
+      }
+    };
     if (hasDonated) {
-      changeViewState(viewState.FINISHEDDONATING, viewState.WAITINGTOCONTRIBUTE);
+      _changeViewState(viewState.FINISHEDDONATING, viewState.WAITINGTOCONTRIBUTE);
     } else {
-      changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
+      _changeViewState(viewState.STARTDONATING, viewState.FINISHEDDONATING);
     }
-  }, [hasDonated, changeViewState]);
+  }, [
+    viewState,
+    hasDonated,
+    viewState.FINISHEDDONATING,
+    viewState.WAITINGTOCONTRIBUTE,
+    viewState.STARTDONATING,
+  ]);
 
   return (
     <div className="tile is-child">
