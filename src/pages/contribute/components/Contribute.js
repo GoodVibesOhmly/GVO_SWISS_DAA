@@ -79,14 +79,28 @@ const Comp = ({
   }, [isReady, viewState, viewStates.STARTDONATING, viewStates.WAITINGTOCONTRIBUTE]);
 
   useEffect(() => {
+    const _changeViewState = (from, to) => {
+      if (viewState === to) return;
+      // make sure you can only transition from a known state to another known state
+      if (viewState === from) {
+        setViewState(to);
+      } else {
+        console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
+      }
+    };
     if (hasDonated) {
-      changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
+      _changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
     } else {
-      changeViewState(viewStates.FINISHEDDONATING, viewStates.WAITINGTOCONTRIBUTE);
+      _changeViewState(viewStates.FINISHEDDONATING, viewStates.WAITINGTOCONTRIBUTE);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasDonated]);
-
+  }, [
+    viewState,
+    hasDonated,
+    viewStates.FINISHEDDONATING,
+    viewStates.WAITINGTOCONTRIBUTE,
+    viewStates.STARTDONATING,
+  ]);
+  
   return (
     <div className="tile is-child">
       <article className=" notification is-primary">

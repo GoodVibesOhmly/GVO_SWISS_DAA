@@ -71,8 +71,8 @@ const reducerWrapper = (_state, _action) => {
   // To test views uncomment below line and change and change initialViewState value above
   // return _state
 
-  // console.log('reducer:');
-  // console.log('action:', _action);
+  console.log('reducer:');
+  console.log('action:', _action);
   const reducer = (state, action) => {
     const { type, web3, amount, allowance } = action;
     switch (type) {
