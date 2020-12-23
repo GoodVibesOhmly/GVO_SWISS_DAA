@@ -180,7 +180,7 @@ const DonateModal = props => {
     console.log('web3 is changed');
     dispatch({ type: ACTION_INIT, web3 });
     updateAllowance();
-  }, [address]);
+  }, [address, web3, updateAllowance]);
 
   useEffect(() => {
     dispatch({ type: ACTION_UPDATE_AMOUNT, amount });
