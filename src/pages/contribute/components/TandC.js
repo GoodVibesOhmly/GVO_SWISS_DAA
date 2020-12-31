@@ -15,12 +15,12 @@ const Comp = ({ onSetAgreedtandc }) => {
 
   React.useEffect(() => {
     setEnableSubmit(agreetandc && box3);
-    console.log(
-      'Check all ??',
-      agreetandc ? 'true' : 'false',
-      box3 ? 'true' : 'false',
-      enableSubmit ? 'true' : 'false',
-    );
+    // console.log(
+    //   'Check all ??',
+    //   agreetandc ? 'true' : 'false',
+    //   box3 ? 'true' : 'false',
+    //   enableSubmit ? 'true' : 'false',
+    // );
   }, [setEnableSubmit, enableSubmit, agreetandc, box3]);
 
   if (!web3) {
@@ -66,7 +66,6 @@ const Comp = ({ onSetAgreedtandc }) => {
               src={`https://ipfs.web3.party/ipfs/${tandcData.hash}`}
               width="100%"
             />
-
 
             <div className="field">
               <div className="control">

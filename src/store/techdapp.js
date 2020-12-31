@@ -194,7 +194,7 @@ const reducer = (state = initialState, action) => {
 
     case 'READ_FUNDING_CONTRACT_FAIL':
       delete state.BB_READ_FUNDING_CONTRACT;
-      console.warn('fail');
+      // console.warn('fail');
       return {
         ...state,
         loading: false,

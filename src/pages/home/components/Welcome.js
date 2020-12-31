@@ -1,14 +1,13 @@
 import React from 'react';
-import { Link,Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-
 
 // eslint-disable-next-line no-unused-vars
 const Comp = ({ agreed, onSetAgreed }) => {
   //     const TomatoButton = styled(Button)`
   // background: tomato;
   // `
-  return(<Redirect to="contribute" />);
+  return <Redirect to="contribute" />;
 
   // return (
   //   <>

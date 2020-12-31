@@ -15,12 +15,12 @@ const Comp = ({ onSetAgreedstatutes }) => {
 
   React.useEffect(() => {
     setEnableSubmit(agreestatutes && box3);
-    console.log(
-      'Check all ??',
-      agreestatutes ? 'true' : 'false',
-      box3 ? 'true' : 'false',
-      enableSubmit ? 'true' : 'false',
-    );
+    // console.log(
+    //   'Check all ??',
+    //   agreestatutes ? 'true' : 'false',
+    //   box3 ? 'true' : 'false',
+    //   enableSubmit ? 'true' : 'false',
+    // );
   }, [setEnableSubmit, enableSubmit, agreestatutes, box3]);
 
   if (!web3) {
