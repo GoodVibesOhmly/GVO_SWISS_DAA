@@ -5,7 +5,9 @@ import CSTKToken from '../blockchain/contracts/CSTKToken';
 import config from '../config';
 
 const initialState = {
+  loadedtandc: false,
   agreedtandc: false,
+  loadedstatutes: false,
   agreedstatutes: false,
   web3: null,
   balances: {},
@@ -58,12 +60,14 @@ const reducer = (state = initialState, action) => {
       delete state.READ_SHOW_TANDC_LOAD;
       return {
         ...state,
+        loadedtandc: true,
         agreedtandc: true,
       };
     case 'READ_SHOW_TANDC_LOAD_FAIL':
       delete state.READ_SHOW_TANDC_LOAD;
       return {
         ...state,
+        loadedtandc: true,
         agreedtandc: false,
         showtandc: true,
       };
@@ -81,12 +85,14 @@ const reducer = (state = initialState, action) => {
       delete state.READ_SHOW_STATUTES_LOAD;
       return {
         ...state,
+        loadedstatutes: true,
         agreedstatutes: true,
       };
     case 'READ_SHOW_STATUTES_LOAD_FAIL':
       delete state.READ_SHOW_STATUTES_LOAD;
       return {
         ...state,
+        loadedstatutes: true,
         agreedstatutes: false,
       };
     case 'SET_SHOW_TANDC':
@@ -111,7 +117,6 @@ const reducer = (state = initialState, action) => {
       delete state.WRITE_TANDC;
       return {
         ...state,
-
         agreedtandc: true,
       };
     case 'WRITE_TANDC_FAIL':
@@ -189,7 +194,7 @@ const reducer = (state = initialState, action) => {
 
     case 'READ_FUNDING_CONTRACT_FAIL':
       delete state.BB_READ_FUNDING_CONTRACT;
-      console.warn('fail');
+      // console.warn('fail');
       return {
         ...state,
         loading: false,

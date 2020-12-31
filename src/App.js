@@ -6,6 +6,7 @@ import './sass/style.sass';
 import Navigation from './components/Navigation';
 
 function App({ bootstrap }) {
+  // console.log(`environment ${config.name}`);
   useEffect(() => {
     bootstrap();
   }, [bootstrap]);
