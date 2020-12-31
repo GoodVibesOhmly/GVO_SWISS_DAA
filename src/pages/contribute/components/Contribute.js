@@ -70,7 +70,6 @@ const Comp = ({
     viewState,
     viewStates.INIT,
     viewStates.WAITINGTOCONTRIBUTE,
-    userIsWhiteListed,
   ]);
 
   useEffect(() => {
