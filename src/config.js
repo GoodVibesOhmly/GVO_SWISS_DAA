@@ -42,7 +42,7 @@ const configs = {
     // rpcUrl: 'https://rinkeby.infura.io/v3/d5e29c9b9a9d4116a7348113f57770a8',
     appUrl: 'http://localhost:3000',
     defaultContribution: 500,
-    minimumContribution: 200,
+    minimumContribution: 0.1,
   },
 };
 const config = process.env.REACT_APP_STAGE
