@@ -28,7 +28,7 @@ const Comp = ({ onClose }) => {
         setAmountDAI(amountDAIFloat);
         setAmountCSTK(0);
       } else {
-        setAmountCSTK(config.ratio * amountDAIFloat);
+        setAmountCSTK(Math.floor(config.ratio * amountDAIFloat));
         setDAIError(null);
       }
 
