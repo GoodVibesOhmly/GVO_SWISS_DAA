@@ -10,7 +10,7 @@ import { OnboardContext } from '../../../components/OnboardProvider';
 const config = require('../../../config');
 
 const Comp = ({ onClose }) => {
-  const [amountDAI, setAmountDAI] = React.useState(500);
+  const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
   const [showDonateModal, setShowDonateModal] = React.useState(false);
   // const [showThankYouModal, setShowThankYouModal] = React.useState(false);
@@ -31,8 +31,12 @@ const Comp = ({ onClose }) => {
         setAmountCSTK(config.ratio * amountDAIFloat);
         setDAIError(null);
       }
+
+      if (amountDAIFloat < config.minimumContribution) {
+        setDAIError(`Minimum contribution is ${config.minimumContribution}`);
+      }
     } catch (e) {
-      console.error(e);
+      // console.error(e);
     }
   }, [amountDAI]);
 

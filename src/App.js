@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import pages from './pages';
 import './sass/style.sass';
 import Navigation from './components/Navigation';
+import config from './config';
 
 function App({ bootstrap }) {
+  console.log(`environment ${config.name}`);
   useEffect(() => {
     bootstrap();
   }, [bootstrap]);

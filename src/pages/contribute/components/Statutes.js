@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import statutesData from '../../../assets/statutes.json';
-import './TandC.sass';
+import './Statutes.sass';
 
 const Comp = ({ onSetAgreedstatutes }) => {
   const { web3, address } = useContext(OnboardContext);
@@ -59,7 +59,11 @@ const Comp = ({ onSetAgreedstatutes }) => {
           </header>
           <div className="is-divider" />
           <section className="modal-card-body">
-            <p className="statutescontent">{statutesData.data}</p>
+            <embed
+              className="statutescontent"
+              src={`https://ipfs.web3.party/ipfs/${statutesData.hash}`}
+              width="100%"
+            />
 
             <div className="field">
               <div className="control">

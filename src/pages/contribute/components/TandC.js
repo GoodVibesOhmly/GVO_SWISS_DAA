@@ -59,7 +59,14 @@ const Comp = ({ onSetAgreedtandc }) => {
           </header>
           <div className="is-divider" />
           <section className="modal-card-body">
-            <p className="tandccontent">{tandcData.data}</p>
+            {/* <p className="tandccontent">{tandcData.data}</p> */}
+
+            <embed
+              className="tandccontent"
+              src={`https://ipfs.web3.party/ipfs/${tandcData.hash}`}
+              width="100%"
+            />
+
 
             <div className="field">
               <div className="control">
