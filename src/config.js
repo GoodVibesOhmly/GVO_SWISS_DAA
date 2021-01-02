@@ -32,7 +32,7 @@ const configs = {
       rpcEndpointXdai: 'https://rpc.xdaichain.com/',
     },
     bridgeAddress: '0x30f938fed5de6e06a9a7cd2ac3517131c317b1e7',
-    CSSTKTokenAddress: '0x1A1CCA6c6A436f6B23e4dA99430f00F01688B00d', // this is on XDAI chain
+    CSSTKTokenAddress: '0xc4fbE68522ba81a28879763C3eE33e08b13c499E', // this is on XDAI chain
     DAITokenAddress: '0x6b175474e89094c44da98b954eedeac495271d0f', // ropsten ?
     ratio: 2.5, // how much CSTK you get for 1 DAI
     givethBridgeAddress: '0x30f938fED5dE6e06a9A7Cd2Ac3517131C317B1E7',
