@@ -36,7 +36,7 @@ const Comp = ({
     if (viewState === from) {
       setViewState(to);
     } else {
-      console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
+      // console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
     }
   };
 
@@ -70,7 +70,6 @@ const Comp = ({
     viewState,
     viewStates.INIT,
     viewStates.WAITINGTOCONTRIBUTE,
-    userIsWhiteListed,
   ]);
 
   useEffect(() => {
@@ -86,7 +85,7 @@ const Comp = ({
       if (viewState === from) {
         setViewState(to);
       } else {
-        console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
+        // console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
       }
     };
     if (hasDonated) {
@@ -167,7 +166,7 @@ const Comp = ({
                     <a
                       rel="noreferrer"
                       target="_blank"
-                      href="https://www.google.com"
+                      href="https://commonsstack.org/apply"
                       className="button is-success"
                     >
                       Apply for the whitelist

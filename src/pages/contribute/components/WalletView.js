@@ -16,7 +16,9 @@ const coinLogos = [
 ];
 
 const Comp = ({
+  loadedtandc,
   agreedtandc,
+  loadedstatutes,
   agreedstatutes,
   balances,
   getBalancesFor,
@@ -106,19 +108,17 @@ const Comp = ({
             {coin.balanceFormatted} {coin.symbol}
           </div>
         ) : (
-          <div className="subtitle level-right mb-04">
-            <span>~DAI</span>
-          </div>
+          <div className="subtitle level-right mb-04">{/* <span>~DAI</span> */}</div>
         )}
       </div>,
     );
     return accum;
   }, []);
 
-  if (!agreedtandc && address) {
+  if (loadedtandc && !agreedtandc && address) {
     return <TandC />;
   }
-  if (!agreedstatutes && address) {
+  if (loadedstatutes && !agreedstatutes && address) {
     return <Statutes />;
   }
 
@@ -141,27 +141,11 @@ const Comp = ({
       <div className="subtitle mb-05">
         <div className="title-level">
           <div className="level-left">
-            {agreedtandc ? (
-              <>
-                <span>{successIcon}</span>
-              </>
-            ) : (
-              <>
-                <span>{failIcon}</span>{' '}
-              </>
-            )}
+            {agreedtandc ? successIcon : failIcon}
             <span className="is-size-7">Sign Terms and Conditions</span>
           </div>
           <div className="level-left">
-            {agreedstatutes ? (
-              <>
-                <span>{successIcon}</span>
-              </>
-            ) : (
-              <>
-                <span>{failIcon}</span>
-              </>
-            )}
+            {agreedstatutes ? successIcon : failIcon}
             <span className="is-size-7">Sign Statutes</span>
           </div>
 
@@ -202,10 +186,19 @@ const Comp = ({
   );
 };
 
-const mapStateToProps = ({ balances, agreedtandc, agreedstatutes, userIsWhiteListed }) => {
+const mapStateToProps = ({
+  balances,
+  agreedtandc,
+  loadedtandc,
+  agreedstatutes,
+  loadedstatutes,
+  userIsWhiteListed,
+}) => {
   return {
     agreedtandc,
+    loadedtandc,
     agreedstatutes,
+    loadedstatutes,
     balances,
     userIsWhiteListed,
   };

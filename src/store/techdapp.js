@@ -3,9 +3,13 @@ import ERC20Contract from 'erc20-contract-js';
 import api from '../util/api';
 import CSTKToken from '../blockchain/contracts/CSTKToken';
 import config from '../config';
+import tandc from '../assets/tandc.json';
+import statutes from '../assets/statutes.json';
 
 const initialState = {
+  loadedtandc: false,
   agreedtandc: false,
+  loadedstatutes: false,
   agreedstatutes: false,
   web3: null,
   balances: {},
@@ -49,7 +53,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         READ_SHOW_TANDC_LOAD: new PromiseBlackBox(() => {
           return api
-            .getSignature(action.address, 'tandc')
+            .getSignature(action.address, tandc.key)
             .then(res => ({ type: 'READ_SHOW_TANDC_LOAD_SUCCESS', res }))
             .catch(e => ({ type: 'READ_SHOW_TANDC_LOAD_FAIL', e }));
         }),
@@ -58,12 +62,14 @@ const reducer = (state = initialState, action) => {
       delete state.READ_SHOW_TANDC_LOAD;
       return {
         ...state,
+        loadedtandc: true,
         agreedtandc: true,
       };
     case 'READ_SHOW_TANDC_LOAD_FAIL':
       delete state.READ_SHOW_TANDC_LOAD;
       return {
         ...state,
+        loadedtandc: true,
         agreedtandc: false,
         showtandc: true,
       };
@@ -72,7 +78,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         READ_SHOW_STATUTES_LOAD: new PromiseBlackBox(() => {
           return api
-            .getSignature(action.address, 'statutes')
+            .getSignature(action.address, statutes.key)
             .then(res => ({ type: 'READ_SHOW_STATUTES_LOAD_SUCCESS', res }))
             .catch(e => ({ type: 'READ_SHOW_STATUTES_LOAD_FAIL', e }));
         }),
@@ -81,12 +87,14 @@ const reducer = (state = initialState, action) => {
       delete state.READ_SHOW_STATUTES_LOAD;
       return {
         ...state,
+        loadedstatutes: true,
         agreedstatutes: true,
       };
     case 'READ_SHOW_STATUTES_LOAD_FAIL':
       delete state.READ_SHOW_STATUTES_LOAD;
       return {
         ...state,
+        loadedstatutes: true,
         agreedstatutes: false,
       };
     case 'SET_SHOW_TANDC':
@@ -101,7 +109,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         WRITE_TANDC: new PromiseBlackBox(() => {
           return api
-            .postSignature(action.message, action.signature, action.address, 'tandc')
+            .postSignature(action.message, action.signature, action.address, tandc.key)
             .then(res => ({ type: 'WRITE_TANDC_SUCCESS', res }))
             .catch(e => ({ type: 'WRITE_TANDC_FAIL', e }));
         }),
@@ -111,7 +119,6 @@ const reducer = (state = initialState, action) => {
       delete state.WRITE_TANDC;
       return {
         ...state,
-
         agreedtandc: true,
       };
     case 'WRITE_TANDC_FAIL':
@@ -128,7 +135,7 @@ const reducer = (state = initialState, action) => {
         ...state,
         WRITE_STATUTES: new PromiseBlackBox(() => {
           return api
-            .postSignature(action.message, action.signature, action.address, 'statutes')
+            .postSignature(action.message, action.signature, action.address, statutes.key)
             .then(res => ({ type: 'WRITE_STATUTES_SUCCESS', res }))
             .catch(e => ({ type: 'WRITE_STATUTES_FAIL', e }));
         }),
@@ -189,7 +196,7 @@ const reducer = (state = initialState, action) => {
 
     case 'READ_FUNDING_CONTRACT_FAIL':
       delete state.BB_READ_FUNDING_CONTRACT;
-      console.warn('fail');
+      // console.warn('fail');
       return {
         ...state,
         loading: false,
