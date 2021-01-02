@@ -141,27 +141,11 @@ const Comp = ({
       <div className="subtitle mb-05">
         <div className="title-level">
           <div className="level-left">
-            {agreedtandc ? (
-              <>
-                <span>{successIcon}</span>
-              </>
-            ) : (
-              <>
-                <span>{failIcon}</span>{' '}
-              </>
-            )}
+            {agreedtandc ? successIcon : failIcon}
             <span className="is-size-7">Sign Terms and Conditions</span>
           </div>
           <div className="level-left">
-            {agreedstatutes ? (
-              <>
-                <span>{successIcon}</span>
-              </>
-            ) : (
-              <>
-                <span>{failIcon}</span>
-              </>
-            )}
+            {agreedstatutes ? successIcon : failIcon}
             <span className="is-size-7">Sign Statutes</span>
           </div>
 
