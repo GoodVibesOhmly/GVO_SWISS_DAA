@@ -225,8 +225,14 @@ const reducer = (state = initialState, action) => {
       delete state.BB_GET_BALANCES_FOR_ADDRESS;
       // eslint-disable-next-line no-case-declarations
       const addressBalances = action.res.map(item => {
-        item.balanceFormatted = parseFloat(item.balance).toFixed(
+        item.balanceFormatted = new BigNumber(item.balance).toFormat(
           BigNumber.min(2, item.decimals).toNumber(),
+          BigNumber.ROUND_DOWN,
+          {
+            decimalSeparator: '.',
+            groupSeparator: ',',
+            groupSize: 3,
+          },
         );
         return item;
       });
@@ -302,7 +308,11 @@ const getBalances = async (web3, address, coins) => {
           .then(b => new BigNumber(b)),
         erc20Contract.decimals().call(),
       ]);
-      return { symbol: coin.symbol, balance: balance.div(new BigNumber(10).pow(decimals)) };
+      return {
+        symbol: coin.symbol,
+        balance: balance.div(new BigNumber(10).pow(decimals)),
+        decimals,
+      };
     }),
   ]);
 };
