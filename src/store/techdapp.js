@@ -1,5 +1,6 @@
 import { PromiseBlackBox } from '@oqton/redux-black-box';
 import ERC20Contract from 'erc20-contract-js';
+import BigNumber from 'bignumber.js';
 import api from '../util/api';
 import CSTKToken from '../blockchain/contracts/CSTKToken';
 import config from '../config';
@@ -224,8 +225,8 @@ const reducer = (state = initialState, action) => {
       delete state.BB_GET_BALANCES_FOR_ADDRESS;
       // eslint-disable-next-line no-case-declarations
       const addressBalances = action.res.map(item => {
-        item.balanceFormatted = parseFloat(state.web3.utils.fromWei(item.balance, 'ether')).toFixed(
-          2,
+        item.balanceFormatted = parseFloat(item.balance).toFixed(
+          BigNumber.min(2, item.decimals).toNumber(),
         );
         return item;
       });
@@ -292,17 +293,17 @@ const reducer = (state = initialState, action) => {
 // eslint-disable-next-line no-shadow
 const getBalances = async (web3, address, coins) => {
   return Promise.all([
-    ...coins.map(coin => {
+    ...coins.map(async coin => {
       const erc20Contract = coin.erc20Contract || new ERC20Contract(web3, coin.contractaddress);
-
-      return erc20Contract
-        .balanceOf(address)
-        .call()
-        .then(balance => {
-          return { symbol: coin.symbol, balance };
-        });
+      const [balance, decimals] = await Promise.all([
+        erc20Contract
+          .balanceOf(address)
+          .call()
+          .then(b => new BigNumber(b)),
+        erc20Contract.decimals().call(),
+      ]);
+      return { symbol: coin.symbol, balance: balance.div(new BigNumber(10).pow(decimals)) };
     }),
-    // { symbol: "ETH", balance: await web3.eth.getBalance(address) },
   ]);
 };
 
