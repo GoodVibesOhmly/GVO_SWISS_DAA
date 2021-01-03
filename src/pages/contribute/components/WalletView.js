@@ -151,7 +151,7 @@ const Comp = ({
 
           <div className="level-left">
             {userIsWhiteListed ? successIcon : failIcon}
-            <span className="is-size-7">Member of the Trusted Seed (Allowlist)</span>
+            <span className="is-size-7">Member of the Trusted Seed (Registry)</span>
           </div>
         </div>
       </div>
