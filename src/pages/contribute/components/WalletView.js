@@ -71,7 +71,7 @@ const Comp = ({
       return (
         isReady && (
           <div key={coin.symbol} className="title level mb-04">
-            <div className="subtitle level-left mb-04">
+            <div className="is-size-7 has-text-grey-light level-left mb-04">
               <span className="icon has-text-light mr-02">
                 <img src={logo.src} alt={coin.symbol} />
                 &nbsp;
@@ -96,7 +96,7 @@ const Comp = ({
 
     accum.push(
       <div key={coin.symbol} className="title level mb-04">
-        <div className="subtitle level-left mb-04">
+        <div className="is-size-7 has-text-grey-light level-left mb-04">
           <span className="icon has-text-light mr-02">
             <img src={logo.src} alt={coin.symbol} />
             &nbsp;
