@@ -17,6 +17,7 @@ const Comp = ({
   userIsWhiteListed,
   balances,
   hasDonated,
+  getBalancesFor,
   onCloseContributeThanks,
 }) => {
   const viewStates = Object.freeze({
@@ -52,6 +53,21 @@ const Comp = ({
     }
     setCstkbalance(balance);
   }, [balances, address]);
+
+  useEffect(() => {
+    if (isReady) {
+      setInterval(() => {
+        getBalancesFor(address);
+        if (balances && balances[address]) {
+          const userBalance = balances[address];
+          const cstk = userBalance.find(b => b.symbol === 'CSTK');
+          if (cstk) {
+            setCstkbalance(cstk.balanceFormatted);
+          }
+        }
+      }, 30000);
+    }
+  }, [isReady, balances, address, getBalancesFor]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
@@ -167,6 +183,7 @@ const Comp = ({
                       target="_blank"
                       href="https://commonsstack.org/apply"
                       className="button is-success"
+                      style={{ marginTop: '16px' }}
                     >
                       Apply for the whitelist
                     </a>
@@ -323,6 +340,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    getBalancesFor: address => dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address }),
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
     onCloseContributeThanks: () => dispatch({ type: 'CLOSE_CONTRIBUTE_THANKS' }),
