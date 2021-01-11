@@ -7,7 +7,6 @@ import GovernanceRights from '../../../assets/governanceRights.svg';
 import Access from '../../../assets/access.svg';
 import GreyLogo from '../../../assets/greylogo.svg';
 import Membership from '../../../assets/membership.svg';
-import Slider from '../../../components/Slider';
 import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
@@ -252,13 +251,10 @@ const Comp = ({
             </div>
           )}
           <div className="is-divider mt-2 mb-2" />
-          <Slider />
-          <div className="is-divider mt-2 mb-2" />
           <div className="title-level">
             <div className="level-left">
               <p className="subtitle mb-2">FOR YOUR CONTRIBUTION YOU WILL ALSO RECEIVE:</p>
             </div>
-
             <div className="level">
               <div className="items-container">
                 <div className="level-item">
