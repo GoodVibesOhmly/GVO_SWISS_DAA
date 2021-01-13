@@ -17,7 +17,7 @@ const WalletButton = () => {
               }
             });
           } else {
-            console.error('onboard is not loaded!');
+            // console.error('onboard is not loaded!');
           }
         }}
       >
