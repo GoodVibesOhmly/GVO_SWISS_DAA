@@ -55,19 +55,17 @@ const Comp = ({
   }, [balances, address]);
 
   useEffect(() => {
-    if (isReady) {
-      setInterval(() => {
-        getBalancesFor(address);
-        if (balances && balances[address]) {
-          const userBalance = balances[address];
-          const cstk = userBalance.find(b => b.symbol === 'CSTK');
-          if (cstk) {
-            setCstkbalance(cstk.balanceFormatted);
-          }
+    setInterval(() => {
+      getBalancesFor(address);
+      if (balances && balances[address]) {
+        const userBalance = balances[address];
+        const cstk = userBalance.find(b => b.symbol === 'CSTK');
+        if (cstk) {
+          setCstkbalance(cstk.balanceFormatted);
         }
-      }, 30000);
-    }
-  }, [isReady, balances, address, getBalancesFor]);
+      }
+    }, 30000);
+  }, [balances, address, getBalancesFor]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
