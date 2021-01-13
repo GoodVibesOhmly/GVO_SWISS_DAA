@@ -7,7 +7,6 @@ import GovernanceRights from '../../../assets/governanceRights.svg';
 import Access from '../../../assets/access.svg';
 import GreyLogo from '../../../assets/greylogo.svg';
 import Membership from '../../../assets/membership.svg';
-import Slider from '../../../components/Slider';
 import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
@@ -18,6 +17,7 @@ const Comp = ({
   userIsWhiteListed,
   balances,
   hasDonated,
+  getBalancesFor,
   onCloseContributeThanks,
 }) => {
   const viewStates = Object.freeze({
@@ -53,6 +53,19 @@ const Comp = ({
     }
     setCstkbalance(balance);
   }, [balances, address]);
+
+  useEffect(() => {
+    setInterval(() => {
+      getBalancesFor(address);
+      if (balances && balances[address]) {
+        const userBalance = balances[address];
+        const cstk = userBalance.find(b => b.symbol === 'CSTK');
+        if (cstk) {
+          setCstkbalance(cstk.balanceFormatted);
+        }
+      }
+    }, 30000);
+  }, [balances, address, getBalancesFor]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
@@ -170,6 +183,7 @@ const Comp = ({
                       target="_blank"
                       href="https://commonsstack.org/apply"
                       className="button is-success"
+                      style={{ marginTop: '16px' }}
                     >
                       Apply for the whitelist
                     </a>
@@ -259,13 +273,10 @@ const Comp = ({
             </div>
           )}
           <div className="is-divider mt-2 mb-2" />
-          <Slider />
-          <div className="is-divider mt-2 mb-2" />
           <div className="title-level">
             <div className="level-left">
               <p className="subtitle mb-2">FOR YOUR CONTRIBUTION YOU WILL ALSO RECEIVE:</p>
             </div>
-
             <div className="level">
               <div className="items-container">
                 <div className="level-item">
@@ -334,6 +345,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    getBalancesFor: address => dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address }),
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
     onCloseContributeThanks: () => dispatch({ type: 'CLOSE_CONTRIBUTE_THANKS' }),
