@@ -17,9 +17,9 @@ const Comp = () => {
       case '/contribute':
         setActiveNavItem(2);
         break;
-      // case "/help":
-      // setActiveNavItem(3)
-      // break
+      case '/help':
+        setActiveNavItem(3);
+        break;
       default:
         break;
     }
@@ -57,13 +57,9 @@ const Comp = () => {
                 </Link>
               </div>
               <div className={activeNavItem === 3 ? 'navbar-item is-active' : 'navbar-item'}>
-                <a
-                  href="mailto:info@commonsstack.foundation"
-                  subject="I have a problem getting CSTK tokens"
-                  className="support-link"
-                >
+                <Link to="/help">
                   <span>Need help?</span>
-                </a>
+                </Link>
               </div>
             </div>
 
