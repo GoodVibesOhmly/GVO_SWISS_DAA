@@ -2,6 +2,8 @@ import React, { useContext, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import './Contribute.sass';
 import { TwitterShareButton, TelegramShareButton, TwitterIcon, TelegramIcon } from 'react-share';
+import Confetti from 'react-confetti';
+import useWindowSize from 'react-use/lib/useWindowSize';
 import WalletButton from '../../../components/WalletButton';
 import GovernanceRights from '../../../assets/governanceRights.svg';
 import Access from '../../../assets/access.svg';
@@ -10,6 +12,7 @@ import Membership from '../../../assets/membership.svg';
 import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
+import donationConfirmed from '../../../assets/donation-confirmed.svg';
 
 const Comp = ({
   agreedtandc,
@@ -30,10 +33,12 @@ const Comp = ({
   const { web3, onboard, isReady, address } = useContext(OnboardContext);
   const [viewState, setViewState] = React.useState(viewStates.INIT);
 
+  const { width, height } = useWindowSize();
+
   const changeViewState = (from, to) => {
     if (viewState === to) return;
     // make sure you can only transition from a known state to another known state
-    if (viewState === from) {
+    if (!from || viewState === from) {
       setViewState(to);
     } else {
       // console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
@@ -218,50 +223,85 @@ const Comp = ({
             </>
           )}
           {viewState === viewStates.FINISHEDDONATING && (
-            <>
-              <div className="enable has-text-left">
-                <div className="contribmain">
-                  <p className="subtitle is-size-2">Thank you for the contribution!</p>
+            <div className="donate-modal-thanks modal is-active">
+              <Confetti
+                numberOfPieces={300}
+                width={width}
+                height={height}
+                colors={['#AECAAC', '#FFFFFF', '#884444']}
+                recycle={false}
+                wind={0}
+                gravity={0.03}
+                initialVelocityY={-10}
+              />
+              <div
+                className="modal-background"
+                onClick={() => {
+                  onCloseContributeThanks();
+                  changeViewState(null, viewStates.WAITINGTOCONTRIBUTE);
+                }}
+              />
+              <div className="modal-card has-text-centered">
+                <header className="modal-card-head">
+                  <p className="modal-card-title" />
+                  <button
+                    className="delete"
+                    aria-label="close"
+                    onClick={() => {
+                      onCloseContributeThanks();
+                      changeViewState(null, viewStates.WAITINGTOCONTRIBUTE);
+                    }}
+                  />
+                </header>
+                <section className="modal-card-body ">
                   <div className="level">
-                    <div className="level-item">5000 CSTK</div>
-                    <div className="level-right">
-                      <div className="level-item">
-                        <div>
-                          <button
-                            className="button is-text text-color-white"
-                            href="#"
-                            onClick={() => {
-                              onCloseContributeThanks();
-                              changeViewState(
-                                viewStates.FINISHEDDONATING,
-                                viewStates.WAITINGTOCONTRIBUTE,
-                              );
-                            }}
-                          >
-                            CLOSE
-                          </button>
-                          <br />
-                          <br />
-                          <br />
-                          <TwitterShareButton
-                            url="https://commonsstack.org"
-                            title="I funded the CS!"
-                          >
-                            <TwitterIcon size={32} round />
-                          </TwitterShareButton>
-                          <TelegramShareButton
-                            url="https://commonsstack.org"
-                            title="I funded the CS!"
-                          >
-                            <TelegramIcon size={32} round />
-                          </TelegramShareButton>
-                        </div>
-                      </div>
+                    <div className="level-item">
+                      <img
+                        src={donationConfirmed}
+                        className="image is-128x128"
+                        alt="Donation confirmed"
+                      />
                     </div>
                   </div>
-                </div>
+                  <p className="has-text-centered is-size-2">Thank you for the contribution!</p>
+                  <br />
+                  <br />
+                  <p className="has-text-centered is-size-5">
+                    Your CSTK score will be transferred to your Ethereum address soon !
+                  </p>
+                </section>
+                <footer className="modal-card-foot">
+                  <div className="field is-grouped">
+                    <p className="control">
+                      <TwitterShareButton
+                        className="button is-primary"
+                        resetButtonStyle={false}
+                        url="https://commonsstack.org"
+                        title="I funded the CS!"
+                      >
+                        <span className="icon">
+                          <TwitterIcon bgStyle={{ fill: 'none' }} size={32} round />
+                        </span>
+                        <span>Share on Twitter</span>
+                      </TwitterShareButton>
+                    </p>
+                    <p className="control">
+                      <TelegramShareButton
+                        className="button is-primary"
+                        resetButtonStyle={false}
+                        url="https://commonsstack.org"
+                        title="I funded the CS!"
+                      >
+                        <span className="icon">
+                          <TelegramIcon bgStyle={{ fill: 'none' }} size={32} round />
+                        </span>
+                        <span>Share on Telegram</span>
+                      </TelegramShareButton>
+                    </p>
+                  </div>
+                </footer>
               </div>
-            </>
+            </div>
           )}
 
           {!web3 && (
