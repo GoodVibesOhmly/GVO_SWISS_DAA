@@ -9,7 +9,6 @@ import GovernanceRights from '../../../assets/governanceRights.svg';
 import Access from '../../../assets/access.svg';
 import GreyLogo from '../../../assets/greylogo.svg';
 import Membership from '../../../assets/membership.svg';
-import Slider from '../../../components/Slider';
 import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
@@ -21,6 +20,7 @@ const Comp = ({
   userIsWhiteListed,
   balances,
   hasDonated,
+  getBalancesFor,
   onCloseContributeThanks,
 }) => {
   const viewStates = Object.freeze({
@@ -58,6 +58,19 @@ const Comp = ({
     }
     setCstkbalance(balance);
   }, [balances, address]);
+
+  useEffect(() => {
+    setInterval(() => {
+      getBalancesFor(address);
+      if (balances && balances[address]) {
+        const userBalance = balances[address];
+        const cstk = userBalance.find(b => b.symbol === 'CSTK');
+        if (cstk) {
+          setCstkbalance(cstk.balanceFormatted);
+        }
+      }
+    }, 30000);
+  }, [balances, address, getBalancesFor]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
@@ -161,8 +174,10 @@ const Comp = ({
                   <div>
                     <img alt="CS Egg" src={GreyLogo} />
                   </div>
-                  <div>You’re not yet a member of the Trusted Seed</div>
-                  <div>
+                  <p className="is-size-3 mb-08 warning">
+                    You're not yet a member of the Trusted Seed
+                  </p>
+                  <div className="mb-08">
                     Sorry, but your address is not whitelisted. In order to be able to receive CSTK
                     tokens you need to apply to become a member of the Trusted Seed. Application may
                     take up to a week. Or you may need to switch to your other wallet.
@@ -173,6 +188,7 @@ const Comp = ({
                       target="_blank"
                       href="https://commonsstack.org/apply"
                       className="button is-success"
+                      style={{ marginTop: '16px' }}
                     >
                       Apply for the whitelist
                     </a>
@@ -184,8 +200,13 @@ const Comp = ({
 
           <br />
           <p>
-            You can pay membership dues with DAI only. You can acquire DAI i.e. on{' '}
-            <a rel="noopener noreferrer" target="_blank" href="https://1inch.exchange">
+            You can pay membership dues with DAI only. You can acquire DAI e.g. on{' '}
+            <a
+              className="exchange"
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://1inch.exchange"
+            >
               1inch.exchange
             </a>
           </p>
@@ -292,13 +313,10 @@ const Comp = ({
             </div>
           )}
           <div className="is-divider mt-2 mb-2" />
-          <Slider />
-          <div className="is-divider mt-2 mb-2" />
           <div className="title-level">
             <div className="level-left">
               <p className="subtitle mb-2">FOR YOUR CONTRIBUTION YOU WILL ALSO RECEIVE:</p>
             </div>
-
             <div className="level">
               <div className="items-container">
                 <div className="level-item">
@@ -367,6 +385,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    getBalancesFor: address => dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address }),
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
     onCloseContributeThanks: () => dispatch({ type: 'CLOSE_CONTRIBUTE_THANKS' }),

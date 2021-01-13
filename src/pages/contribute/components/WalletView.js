@@ -6,6 +6,8 @@ import { OnboardContext } from '../../../components/OnboardProvider';
 import CSTK from '../../../assets/cstk.svg';
 import TandC from './TandC';
 import Statutes from './Statutes';
+import tandcData from '../../../assets/tandc.json';
+import statutesData from '../../../assets/statutes.json';
 
 const coinLogos = [
   { symbol: 'DAI', src: DAI },
@@ -142,11 +144,29 @@ const Comp = ({
         <div className="title-level">
           <div className="level-left">
             {agreedtandc ? successIcon : failIcon}
-            <span className="is-size-7">Sign Terms and Conditions</span>
+            <span className="is-size-7">
+              Sign{' '}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://ipfs.web3.party/ipfs/${tandcData.hash}`}
+              >
+                Terms and Conditions
+              </a>
+            </span>
           </div>
           <div className="level-left">
             {agreedstatutes ? successIcon : failIcon}
-            <span className="is-size-7">Sign Statutes</span>
+            <span className="is-size-7">
+              Sign{' '}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://ipfs.web3.party/ipfs/${statutesData.hash}`}
+              >
+                Statutes
+              </a>
+            </span>
           </div>
 
           <div className="level-left">
@@ -158,13 +178,15 @@ const Comp = ({
       <br />
       <span className="title is-text-overflow mb-2">
         Total Available Balance{' '}
-        <a
-          href={`https://etherscan.io/address/${address}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <i className="fas fa-info-circle is-size-7" />
-        </a>
+        {address && isReady ? (
+          <a
+            href={`https://etherscan.io/address/${address}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i className="fas fa-info-circle is-size-7" />
+          </a>
+        ) : null}
       </span>
 
       {address && isReady ? (
