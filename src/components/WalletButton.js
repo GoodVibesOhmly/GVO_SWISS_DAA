@@ -27,11 +27,7 @@ const WalletButton = () => {
   }
 
   // `web3` and `account` loaded 🎉
-  return (
-    <button type="button" className="button is-outlined is-success wallet-button">
-      <span>{address}</span>
-    </button>
-  );
+  return null;
 };
 
 export default WalletButton;
