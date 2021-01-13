@@ -156,8 +156,10 @@ const Comp = ({
                   <div>
                     <img alt="CS Egg" src={GreyLogo} />
                   </div>
-                  <div>You’re not yet a member of the Trusted Seed</div>
-                  <div>
+                  <p className="is-size-3 mb-08 warning">
+                    You're not yet a member of the Trusted Seed
+                  </p>
+                  <div className="mb-08">
                     Sorry, but your address is not whitelisted. In order to be able to receive CSTK
                     tokens you need to apply to become a member of the Trusted Seed. Application may
                     take up to a week. Or you may need to switch to your other wallet.
@@ -179,8 +181,13 @@ const Comp = ({
 
           <br />
           <p>
-            You can pay membership dues with DAI only. You can acquire DAI i.e. on{' '}
-            <a rel="noopener noreferrer" target="_blank" href="https://1inch.exchange">
+            You can pay membership dues with DAI only. You can acquire DAI e.g. on{' '}
+            <a
+              className="exchange"
+              rel="noopener noreferrer"
+              target="_blank"
+              href="https://1inch.exchange"
+            >
               1inch.exchange
             </a>
           </p>
