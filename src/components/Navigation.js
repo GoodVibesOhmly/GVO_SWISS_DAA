@@ -61,7 +61,6 @@ const Comp = () => {
                   <span>Need help?</span>
                 </a>
               </div> */}
-
             </div>
 
             <div className="navbar-end">
