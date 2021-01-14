@@ -177,7 +177,7 @@ const DonateModal = props => {
       .catch(e => dispatch({ type: ACTION_ALLOWANCE_FAIL, e }));
   };
   useEffect(() => {
-    console.log('web3 is changed');
+    // console.log('web3 is changed');
     dispatch({ type: ACTION_INIT, web3 });
     updateAllowance();
     // eslint-disable-next-line react-hooks/exhaustive-deps

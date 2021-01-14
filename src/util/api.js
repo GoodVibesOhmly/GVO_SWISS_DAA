@@ -11,6 +11,11 @@ export default {
     return !!res && !!res.data && !!res.data.whitelisted;
   },
 
+  getMaxTrust: async address => {
+    const res = await axios.get(`${config.apiGateway.URL}/maxtrust/${address}`);
+    return res.data.maxtrust;
+  },
+
   postSignature: (message, signature, address, type) => {
     return axios.post(`${config.apiGateway.URL}/signature`, {
       type,

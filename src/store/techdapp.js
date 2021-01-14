@@ -301,17 +301,21 @@ const getBalances = async (web3, address, coins) => {
   return Promise.all([
     ...coins.map(async coin => {
       const erc20Contract = coin.erc20Contract || new ERC20Contract(web3, coin.contractaddress);
-      const [balance, decimals] = await Promise.all([
+      const [balance, decimals, totalsupply, maxtrust] = await Promise.all([
         erc20Contract
           .balanceOf(address)
           .call()
           .then(b => new BigNumber(b)),
         erc20Contract.decimals().call(),
+        erc20Contract.totalSupply().call(),
+        api.getMaxTrust(address),
       ]);
       return {
         symbol: coin.symbol,
         balance: balance.div(new BigNumber(10).pow(decimals)),
+        totalsupply,
         decimals,
+        maxtrust,
       };
     }),
   ]);
