@@ -47,7 +47,7 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
     } catch (e) {
       // console.error(e);
     }
-  }, [amountDAI]);
+  }, [amountDAI, balances, address, getBalancesFor]);
 
   React.useEffect(() => {
     setDonationButtonEnabled(amountCSTK !== 0);
