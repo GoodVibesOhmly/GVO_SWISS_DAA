@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import './Contribute.sass';
 import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
@@ -9,7 +9,8 @@ import { OnboardContext } from '../../../components/OnboardProvider';
 
 const config = require('../../../config');
 
-const Comp = ({ onClose }) => {
+const Comp = ({ onClose, balances, getBalancesFor }) => {
+  const { isReady, address } = useContext(OnboardContext);
   const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
   const [showDonateModal, setShowDonateModal] = React.useState(false);
@@ -21,14 +22,22 @@ const Comp = ({ onClose }) => {
   React.useEffect(() => {
     try {
       const amountDAIFloat = parseFloat(amountDAI);
+      getBalancesFor(address);
+      console.log(balances);
       if (Number.isNaN(amountDAIFloat)) {
         if (amountDAI && amountDAI !== '') {
           setDAIError('please enter a number');
         }
         setAmountDAI(amountDAIFloat);
         setAmountCSTK(0);
-      } else {
-        setAmountCSTK(Math.floor(config.ratio * amountDAIFloat));
+      } else if (balances && balances[address]) {
+        const cstk = balances[address].find(b => b.symbol === 'CSTK');
+        const maxToReceive = (cstk.maxtrust * cstk.totalsupply) / 10000000;
+        let cstkToReceive = Math.floor(config.ratio * amountDAIFloat);
+        if (maxToReceive <= cstk.amount + cstkToReceive) {
+          cstkToReceive = maxToReceive - cstk.amount;
+        }
+        setAmountCSTK(cstkToReceive);
         setDAIError(null);
       }
 
@@ -43,8 +52,6 @@ const Comp = ({ onClose }) => {
   React.useEffect(() => {
     setDonationButtonEnabled(amountCSTK !== 0);
   }, [amountCSTK]);
-
-  const { isReady } = React.useContext(OnboardContext);
 
   return (
     <>
@@ -173,6 +180,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
+    getBalancesFor: address => dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address }),
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
   };
