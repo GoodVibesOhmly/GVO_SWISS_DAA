@@ -23,7 +23,7 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
     try {
       const amountDAIFloat = parseFloat(amountDAI);
       getBalancesFor(address);
-      console.log(balances);
+      // console.log(balances);
       if (Number.isNaN(amountDAIFloat)) {
         if (amountDAI && amountDAI !== '') {
           setDAIError('please enter a number');
