@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
+import BigNumber from 'bignumber.js';
 import './Contribute.sass';
 import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
 import arrow from '../../../assets/arrow.svg';
@@ -16,13 +17,14 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
   const [showDonateModal, setShowDonateModal] = React.useState(false);
   // const [showThankYouModal, setShowThankYouModal] = React.useState(false);
   const [donationButtonEnabled, setDonationButtonEnabled] = React.useState(false);
-
+  const [showToolTip, setShowToolTip] = React.useState(false);
   const [DAIError, setDAIError] = React.useState();
 
   React.useEffect(() => {
     try {
+      // debugger;
       const amountDAIFloat = parseFloat(amountDAI);
-      getBalancesFor(address);
+      // getBalancesFor(address);
       // console.log(balances);
       if (Number.isNaN(amountDAIFloat)) {
         if (amountDAI && amountDAI !== '') {
@@ -32,10 +34,19 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
         setAmountCSTK(0);
       } else if (balances && balances[address]) {
         const cstk = balances[address].find(b => b.symbol === 'CSTK');
-        const maxToReceive = (cstk.maxtrust * cstk.totalsupply) / 10000000;
+        const maxTrust = new BigNumber(cstk.maxtrust);
+        const totalSupply = new BigNumber(cstk.totalsupply);
+        const maxToReceive = maxTrust
+          .multipliedBy(totalSupply)
+          .dividedBy(new BigNumber('10000000'))
+          .toNumber();
         let cstkToReceive = Math.floor(config.ratio * amountDAIFloat);
-        if (maxToReceive <= cstk.amount + cstkToReceive) {
-          cstkToReceive = maxToReceive - cstk.amount;
+        const cstkBalance = cstk.balance.toNumber();
+        if (maxToReceive <= cstkBalance + cstkToReceive) {
+          cstkToReceive = Math.floor(maxToReceive - cstkBalance);
+          setShowToolTip(true);
+        } else {
+          setShowToolTip(false);
         }
         setAmountCSTK(cstkToReceive);
         setDAIError(null);
@@ -127,7 +138,7 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
                         placeholder=""
                       />
                     </div>
-                    <p className="help is-danger">&nbsp;</p>
+                    <p className="help is-danger">&nbsp;{showToolTip && <>TOOLTIP</>}</p>
                   </div>
                 </div>
                 <div className="level-item">
@@ -174,6 +185,7 @@ const mapStateToProps = state => {
     denominator: state.denominator,
     softCap: state.softCap,
     hardCap: state.hardCap,
+    balances: state.balances,
     totalReceived: state.totalReceived,
   };
 };
