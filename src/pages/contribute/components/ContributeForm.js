@@ -34,11 +34,13 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
         setAmountCSTK(0);
       } else if (balances && balances[address]) {
         const cstk = balances[address].find(b => b.symbol === 'CSTK');
+        const myBalance = new BigNumber(cstk.balance || '0');
         const maxTrust = new BigNumber(cstk.maxtrust);
         const totalSupply = new BigNumber(cstk.totalsupply);
         const maxToReceive = maxTrust
           .multipliedBy(totalSupply)
           .dividedBy(new BigNumber('10000000'))
+          .minus(myBalance)
           .toNumber();
         let cstkToReceive = Math.floor(config.ratio * amountDAIFloat);
         const cstkBalance = cstk.balance.toNumber();
