@@ -137,7 +137,9 @@ const Comp = ({
                       </figure>
                       <div className="media-content">
                         <div className="content">
-                          <p className="heading is-size-2 has-text-weight-bold">{cstkBalance} CSTK</p>
+                          <p className="heading is-size-2 has-text-weight-bold">
+                            {cstkBalance} CSTK
+                          </p>
                         </div>
                       </div>
                     </article>
@@ -177,12 +179,12 @@ const Comp = ({
                       </div>
                       <p className="is-size-3 mb-08 warning">
                         You're not yet a member of the Trusted Seed
-                  </p>
+                      </p>
                       <div className="mb-08">
-                        Sorry, but your address is not whitelisted. In order to be able to receive CSTK
-                        tokens you need to apply to become a member of the Trusted Seed. Application may
-                        take up to a week. Or you may need to switch to your other wallet.
-                  </div>
+                        Sorry, but your address is not whitelisted. In order to be able to receive
+                        CSTK tokens you need to apply to become a member of the Trusted Application
+                        may take up to a week. Or you may need to switch to your other wallet.
+                      </div>
                       <p className="control">
                         <a
                           rel="noreferrer"
@@ -192,7 +194,7 @@ const Comp = ({
                           style={{ marginTop: '16px' }}
                         >
                           Apply for the whitelist
-                    </a>
+                        </a>
                       </p>
                     </article>
                   </div>
@@ -209,7 +211,7 @@ const Comp = ({
                   href="https://1inch.exchange"
                 >
                   1inch.exchange
-            </a>
+                </a>
               </p>
 
               {viewState === viewStates.STARTDONATING && (
@@ -269,7 +271,7 @@ const Comp = ({
                       <br />
                       <p className="has-text-centered is-size-5">
                         Your CSTK score will be transferred to your Ethereum address soon !
-                  </p>
+                      </p>
                     </section>
                     <footer className="modal-card-foot">
                       <div className="field is-grouped">
