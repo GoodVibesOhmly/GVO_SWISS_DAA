@@ -124,186 +124,188 @@ const Comp = ({
       <article className=" notification is-primary">
         <div className="contribmain">
           <p className="subtitle mb-2">YOUR MEMBERSHIP SCORE</p>
-
-          <div className="level">
-            <div className="level-left">
-              <div className="level-item">
-                <article className="media">
-                  <figure className="media-left">
-                    <p className="image is-64x64">
-                      <img alt="CSTK logo" src={Cstk} />
-                    </p>
-                  </figure>
-                  <div className="media-content">
-                    <div className="content">
-                      <p className="heading is-size-2 has-text-weight-bold">{cstkBalance} CSTK</p>
-                    </div>
-                  </div>
-                </article>
-              </div>
-            </div>
-            <div className="level-right">
-              <div className="level-item">
-                <span>
-                  {viewState === viewStates.WAITINGTOCONTRIBUTE && (
-                    <button
-                      onClick={() => {
-                        onboard.walletCheck().then(readyToTransact => {
-                          if (readyToTransact) {
-                            changeViewState(
-                              viewStates.WAITINGTOCONTRIBUTE,
-                              viewStates.STARTDONATING,
-                            );
-                          }
-                        });
-                      }}
-                      className="button is-success is-medium"
-                    >
-                      Make Contribution
-                    </button>
-                  )}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {viewState === viewStates.INIT && (
-            <div>
-              <div className="tile is-child">
-                <article className=" notification is-primary has-text-centered">
-                  <div>
-                    <img alt="CS Egg" src={GreyLogo} />
-                  </div>
-                  <p className="is-size-3 mb-08 warning">
-                    You're not yet a member of the Trusted Seed
-                  </p>
-                  <div className="mb-08">
-                    Sorry, but your address is not whitelisted. In order to be able to receive CSTK
-                    tokens you need to apply to become a member of the Trusted Seed. Application may
-                    take up to a week. Or you may need to switch to your other wallet.
-                  </div>
-                  <p className="control">
-                    <a
-                      rel="noreferrer"
-                      target="_blank"
-                      href="https://commonsstack.org/apply"
-                      className="button is-success"
-                      style={{ marginTop: '16px' }}
-                    >
-                      Apply for the whitelist
-                    </a>
-                  </p>
-                </article>
-              </div>
-            </div>
-          )}
-
-          <br />
-          <p>
-            You can pay membership dues with DAI only. You can acquire DAI e.g. on{' '}
-            <a
-              className="exchange"
-              rel="noopener noreferrer"
-              target="_blank"
-              href="https://1inch.exchange"
-            >
-              1inch.exchange
-            </a>
-          </p>
-
-          {viewState === viewStates.STARTDONATING && (
+          {web3 && (
             <>
-              <ContributeForm
-                onClose={() => {
-                  if (hasDonated) {
-                    changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
-                  }
-                }}
-              />
-            </>
-          )}
-          {viewState === viewStates.FINISHEDDONATING && (
-            <div className="donate-modal-thanks modal is-active">
-              <Confetti
-                numberOfPieces={300}
-                width={width}
-                height={height}
-                colors={['#AECAAC', '#FFFFFF', '#884444']}
-                recycle={false}
-                wind={0}
-                gravity={0.03}
-                initialVelocityY={-10}
-              />
-              <div
-                className="modal-background"
-                onClick={() => {
-                  onCloseContributeThanks();
-                  changeViewState(null, viewStates.WAITINGTOCONTRIBUTE);
-                }}
-              />
-              <div className="modal-card has-text-centered">
-                <header className="modal-card-head">
-                  <p className="modal-card-title" />
-                  <button
-                    className="delete"
-                    aria-label="close"
+              <div className="level">
+                <div className="level-left">
+                  <div className="level-item">
+                    <article className="media">
+                      <figure className="media-left">
+                        <p className="image is-64x64">
+                          <img alt="CSTK logo" src={Cstk} />
+                        </p>
+                      </figure>
+                      <div className="media-content">
+                        <div className="content">
+                          <p className="heading is-size-2 has-text-weight-bold">{cstkBalance} CSTK</p>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+                <div className="level-right">
+                  <div className="level-item">
+                    <span>
+                      {viewState === viewStates.WAITINGTOCONTRIBUTE && (
+                        <button
+                          onClick={() => {
+                            onboard.walletCheck().then(readyToTransact => {
+                              if (readyToTransact) {
+                                changeViewState(
+                                  viewStates.WAITINGTOCONTRIBUTE,
+                                  viewStates.STARTDONATING,
+                                );
+                              }
+                            });
+                          }}
+                          className="button is-success is-medium"
+                        >
+                          Make Contribution
+                        </button>
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {viewState === viewStates.INIT && (
+                <div>
+                  <div className="tile is-child">
+                    <article className=" notification is-primary has-text-centered">
+                      <div>
+                        <img alt="CS Egg" src={GreyLogo} />
+                      </div>
+                      <p className="is-size-3 mb-08 warning">
+                        You're not yet a member of the Trusted Seed
+                  </p>
+                      <div className="mb-08">
+                        Sorry, but your address is not whitelisted. In order to be able to receive CSTK
+                        tokens you need to apply to become a member of the Trusted Seed. Application may
+                        take up to a week. Or you may need to switch to your other wallet.
+                  </div>
+                      <p className="control">
+                        <a
+                          rel="noreferrer"
+                          target="_blank"
+                          href="https://commonsstack.org/apply"
+                          className="button is-success"
+                          style={{ marginTop: '16px' }}
+                        >
+                          Apply for the whitelist
+                    </a>
+                      </p>
+                    </article>
+                  </div>
+                </div>
+              )}
+
+              <br />
+              <p>
+                You can pay membership dues with DAI only. You can acquire DAI e.g. on{' '}
+                <a
+                  className="exchange"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  href="https://1inch.exchange"
+                >
+                  1inch.exchange
+            </a>
+              </p>
+
+              {viewState === viewStates.STARTDONATING && (
+                <>
+                  <ContributeForm
+                    onClose={() => {
+                      if (hasDonated) {
+                        changeViewState(viewStates.STARTDONATING, viewStates.FINISHEDDONATING);
+                      }
+                    }}
+                  />
+                </>
+              )}
+              {viewState === viewStates.FINISHEDDONATING && (
+                <div className="donate-modal-thanks modal is-active">
+                  <Confetti
+                    numberOfPieces={300}
+                    width={width}
+                    height={height}
+                    colors={['#AECAAC', '#FFFFFF', '#884444']}
+                    recycle={false}
+                    wind={0}
+                    gravity={0.03}
+                    initialVelocityY={-10}
+                  />
+                  <div
+                    className="modal-background"
                     onClick={() => {
                       onCloseContributeThanks();
                       changeViewState(null, viewStates.WAITINGTOCONTRIBUTE);
                     }}
                   />
-                </header>
-                <section className="modal-card-body ">
-                  <div className="level">
-                    <div className="level-item">
-                      <img
-                        src={donationConfirmed}
-                        className="image is-128x128"
-                        alt="Donation confirmed"
+                  <div className="modal-card has-text-centered">
+                    <header className="modal-card-head">
+                      <p className="modal-card-title" />
+                      <button
+                        className="delete"
+                        aria-label="close"
+                        onClick={() => {
+                          onCloseContributeThanks();
+                          changeViewState(null, viewStates.WAITINGTOCONTRIBUTE);
+                        }}
                       />
-                    </div>
-                  </div>
-                  <p className="has-text-centered is-size-2">Thank you for the contribution!</p>
-                  <br />
-                  <br />
-                  <p className="has-text-centered is-size-5">
-                    Your CSTK score will be transferred to your Ethereum address soon !
+                    </header>
+                    <section className="modal-card-body ">
+                      <div className="level">
+                        <div className="level-item">
+                          <img
+                            src={donationConfirmed}
+                            className="image is-128x128"
+                            alt="Donation confirmed"
+                          />
+                        </div>
+                      </div>
+                      <p className="has-text-centered is-size-2">Thank you for the contribution!</p>
+                      <br />
+                      <br />
+                      <p className="has-text-centered is-size-5">
+                        Your CSTK score will be transferred to your Ethereum address soon !
                   </p>
-                </section>
-                <footer className="modal-card-foot">
-                  <div className="field is-grouped">
-                    <p className="control">
-                      <TwitterShareButton
-                        className="button is-primary"
-                        resetButtonStyle={false}
-                        url="https://commonsstack.org"
-                        title="I funded the CS!"
-                      >
-                        <span className="icon">
-                          <TwitterIcon bgStyle={{ fill: 'none' }} size={32} round />
-                        </span>
-                        <span>Share on Twitter</span>
-                      </TwitterShareButton>
-                    </p>
-                    <p className="control">
-                      <TelegramShareButton
-                        className="button is-primary"
-                        resetButtonStyle={false}
-                        url="https://commonsstack.org"
-                        title="I funded the CS!"
-                      >
-                        <span className="icon">
-                          <TelegramIcon bgStyle={{ fill: 'none' }} size={32} round />
-                        </span>
-                        <span>Share on Telegram</span>
-                      </TelegramShareButton>
-                    </p>
+                    </section>
+                    <footer className="modal-card-foot">
+                      <div className="field is-grouped">
+                        <p className="control">
+                          <TwitterShareButton
+                            className="button is-primary"
+                            resetButtonStyle={false}
+                            url="https://commonsstack.org"
+                            title="I funded the CS!"
+                          >
+                            <span className="icon">
+                              <TwitterIcon bgStyle={{ fill: 'none' }} size={32} round />
+                            </span>
+                            <span>Share on Twitter</span>
+                          </TwitterShareButton>
+                        </p>
+                        <p className="control">
+                          <TelegramShareButton
+                            className="button is-primary"
+                            resetButtonStyle={false}
+                            url="https://commonsstack.org"
+                            title="I funded the CS!"
+                          >
+                            <span className="icon">
+                              <TelegramIcon bgStyle={{ fill: 'none' }} size={32} round />
+                            </span>
+                            <span>Share on Telegram</span>
+                          </TelegramShareButton>
+                        </p>
+                      </div>
+                    </footer>
                   </div>
-                </footer>
-              </div>
-            </div>
+                </div>
+              )}
+            </>
           )}
-
           {!web3 && (
             <div className="enable has-text-centered">
               <p className="title">
