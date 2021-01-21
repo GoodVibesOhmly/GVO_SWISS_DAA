@@ -208,7 +208,7 @@ const Comp = ({
                   className="exchange"
                   rel="noopener noreferrer"
                   target="_blank"
-                  href="https://1inch.exchange"
+                  href="https://1inch.exchange/#/r/0x8110d1D04ac316fdCACe8f24fD60C86b810AB15A"
                 >
                   1inch.exchange
                 </a>
