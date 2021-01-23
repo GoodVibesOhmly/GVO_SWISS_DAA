@@ -406,15 +406,15 @@ const DonateModal = props => {
         <section className="modal-card-body">
           {/* This is to show all states in one screen  - should be replaces  bythe function above modalContent()
           in the final version after Kay has done his work ! */}
-          {Object.keys(contents).map(k => {
+          {/* {Object.keys(contents).map(k => {
             return (
               <>
                 <hr />
                 {contents[k]}
               </>
             );
-          })}
-          {/* {contents[viewState]} */}
+          })} */}
+          {contents[viewState]}
         </section>
         <footer className="modal-card-foot">
           {showApproveButton && (
