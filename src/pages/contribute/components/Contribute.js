@@ -32,7 +32,6 @@ const Comp = ({
 
   const { web3, onboard, isReady, address } = useContext(OnboardContext);
   const [viewState, setViewState] = React.useState(viewStates.INIT);
-
   const { width, height } = useWindowSize();
 
   const changeViewState = (from, to) => {
@@ -44,6 +43,24 @@ const Comp = ({
       // console.log(`Cannot transition from ${from} to ${to} since I am in ${viewState}`);
     }
   };
+
+  const updateBalances = () => {
+    getBalancesFor(address);
+    if (balances && balances[address]) {
+      const userBalance = balances[address];
+      const cstk = userBalance.find(b => b.symbol === 'CSTK');
+      if (cstk) {
+        setCstkbalance(cstk.balanceFormatted);
+      }
+    }
+  };
+
+  useEffect(() => {
+    const interval = setInterval(updateBalances, 5000);
+    return () => {
+      clearInterval(interval);
+    };
+  });
 
   const [cstkBalance, setCstkbalance] = useState('');
 
@@ -58,19 +75,6 @@ const Comp = ({
     }
     setCstkbalance(balance);
   }, [balances, address]);
-
-  useEffect(() => {
-    setInterval(() => {
-      getBalancesFor(address);
-      if (balances && balances[address]) {
-        const userBalance = balances[address];
-        const cstk = userBalance.find(b => b.symbol === 'CSTK');
-        if (cstk) {
-          setCstkbalance(cstk.balanceFormatted);
-        }
-      }
-    }, 30000);
-  }, [balances, address, getBalancesFor]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
