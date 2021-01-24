@@ -2,13 +2,16 @@ import React, { useContext, useEffect, useReducer } from 'react';
 import { connect } from 'react-redux';
 import ERC20Contract from 'erc20-contract-js';
 import Web3 from 'web3';
+import { Player } from '@lottiefiles/react-lottie-player';
 import config from '../../../config';
 import GivethBridge from '../../../blockchain/contracts/GivethBridge';
-import './DonateModal.sass';
+// import './DonateModal.sass';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import AllowanceHelper from '../../../blockchain/allowanceHelper';
 import spinner from '../../../assets/spinner.svg';
 import Success from './Success';
+import DAI from '../../../assets/dai.svg';
+import CSTK from '../../../assets/cstk.svg';
 
 const { DAITokenAddress, givethBridgeAddress } = config;
 
@@ -71,8 +74,6 @@ const reducerWrapper = (_state, _action) => {
   // To test views uncomment below line and change and change initialViewState value above
   // return _state
 
-  // console.log('reducer:');
-  // console.log('action:', _action);
   const reducer = (state, action) => {
     const { type, web3, amount, allowance } = action;
     switch (type) {
@@ -162,13 +163,7 @@ const DonateModal = props => {
     allowance: 0,
   });
 
-  // const toBN = value => new web3.utils.BN(value);
-  //
-  // // Amount in wei in BN type
-  // const amountWei = web3.utils.toWei(amount.toString());
-  // const amountBN = toBN(amountWei);
-
-  const { allowance, daiTokenContract, givethBridge, viewState } = state;
+  const { daiTokenContract, givethBridge, viewState } = state;
   const updateAllowance = async () => {
     return daiTokenContract
       .allowance(address, givethBridgeAddress)
@@ -236,30 +231,71 @@ const DonateModal = props => {
 
   contents[VIEW_READY_TO_APPROVE] = (
     <>
-      <h2 className="mb-2">
-        You first need to approve access to your DAI balance before you can donate
+      <div className="level">
+        <div className="level-item">
+          <figure className="image is-64x64">
+            <img src={DAI} alt="DAI logo" />
+          </figure>
+        </div>
+      </div>
+      <p className="is-size-5 has-text-centered has-text-weight-bold">
+        We need permission to use your DAI
+      </p>
+      <br />
+      <h2 className="has-text-centered mb-2">
+        Please approve DAI spend from your wallet to continue.
       </h2>
-      <p>Allowance needed: {amount} DAI</p>
-      <p>Current Allowance: {allowance} DAI</p>
     </>
   );
 
   contents[VIEW_APPROVING] = (
-    <div className="modal-content">
-      <h2>Transaction sent - Approving DAI balance</h2>
-    </div>
+    <>
+      <div className="level">
+        <div className="level-item">
+          <div className="card">
+            <div className="card-image">
+              <p className="image is-64x64">
+                <img src={DAI} alt="DAI logo" />
+              </p>
+            </div>
+            <div className="is-overlay">
+              <Player
+                autoplay
+                loop
+                src="https://assets9.lottiefiles.com/packages/lf20_WXXDFD.json"
+                style={{ height: '64px', width: '64px' }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="is-size-5 has-text-centered has-text-weight-bold">Transaction sent</p>
+      <br />
+      <h2 className="has-text-centered mb-2">Approving your DAI balance.</h2>
+    </>
   );
 
   contents[VIEW_APPROVE_FAILED] = (
     <>
-      <h2 className="has-text-centered pb-2 red">
-        <span role="img" aria-label="warning">
-          ⚠️
-        </span>{' '}
-        Transaction failed!
-      </h2>
-      <p>
-        {' '}
+      <div className="level">
+        <div className="level-item">
+          <div className="card">
+            <div className="card-image">
+              <p className="image is-64x64">{/* <img src={DAI} alt="DAI logo" /> */}</p>
+            </div>
+            <div className="is-overlay">
+              <Player
+                autoplay
+                src="https://assets2.lottiefiles.com/packages/lf20_h3Bz5a.json"
+                style={{ height: '64px', width: '64px' }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="is-size-5 has-text-centered has-text-weight-bold">Transaction failed!</p>
+      <br />
+      <h2 className="has-text-centered mb-2">
         Please try again, or{' '}
         <a
           href="mailto:info@commonsstack.foundation"
@@ -269,7 +305,7 @@ const DonateModal = props => {
           contact support
         </a>{' '}
         if you experience further difficulties.
-      </p>
+      </h2>
     </>
   );
 
@@ -283,22 +319,55 @@ const DonateModal = props => {
   );
 
   contents[VIEW_DONATING] = (
-    <div className="modal-content">
-      <h2 className="has-text-centered pb-2">Transaction sent</h2>
-      <p className="has-text-centered subtitle">Waiting for the transaction to be completed</p>
-    </div>
+    <>
+      <div className="level">
+        <div className="level-item">
+          <div className="card">
+            <div className="card-image">
+              <p className="image is-64x64">
+                <img src={CSTK} alt="CSTK logo" />
+              </p>
+            </div>
+            <div className="is-overlay">
+              <Player
+                autoplay
+                loop
+                src="https://assets9.lottiefiles.com/packages/lf20_WXXDFD.json"
+                style={{ height: '64px', width: '64px' }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="is-size-5 has-text-centered has-text-weight-bold">Transaction sent</p>
+      <br />
+      <h2 className="has-text-centered mb-2">Waiting for the transaction to be completed</h2>
+    </>
   );
 
   contents[VIEW_DONATING_FAILED] = (
     <>
-      <h2 className="has-text-centered pb-2 red">
-        <span role="img" aria-label="warning">
-          ⚠️
-        </span>{' '}
-        Transaction failed!
-      </h2>
-      <p>
-        {' '}
+      <div className="level">
+        <div className="level-item">
+          <div className="card">
+            <div className="card-image">
+              <p className="image is-64x64">
+                <img src={CSTK} alt="CSTK logo" />
+              </p>
+            </div>
+            <div className="is-overlay">
+              <Player
+                autoplay
+                src="https://assets2.lottiefiles.com/packages/lf20_h3Bz5a.json"
+                style={{ height: '64px', width: '64px' }}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="is-size-5 has-text-centered has-text-weight-bold">Transaction failed!</p>
+      <br />
+      <h2 className="has-text-centered mb-2">
         Please try again, or{' '}
         <a
           href="mailto:info@commonsstack.foundation"
@@ -308,7 +377,7 @@ const DonateModal = props => {
           contact support
         </a>{' '}
         if you experience further difficulties.
-      </p>
+      </h2>
     </>
   );
 
@@ -337,6 +406,14 @@ const DonateModal = props => {
         <section className="modal-card-body">
           {/* This is to show all states in one screen  - should be replaces  bythe function above modalContent()
           in the final version after Kay has done his work ! */}
+          {/* {Object.keys(contents).map(k => {
+            return (
+              <>
+                <hr />
+                {contents[k]}
+              </>
+            );
+          })} */}
           {contents[viewState]}
         </section>
         <footer className="modal-card-foot">

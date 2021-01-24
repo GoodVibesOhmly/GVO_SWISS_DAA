@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
-import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
 import ETH from 'cryptocurrency-icons/svg/color/eth.svg';
+import DAI from '../../../assets/dai.svg';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import CSTK from '../../../assets/cstk.svg';
 import TandC from './TandC';
