@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
+import ReactTooltip from 'react-tooltip';
 import BigNumber from 'bignumber.js';
 import './Contribute.sass';
 import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
@@ -19,6 +20,26 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
   const [donationButtonEnabled, setDonationButtonEnabled] = React.useState(false);
   const [showToolTip, setShowToolTip] = React.useState(false);
   const [DAIError, setDAIError] = React.useState();
+
+  const TOOLTIP = `
+    <p>
+      If you contribute this amount you will have reached your max. trust score,
+      the max amount of CSTK tokens you will receive. If you want to increase the max. score please
+      <a
+        href="mailto:info@commonsstack.foundation"
+        subject="I have a problem getting CSTK tokens"
+        className="support-link"
+        style="color: #1BDD9D; text-decoration: none;"
+      >
+        contact us
+      </a>.
+    </p>
+    <br/>
+    <p>
+      You can decrease contribution to match you max. trust score or continue and remaning funs will be donated to the Commons Stack.
+    </p>
+    `
+
 
   React.useEffect(() => {
     try {
@@ -131,7 +152,16 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
               <div className="level-item">
                 <div className="level-item">
                   <div className="field" style={{ maxWidth: `100px` }}>
-                    <div className="control">
+                  <ReactTooltip
+                    id="registerTip"
+                    place="top"
+                    effect="solid"
+                    html={true}
+                    offset={{left: 100}}
+                    backgroundColor="black"
+                    globalEventOff='click'
+                  />
+                    <div className="control" data-tip={TOOLTIP} data-for="registerTip" data-event-off='dblclick' data-event='click focus'>
                       <input
                         className="input"
                         disabled
