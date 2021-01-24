@@ -1,0 +1,34 @@
+@import '../../../sass/_colors'
+
+.tooltip
+    position: relative
+
+.tooltip-content
+    bottom: 50px
+    left: calc(50% - 200px)
+    line-height: 1.2rem
+    z-index: 1000
+    position: absolute
+    width: 400px
+    padding: 20px
+    color: #fff
+    background-color: #000
+    border-radius: 4px
+
+.tooltip-arrow
+    top: auto
+    bottom: -5px
+    left: 50%
+    margin-left: -5px
+    border-width: 5px 5px 0
+    border-top-color: #000
+
+.tooltip-content::after
+  content: " "
+  position: absolute
+  top: 100%
+  left: 50%
+  margin-left: -5px
+  border-width: 5px
+  border-style: solid
+  border-color: black transparent transparent transparent

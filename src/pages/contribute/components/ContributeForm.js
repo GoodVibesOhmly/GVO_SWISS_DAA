@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
-import ReactTooltip from 'react-tooltip';
 import BigNumber from 'bignumber.js';
 import './Contribute.sass';
 import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
@@ -8,6 +7,7 @@ import arrow from '../../../assets/arrow.svg';
 import CSTK from '../../../assets/cstk.svg';
 import DonateModal from './DonateModal';
 import { OnboardContext } from '../../../components/OnboardProvider';
+import ToolTip from './Tooltip';
 
 const config = require('../../../config');
 
@@ -20,25 +20,6 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
   const [donationButtonEnabled, setDonationButtonEnabled] = React.useState(false);
   const [showToolTip, setShowToolTip] = React.useState(false);
   const [DAIError, setDAIError] = React.useState();
-
-  const TOOLTIP = `
-    <p>
-      If you contribute this amount you will have reached your max. trust score,
-      the max amount of CSTK tokens you will receive. If you want to increase the max. score please
-      <a
-        href="mailto:info@commonsstack.foundation"
-        subject="I have a problem getting CSTK tokens"
-        className="support-link"
-        style="color: #1BDD9D; text-decoration: none;"
-      >
-        contact us
-      </a>.
-    </p>
-    <br/>
-    <p>
-      You can decrease contribution to match you max. trust score or continue and remaning funs will be donated to the Commons Stack.
-    </p>
-    `;
 
   React.useEffect(() => {
     try {
@@ -150,32 +131,18 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
             <div className="level-right">
               <div className="level-item">
                 <div className="level-item">
-                  <div className="field" style={{ maxWidth: `100px` }}>
-                    <ReactTooltip
-                      id="registerTip"
-                      place="top"
-                      effect="solid"
-                      html
-                      offset={{ left: 100 }}
-                      backgroundColor="black"
-                      globalEventOff="click"
-                    />
-                    <div
-                      className="control"
-                      data-tip={TOOLTIP}
-                      data-for="registerTip"
-                      data-event-off="dblclick"
-                      data-event="click focus"
-                    >
+                  <div className="field" style={{ maxWidth: '100px' }}>
+                    <ToolTip className="control" active={showToolTip}>
                       <input
                         className="input"
                         disabled
                         type="text"
+                        style={{ border: showToolTip ? '1px solid red' : '' }}
                         value={amountCSTK}
                         placeholder=""
                       />
-                    </div>
-                    <p className="help is-danger">&nbsp;{showToolTip && <>TOOLTIP</>}</p>
+                    </ToolTip>
+                    <p className="help is-danger">&nbsp;</p>
                   </div>
                 </div>
                 <div className="level-item">
