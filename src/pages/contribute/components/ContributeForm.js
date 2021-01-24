@@ -38,8 +38,7 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
     <p>
       You can decrease contribution to match you max. trust score or continue and remaning funs will be donated to the Commons Stack.
     </p>
-    `
-
+    `;
 
   React.useEffect(() => {
     try {
@@ -152,16 +151,22 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
               <div className="level-item">
                 <div className="level-item">
                   <div className="field" style={{ maxWidth: `100px` }}>
-                  <ReactTooltip
-                    id="registerTip"
-                    place="top"
-                    effect="solid"
-                    html={true}
-                    offset={{left: 100}}
-                    backgroundColor="black"
-                    globalEventOff='click'
-                  />
-                    <div className="control" data-tip={TOOLTIP} data-for="registerTip" data-event-off='dblclick' data-event='click focus'>
+                    <ReactTooltip
+                      id="registerTip"
+                      place="top"
+                      effect="solid"
+                      html
+                      offset={{ left: 100 }}
+                      backgroundColor="black"
+                      globalEventOff="click"
+                    />
+                    <div
+                      className="control"
+                      data-tip={TOOLTIP}
+                      data-for="registerTip"
+                      data-event-off="dblclick"
+                      data-event="click focus"
+                    >
                       <input
                         className="input"
                         disabled
