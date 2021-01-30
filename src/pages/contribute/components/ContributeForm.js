@@ -7,6 +7,7 @@ import arrow from '../../../assets/arrow.svg';
 import CSTK from '../../../assets/cstk.svg';
 import DonateModal from './DonateModal';
 import { OnboardContext } from '../../../components/OnboardProvider';
+import ToolTip from './Tooltip';
 
 const config = require('../../../config');
 
@@ -130,17 +131,18 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
             <div className="level-right">
               <div className="level-item">
                 <div className="level-item">
-                  <div className="field" style={{ maxWidth: `100px` }}>
-                    <div className="control">
+                  <div className="field" style={{ maxWidth: '100px' }}>
+                    <ToolTip className="control" active={showToolTip}>
                       <input
                         className="input"
                         disabled
                         type="text"
+                        style={{ border: showToolTip ? '1px solid red' : '' }}
                         value={amountCSTK}
                         placeholder=""
                       />
-                    </div>
-                    <p className="help is-danger">&nbsp;{showToolTip && <>TOOLTIP</>}</p>
+                    </ToolTip>
+                    <p className="help is-danger">&nbsp;</p>
                   </div>
                 </div>
                 <div className="level-item">
