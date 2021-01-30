@@ -2,7 +2,7 @@ const configs = {
   development: {
     name: 'dev',
     apiGateway: {
-      URL: 'http://localhost:5005',
+      URL: 'https://cs.datapinner.com',
     },
     ETH: {
       // rpcEndpoint: "https://ropsten.infura.io/v3/766661aa3a1e414584b9d2c2b73e6930",
