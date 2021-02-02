@@ -48,8 +48,8 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
   );
 
   React.useEffect(() => {
-    const scholarship = Math.round(amountDAI / 450 - 1);
-    if (scholarship > 1) {
+    const scholarship = Math.floor(amountDAI / 450 - 1);
+    if (scholarship >= 1) {
       setAmountScholarship(scholarship);
       setShowScholarshipTooltip(true);
     } else {
@@ -58,7 +58,10 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
   }, [showScholarshipTooltip, amountScholarship, amountDAI]);
 
   const TooltipScholarshipContent = () => (
-    <p>In addition to your membership dues, this will fund {amountScholarship} scholarships!</p>
+    <p>
+      In addition to your membership dues, this will fund {amountScholarship}{' '}
+      {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
+    </p>
   );
 
   React.useEffect(() => {
