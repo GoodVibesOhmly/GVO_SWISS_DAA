@@ -323,7 +323,7 @@ const Comp = ({
           <div className="is-divider mt-2 mb-2" />
           <div className="title-level">
             <div className="level-left">
-              <p className="subtitle mb-2">FOR YOUR CONTRIBUTION YOU WILL ALSO RECEIVE:</p>
+              <p className="subtitle mb-2">FOR YOUR DUES YOU WILL ALSO RECEIVE:</p>
             </div>
             <div className="level">
               <div className="items-container">
