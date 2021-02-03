@@ -166,7 +166,7 @@ const Comp = ({
                           }}
                           className="button is-success is-medium"
                         >
-                          Make Contribution
+                          Pay Membership Dues
                         </button>
                       )}
                     </span>
@@ -274,7 +274,7 @@ const Comp = ({
                       <br />
                       <br />
                       <p className="has-text-centered is-size-5">
-                        Your CSTK score will be transferred to your Ethereum address soon !
+                        Your CSTK score will be updated soon!
                       </p>
                     </section>
                     <footer className="modal-card-foot">

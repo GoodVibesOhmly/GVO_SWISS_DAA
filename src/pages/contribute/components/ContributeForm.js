@@ -81,7 +81,6 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
       )}
       <div className="enable has-text-left">
         <div className="contribmain">
-          <p className="subtitle mb-2">I WANT TO CONTRIBUTE</p>
           <div className="level">
             <div className="level-left">
               <div className="level-item">
@@ -171,7 +170,7 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
             disabled={!donationButtonEnabled}
             onClick={() => setShowDonateModal(true)}
           >
-            Make Contribution
+            Pay Membership Dues
           </button>
         </div>
         {/* </article> */}
