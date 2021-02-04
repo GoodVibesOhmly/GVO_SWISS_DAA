@@ -344,9 +344,9 @@ const Comp = ({
                 <div className="level-item">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={Access} alt="Access to Future ABC Hatch Phases" />
+                      <img src={Access} alt="Potential Access to Many Future Hatches" />
                       <p className="subtitle">
-                        <span>Access to Future ABC Hatch Phases</span>
+                        <span>Potential Access to Many Future Hatches</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">
                           <i className="fas fa-info-circle" />
                         </span> */}
