@@ -323,17 +323,17 @@ const Comp = ({
           <div className="is-divider mt-2 mb-2" />
           <div className="title-level">
             <div className="level-left">
-              <p className="subtitle mb-2">FOR YOUR CONTRIBUTION YOU WILL ALSO RECEIVE:</p>
+              <p className="subtitle mb-2">Your CSTK Score enables:</p>
             </div>
             <div className="level">
               <div className="items-container">
                 <div className="level-item">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={GovernanceRights} alt="Governance Rights" />
+                      <img src={GovernanceRights} alt="Participation in Community Governance" />
 
                       <p className="subtitle">
-                        <span>Governance Rights</span>
+                        <span>Participation in Community Governance</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">
                         <span className="has-tooltip-arrow" data-tooltip="Tooltip content"><i className="fas fa-info-circle" /></span>
                         </span> */}
@@ -357,9 +357,9 @@ const Comp = ({
                 <div className="level-item">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={Membership} alt="Membership in Swiss Commons Stack Associations" />
+                      <img src={Membership} alt="Membership in Commons Stack Swiss Association" />
                       <p className="subtitle">
-                        <span>Membership in Swiss Commons Stack Associations</span>
+                        <span>Membership in Commons Stack Swiss Association</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">
                           <i className="fas fa-info-circle" />
                         </span> */}

@@ -1,8 +1,7 @@
 import React from 'react';
-import './ToolTip.sass';
-import './DonateModal.sass';
+import './Tooltip.sass';
 
-const ToolTip = ({ children, active }) => {
+const Tooltip = ({ children, active, content }) => {
   const [showToolTip, setShowToolTip] = React.useState(true);
 
   return (
@@ -12,32 +11,10 @@ const ToolTip = ({ children, active }) => {
       onMouseLeave={() => setShowToolTip(false)}
     >
       <div className="tooltip-arrow" />
-      {active && showToolTip && (
-        <div className="tooltip-content">
-          <p>
-            If you contribute this amount you will have reached your max. trust score, the max
-            amount of CSTK tokens you will receive. If you want to increase the max. score
-            please&nbsp;
-            <a
-              href="mailto:info@commonsstack.foundation"
-              subject="I have a problem getting CSTK tokens"
-              className="support-link"
-              style={{ color: '#1BDD9D', textDecoration: 'none' }}
-            >
-              contact us
-            </a>
-            .
-          </p>
-          <br />
-          <p>
-            You can decrease contribution to match you max. trust score or continue and remaning
-            funs will be donated to the Commons Stack.
-          </p>
-        </div>
-      )}
+      {active && showToolTip && <div className="tooltip-content">{content}</div>}
       {children}
     </div>
   );
 };
 
-export default ToolTip;
+export default Tooltip;
