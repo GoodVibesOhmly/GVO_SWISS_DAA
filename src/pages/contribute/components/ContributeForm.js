@@ -7,7 +7,8 @@ import arrow from '../../../assets/arrow.svg';
 import CSTK from '../../../assets/cstk.svg';
 import DonateModal from './DonateModal';
 import { OnboardContext } from '../../../components/OnboardProvider';
-import ToolTip from './Tooltip';
+import Tooltip from './Tooltip';
+import './DonateModal.sass';
 
 const config = require('../../../config');
 
@@ -15,11 +16,53 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
   const { isReady, address } = useContext(OnboardContext);
   const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
+  const [amountScholarship, setAmountScholarship] = React.useState(0);
   const [showDonateModal, setShowDonateModal] = React.useState(false);
   // const [showThankYouModal, setShowThankYouModal] = React.useState(false);
   const [donationButtonEnabled, setDonationButtonEnabled] = React.useState(false);
-  const [showToolTip, setShowToolTip] = React.useState(false);
+  const [showMaxTrustScoreTooltip, setShowMaxTrustScoreTooltip] = React.useState(false);
+  const [showScholarshipTooltip, setShowScholarshipTooltip] = React.useState(false);
   const [DAIError, setDAIError] = React.useState();
+
+  const TooltipMaxTrustScoreContent = () => (
+    <>
+      <p>
+        If you contribute this amount you will have reached your max. trust score, the max amount of
+        CSTK tokens you will receive. If you want to increase the max. score please&nbsp;
+        <a
+          href="mailto:info@commonsstack.foundation"
+          subject="I have a problem getting CSTK tokens"
+          className="support-link"
+          style={{ color: '#1BDD9D', textDecoration: 'none' }}
+        >
+          contact us
+        </a>
+        .
+      </p>
+      <br />
+      <p>
+        You can decrease contribution to match you max. trust score or continue and remaning funs
+        will be donated to the Commons Stack.
+      </p>
+    </>
+  );
+
+  React.useEffect(() => {
+    const scholarship = Math.floor(amountDAI / 450 - 1);
+    if (scholarship >= 1) {
+      setAmountScholarship(scholarship);
+      setShowScholarshipTooltip(true);
+    } else {
+      setShowScholarshipTooltip(false);
+    }
+  }, [showScholarshipTooltip, amountScholarship, amountDAI]);
+
+  const TooltipScholarshipContent = () => (
+    <p>
+      In addition to your membership dues, this will fund {amountScholarship}{' '}
+      {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
+    </p>
+  );
 
   React.useEffect(() => {
     try {
@@ -47,9 +90,9 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
         const cstkBalance = cstk.balance.toNumber();
         if (maxToReceive <= cstkBalance + cstkToReceive) {
           cstkToReceive = Math.floor(maxToReceive - cstkBalance);
-          setShowToolTip(true);
+          setShowMaxTrustScoreTooltip(true);
         } else {
-          setShowToolTip(false);
+          setShowMaxTrustScoreTooltip(false);
         }
         setAmountCSTK(cstkToReceive);
         setDAIError(null);
@@ -103,7 +146,11 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
               </div>
               <div className="level-item">
                 <div className="field" style={{ maxWidth: `100px` }}>
-                  <div className="control">
+                  <Tooltip
+                    className="control"
+                    active={showScholarshipTooltip}
+                    content={<TooltipScholarshipContent />}
+                  >
                     <input
                       className="input"
                       type="number"
@@ -113,7 +160,7 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
                       }}
                       value={amountDAI}
                     />
-                  </div>
+                  </Tooltip>
                   <p className="help is-danger">{DAIError || <>&nbsp;</>}</p>
                 </div>
               </div>
@@ -132,16 +179,20 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
               <div className="level-item">
                 <div className="level-item">
                   <div className="field" style={{ maxWidth: '100px' }}>
-                    <ToolTip className="control" active={showToolTip}>
+                    <Tooltip
+                      className="control"
+                      active={showMaxTrustScoreTooltip}
+                      content={<TooltipMaxTrustScoreContent />}
+                    >
                       <input
                         className="input"
                         disabled
                         type="text"
-                        style={{ border: showToolTip ? '1px solid red' : '' }}
+                        style={{ border: showMaxTrustScoreTooltip ? '1px solid red' : '' }}
                         value={amountCSTK}
                         placeholder=""
                       />
-                    </ToolTip>
+                    </Tooltip>
                     <p className="help is-danger">&nbsp;</p>
                   </div>
                 </div>

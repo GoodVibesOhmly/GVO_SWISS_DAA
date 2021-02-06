@@ -18,7 +18,7 @@ const configs = {
     networkId: 3, // Ropsten
     rpcUrl: 'https://rinkeby.infura.io/v3/d5e29c9b9a9d4116a7348113f57770a8',
     appUrl: 'http://localhost:3000',
-    defaultContribution: 500,
+    defaultContribution: 900,
     minimumContribution: 450,
   },
 
@@ -41,7 +41,7 @@ const configs = {
     networkId: 1, // Mainnet
     // rpcUrl: 'https://rinkeby.infura.io/v3/d5e29c9b9a9d4116a7348113f57770a8',
     appUrl: 'http://localhost:3000',
-    defaultContribution: 500,
+    defaultContribution: 900,
     minimumContribution: 0.1,
   },
 };
