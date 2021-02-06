@@ -16,6 +16,11 @@ export default {
     return res.data.maxtrust;
   },
 
+  getEffectiveBalance: async address => {
+    const res = await axios.get(`${config.apiGateway.URL}/balance/${address}`);
+    return res.data.balance;
+  },
+
   postSignature: (message, signature, address, type) => {
     return axios.post(`${config.apiGateway.URL}/signature`, {
       type,

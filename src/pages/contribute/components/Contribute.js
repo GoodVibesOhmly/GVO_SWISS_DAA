@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import './Contribute.sass';
 import { TwitterShareButton, TelegramShareButton, TwitterIcon, TelegramIcon } from 'react-share';
@@ -18,9 +18,11 @@ const Comp = ({
   agreedtandc,
   agreedstatutes,
   userIsWhiteListed,
-  balances,
+  // balances,
   hasDonated,
-  getBalancesFor,
+  effectiveBalance,
+  // getBalancesFor,
+  getEffectiveBalancesFor,
   onCloseContributeThanks,
 }) => {
   const viewStates = Object.freeze({
@@ -45,14 +47,15 @@ const Comp = ({
   };
 
   const updateBalances = () => {
-    getBalancesFor(address);
-    if (balances && balances[address]) {
-      const userBalance = balances[address];
-      const cstk = userBalance.find(b => b.symbol === 'CSTK');
-      if (cstk) {
-        setCstkbalance(cstk.balanceFormatted);
-      }
-    }
+    // getBalancesFor(address);
+    getEffectiveBalancesFor(address);
+    // if (balances && balances[address]) {
+    //   const userBalance = balances[address];
+    //   const cstk = userBalance.find(b => b.symbol === 'CSTK');
+    //   if (cstk) {
+    //     setCstkbalance(cstk.balanceFormatted);
+    //   }
+    // }
   };
 
   useEffect(() => {
@@ -62,19 +65,19 @@ const Comp = ({
     };
   });
 
-  const [cstkBalance, setCstkbalance] = useState('');
+  // const [cstkBalance, setCstkbalance] = useState('');
 
-  useEffect(() => {
-    let balance = '0';
-    if (balances && balances[address]) {
-      const userBalance = balances[address];
-      const cstk = userBalance.find(b => b.symbol === 'CSTK');
-      if (cstk) {
-        balance = cstk.balanceFormatted;
-      }
-    }
-    setCstkbalance(balance);
-  }, [balances, address]);
+  // useEffect(() => {
+  //   let balance = '0';
+  //   if (balances && balances[address]) {
+  //     const userBalance = balances[address];
+  //     const cstk = userBalance.find(b => b.symbol === 'CSTK');
+  //     if (cstk) {
+  //       balance = cstk.balanceFormatted;
+  //     }
+  //   }
+  //   setCstkbalance(balance);
+  // }, [balances, address]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
@@ -142,7 +145,7 @@ const Comp = ({
                       <div className="media-content">
                         <div className="content">
                           <p className="heading is-size-2 has-text-weight-bold">
-                            {cstkBalance} CSTK
+                            {effectiveBalance} CSTK
                           </p>
                         </div>
                       </div>
@@ -388,12 +391,15 @@ const mapStateToProps = state => {
     totalReceived: state.totalReceived,
     balances: state.balances,
     hasDonated: state.hasDonated,
+    effectiveBalance: state.effectiveBalance,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     getBalancesFor: address => dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address }),
+    getEffectiveBalancesFor: address =>
+      dispatch({ type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS', address }),
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
     onCloseContributeThanks: () => dispatch({ type: 'CLOSE_CONTRIBUTE_THANKS' }),
