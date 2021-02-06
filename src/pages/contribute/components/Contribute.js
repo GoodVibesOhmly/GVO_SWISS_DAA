@@ -166,7 +166,7 @@ const Comp = ({
                           }}
                           className="button is-success is-medium"
                         >
-                          Make Contribution
+                          Pay Membership Dues
                         </button>
                       )}
                     </span>
@@ -274,7 +274,7 @@ const Comp = ({
                       <br />
                       <br />
                       <p className="has-text-centered is-size-5">
-                        Your CSTK score will be transferred to your Ethereum address soon !
+                        Your CSTK score will be updated soon!
                       </p>
                     </section>
                     <footer className="modal-card-foot">
@@ -344,9 +344,9 @@ const Comp = ({
                 <div className="level-item">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={Access} alt="Access to Future Commons Hatches" />
+                      <img src={Access} alt="Potential Access to Many Future Hatches" />
                       <p className="subtitle">
-                        <span>Access to Future Commons Hatches</span>
+                        <span>Potential Access to Many Future Hatches</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">
                           <i className="fas fa-info-circle" />
                         </span> */}
