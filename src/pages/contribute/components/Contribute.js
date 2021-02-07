@@ -59,11 +59,12 @@ const Comp = ({
   };
 
   useEffect(() => {
+    updateBalances();
     const interval = setInterval(updateBalances, 25000);
     return () => {
       clearInterval(interval);
     };
-  });
+  }, []);
 
   // const [cstkBalance, setCstkbalance] = useState('');
 

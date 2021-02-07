@@ -253,7 +253,12 @@ const reducer = (state = initialState, action) => {
       return state;
 
     case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS':
-      if (!action.address) return state;
+      if (!action.address) {
+        return {
+          ...state,
+          effectiveBalance: new BigNumber(0),
+        };
+      }
       return {
         ...state,
         BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS: new PromiseBlackBox(() =>
