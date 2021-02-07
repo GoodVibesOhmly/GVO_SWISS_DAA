@@ -23,6 +23,7 @@ const initialState = {
   totalReceived: undefined,
   loading: false,
   userIsWhiteListed: false,
+  effectiveBalance: false,
 };
 
 const CSTK = new CSTKToken().contract; // CSTK tokencontract on XDAI
@@ -251,6 +252,45 @@ const reducer = (state = initialState, action) => {
         : (state.balances[action.address] = { status: 'error fetching' });
       return state;
 
+    case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS':
+      if (!action.address) return state;
+      return {
+        ...state,
+        BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS: new PromiseBlackBox(() =>
+          api
+            .getEffectiveBalance(action.address)
+            .then(res => ({
+              type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_SUCCESS',
+              res,
+              address: action.address,
+            }))
+            .catch(e => ({ type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_FAIL', e })),
+        ),
+      };
+    case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_SUCCESS':
+      delete state.BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS;
+      // eslint-disable-next-line no-case-declarations
+      const effectiveBalance = new BigNumber(action.res.balance).toFormat(
+        BigNumber.min(2, 18).toNumber(),
+        BigNumber.ROUND_DOWN,
+        {
+          decimalSeparator: '.',
+          groupSeparator: ',',
+          groupSize: 3,
+        },
+      );
+      return {
+        ...state,
+        effectiveBalance,
+      };
+
+    case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_FAIL':
+      delete state.BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS;
+      return {
+        ...state,
+        effectiveBalance: new BigNumber(0),
+      };
+
     case 'GET_USER_IS_WHITELISTED':
       return {
         ...state,
@@ -292,6 +332,7 @@ const reducer = (state = initialState, action) => {
         hasDonated: false,
       };
     default:
+      console.log(`unknown action ${action.type}`);
       return state;
   }
 };
