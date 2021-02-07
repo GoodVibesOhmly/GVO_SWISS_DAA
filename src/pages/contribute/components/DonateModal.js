@@ -12,6 +12,7 @@ import spinner from '../../../assets/spinner.svg';
 import Success from './Success';
 import DAI from '../../../assets/dai.svg';
 import CSTK from '../../../assets/cstk.svg';
+import approveSuccess from '../../../assets/approve-success.svg';
 
 const { DAITokenAddress, givethBridgeAddress } = config;
 
@@ -311,6 +312,17 @@ const DonateModal = props => {
 
   contents[VIEW_ENOUGH_ALLOWANCE] = (
     <>
+      <div className="level">
+        <div className="level-item">
+          <div className="card">
+            <div className="card-image">
+              <p className="image is-64x64">
+                <img src={approveSuccess} alt="Donation confirmed" />
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
       <h2 className="has-text-centered pb-2">Ready to send your dues!</h2>
       <p className="has-text-centered subtitle">
         Press the button below to execute the transaction
