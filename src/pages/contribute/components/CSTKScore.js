@@ -2,15 +2,31 @@ import React, { useContext, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { OnboardContext } from '../../../components/OnboardProvider';
 
-const Comp = ({ balances, getBalancesFor }) => {
+const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
   const { address, isReady } = useContext(OnboardContext);
 
-  // TODO: this should be moved to the store IMO
   React.useEffect(() => {
     if (isReady) {
       getBalancesFor(address);
+      // getEffectiveBalancesFor(address);
     }
   }, [isReady, address, getBalancesFor]);
+
+  React.useEffect(() => {
+    if (isReady) {
+      // getBalancesFor(address);
+      getEffectiveBalancesFor(address);
+    }
+  }, [isReady, address, getEffectiveBalancesFor]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getEffectiveBalancesFor(address);
+    }, 25000);
+    return () => {
+      clearInterval(interval);
+    };
+  });
 
   const [cstkBalance, setCstkbalance] = useState();
 
@@ -26,30 +42,30 @@ const Comp = ({ balances, getBalancesFor }) => {
     setCstkbalance(balance);
   }, [balances, address]);
 
-  if (!cstkBalance) {
-    return null;
-  }
-
   return (
     <>
       <p className="title is-text-overflow mb-2">Your CSTK Score</p>
       <div className="subtitle mb-05">Pending score: {cstkBalance} CSTK</div>
+      {/* <div className="subtitle mb-05">Effective score: {effectiveBalance.toString()} CSTK</div> */}
+      {effectiveBalance && effectiveBalance.toString() === '0' && (
+        <div className="subtitle mb-05">You haven't paid your membership dues yet</div>
+      )}
     </>
   );
 };
 
-const mapStateToProps = ({ balances }) => {
+const mapStateToProps = ({ balances, effectiveBalance }) => {
   return {
     balances,
+    effectiveBalance,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    // onSetAgreed: () => dispatch({ type: "AGREE_TANDC" }),
-    getBalancesFor: address => {
-      dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address });
-    },
+    getBalancesFor: address => dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address }),
+    getEffectiveBalancesFor: address =>
+      dispatch({ type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS', address }),
   };
 };
 

@@ -59,7 +59,7 @@ const Comp = ({
   };
 
   useEffect(() => {
-    const interval = setInterval(updateBalances, 5000);
+    const interval = setInterval(updateBalances, 25000);
     return () => {
       clearInterval(interval);
     };
@@ -145,7 +145,7 @@ const Comp = ({
                       <div className="media-content">
                         <div className="content">
                           <p className="heading is-size-2 has-text-weight-bold">
-                            {effectiveBalance} CSTK
+                            {effectiveBalance.toString()} CSTK
                           </p>
                         </div>
                       </div>

@@ -23,7 +23,7 @@ const initialState = {
   totalReceived: undefined,
   loading: false,
   userIsWhiteListed: false,
-  effectiveBalance: '0',
+  effectiveBalance: false,
 };
 
 const CSTK = new CSTKToken().contract; // CSTK tokencontract on XDAI
@@ -256,7 +256,7 @@ const reducer = (state = initialState, action) => {
       if (!action.address) return state;
       return {
         ...state,
-        BB_GET_BALANCES_FOR_ADDRESS: new PromiseBlackBox(() =>
+        BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS: new PromiseBlackBox(() =>
           api
             .getEffectiveBalance(action.address)
             .then(res => ({
@@ -264,7 +264,7 @@ const reducer = (state = initialState, action) => {
               res,
               address: action.address,
             }))
-            .catch(e => ({ type: 'GET_BALANCES_FOR_ADDRESS_FAIL', e })),
+            .catch(e => ({ type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_FAIL', e })),
         ),
       };
     case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_SUCCESS':
@@ -332,6 +332,7 @@ const reducer = (state = initialState, action) => {
         hasDonated: false,
       };
     default:
+      console.log(`unknown action ${action.type}`);
       return state;
   }
 };
