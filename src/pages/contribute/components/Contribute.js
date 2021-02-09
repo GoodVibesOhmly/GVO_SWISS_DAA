@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import './Contribute.sass';
 import { TwitterShareButton, TelegramShareButton, TwitterIcon, TelegramIcon } from 'react-share';
@@ -46,7 +46,7 @@ const Comp = ({
     }
   };
 
-  const updateBalances = () => {
+  const updateBalances = useCallback(() => {
     // getBalancesFor(address);
     getEffectiveBalancesFor(address);
     // if (balances && balances[address]) {
@@ -56,14 +56,15 @@ const Comp = ({
     //     setCstkbalance(cstk.balanceFormatted);
     //   }
     // }
-  };
+  }, [address, getEffectiveBalancesFor]);
 
   useEffect(() => {
+    updateBalances();
     const interval = setInterval(updateBalances, 25000);
     return () => {
       clearInterval(interval);
     };
-  });
+  }, [updateBalances]);
 
   // const [cstkBalance, setCstkbalance] = useState('');
 

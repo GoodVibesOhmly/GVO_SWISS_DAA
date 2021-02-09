@@ -45,7 +45,7 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
   return (
     <>
       <p className="title is-text-overflow mb-2">Your CSTK Score</p>
-      <div className="subtitle mb-05">Pending score: {cstkBalance} CSTK</div>
+      <div className="subtitle mb-05">Pending score: {cstkBalance || 0} CSTK</div>
       {/* <div className="subtitle mb-05">Effective score: {effectiveBalance.toString()} CSTK</div> */}
       {effectiveBalance && effectiveBalance.toString() === '0' && (
         <div className="subtitle mb-05">You haven't paid your membership dues yet</div>
