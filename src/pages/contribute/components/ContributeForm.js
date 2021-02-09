@@ -99,7 +99,7 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
       }
 
       if (amountDAIFloat < config.minimumContribution) {
-        setDAIError(`Minimum contribution is ${config.minimumContribution}`);
+        setDAIError(`Minimum is ${config.minimumContribution} Dai`);
       }
     } catch (e) {
       // console.error(e);
