@@ -210,7 +210,7 @@ const Comp = ({
 
               <br />
               <p>
-                You can pay membership dues with DAI only. You can acquire DAI e.g. on{' '}
+                Membership dues are paid with DAI. You can acquire DAI on{' '}
                 <a
                   className="exchange"
                   rel="noopener noreferrer"
