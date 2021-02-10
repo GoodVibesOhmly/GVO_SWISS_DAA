@@ -37,7 +37,7 @@ const configs = {
     ratio: 2.5, // how much CSTK you get for 1 DAI
     givethBridgeAddress: '0x30f938fED5dE6e06a9A7Cd2Ac3517131C317B1E7',
     targetProjectId: 2349, // verified 29/12/2020
-    onboardApiKey: '818d425c-a8f6-4c11-bbbe-52eb6058877e',
+    onboardApiKey: '25c39144-b224-4275-954c-e6e708b236e9',
     networkId: 1, // Mainnet
     // rpcUrl: 'https://rinkeby.infura.io/v3/d5e29c9b9a9d4116a7348113f57770a8',
     appUrl: 'http://localhost:3000',
