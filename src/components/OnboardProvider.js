@@ -66,7 +66,7 @@ const Comp = ({ onWeb3Ready, children }) => {
       params: {
         type: 'ERC20',
         options: {
-          address: '0x617b3f8050a0bd94b6b1da02b4384ee5b4df13f4',
+          address: '0xc4fbE68522ba81a28879763C3eE33e08b13c499E',
           symbol: 'CSTK',
           decimals: 0,
           image: Cstk,
