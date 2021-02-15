@@ -53,12 +53,18 @@ const Success = () => {
           Add CSTK to Metamask
         </div>
         <div className="button-container pt-6">
-          <TwitterShareButton url="https://commonsstack.org" title="I funded the Commons Stack!">
+          <TwitterShareButton
+            url="https://commonsstack.org/apply"
+            title="I've just become a member of Commons Stack's Swiss Association! 🎉🌍🌌🎩🥂 Join us:"
+          >
             <button className="button is-info">
               <TwitterIcon size={32} round className="mr-2" /> Share on Twitter
             </button>
           </TwitterShareButton>
-          <TelegramShareButton url="https://commonsstack.org" title="I funded the Commons Stack!">
+          <TelegramShareButton
+            url="https://commonsstack.org/apply"
+            title="I've just become a member of Commons Stack's Swiss Association! 🎉🌍🌌🎩🥂 Join us!"
+          >
             <button className="button is-info">
               <TelegramIcon size={32} round className="mr-2" /> Share on Telegram
             </button>
