@@ -12,7 +12,6 @@ import spinner from '../../../assets/spinner.svg';
 import Success from './Success';
 import DAI from '../../../assets/dai.svg';
 import CSTK from '../../../assets/cstk.svg';
-import approveSuccess from '../../../assets/approve-success.svg';
 
 const { DAITokenAddress, givethBridgeAddress } = config;
 
@@ -316,9 +315,14 @@ const DonateModal = props => {
         <div className="level-item">
           <div className="card">
             <div className="card-image">
-              <p className="image is-64x64">
-                <img src={approveSuccess} alt="Donation confirmed" />
-              </p>
+              <p className="image is-64x64">{/* <img src={DAI} alt="DAI logo" /> */}</p>
+            </div>
+            <div className="is-overlay">
+              <Player
+                autoplay
+                src="https://assets2.lottiefiles.com/packages/lf20_tAtUrg.json"
+                style={{ height: '64px', width: '64px' }}
+              />
             </div>
           </div>
         </div>
