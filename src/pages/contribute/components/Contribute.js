@@ -18,10 +18,10 @@ const Comp = ({
   agreedtandc,
   agreedstatutes,
   userIsWhiteListed,
-  // balances,
+  balances,
   hasDonated,
   effectiveBalance,
-  // getBalancesFor,
+  getBalancesFor,
   getEffectiveBalancesFor,
   onCloseContributeThanks,
 }) => {
@@ -47,7 +47,7 @@ const Comp = ({
   };
 
   const updateBalances = useCallback(() => {
-    // getBalancesFor(address);
+    getBalancesFor(address);
     getEffectiveBalancesFor(address);
     // if (balances && balances[address]) {
     //   const userBalance = balances[address];
@@ -56,7 +56,7 @@ const Comp = ({
     //     setCstkbalance(cstk.balanceFormatted);
     //   }
     // }
-  }, [address, getEffectiveBalancesFor]);
+  }, [address, getBalancesFor, getEffectiveBalancesFor]);
 
   useEffect(() => {
     updateBalances();
@@ -66,19 +66,19 @@ const Comp = ({
     };
   }, [updateBalances]);
 
-  // const [cstkBalance, setCstkbalance] = useState('');
+  const [cstkBalance, setCstkbalance] = React.useState('');
 
-  // useEffect(() => {
-  //   let balance = '0';
-  //   if (balances && balances[address]) {
-  //     const userBalance = balances[address];
-  //     const cstk = userBalance.find(b => b.symbol === 'CSTK');
-  //     if (cstk) {
-  //       balance = cstk.balanceFormatted;
-  //     }
-  //   }
-  //   setCstkbalance(balance);
-  // }, [balances, address]);
+  useEffect(() => {
+    let balance = '0';
+    if (balances && balances[address]) {
+      const userBalance = balances[address];
+      const cstk = userBalance.find(b => b.symbol === 'CSTK');
+      if (cstk) {
+        balance = cstk.balanceFormatted;
+      }
+    }
+    setCstkbalance(balance);
+  }, [balances, address]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
@@ -146,7 +146,7 @@ const Comp = ({
                       <div className="media-content">
                         <div className="content">
                           <p className="heading is-size-2 has-text-weight-bold">
-                            {effectiveBalance.toString()} CSTK
+                            {effectiveBalance >= 450 ? cstkBalance : '0'} CSTK
                           </p>
                         </div>
                       </div>
