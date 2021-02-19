@@ -47,21 +47,17 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
     <>
       <p className="title is-text-overflow mb-2">Your CSTK Score</p>
       <div className="title level mb-04">
-        <div className="is-size-7 has-text-grey-light level-left mb-04">
+        <div className="is-size-6 level-left mb-04">
           <span className="icon has-text-light mr-02">
             <img src={CSTK} alt="CSTK" />
             &nbsp;
           </span>
-          <span style={{ marginLeft: '4px' }}>CSTK</span>
-        </div>
-        <div className="subtitle level-right mb-04">
-          {cstkBalance || '~'}
-          CSTK
+          <span className="has-text-weight-bold" style={{ marginLeft: '4px' }}>
+            {cstkBalance || '~'}&nbsp; CSTK
+          </span>
         </div>
       </div>
-      <div className="subtitle mb-05" style={{ marginTop: '4px' }}>
-        Pending score: {cstkBalance || 0} CSTK
-      </div>
+      <div />
       {/* <div className="subtitle mb-05">Effective score: {effectiveBalance.toString()} CSTK</div> */}
       {effectiveBalance && effectiveBalance.toString() === '0' && (
         <div className="subtitle mb-05">You haven't paid your membership dues yet</div>
