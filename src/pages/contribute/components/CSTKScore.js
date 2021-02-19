@@ -4,7 +4,7 @@ import { OnboardContext } from '../../../components/OnboardProvider';
 import CSTK from '../../../assets/cstk.svg';
 
 const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
-  const { address, isReady } = useContext(OnboardContext);
+  const { addCSTK, address, isReady } = useContext(OnboardContext);
 
   React.useEffect(() => {
     if (isReady) {
@@ -59,9 +59,16 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
       </div>
       <div />
       {/* <div className="subtitle mb-05">Effective score: {effectiveBalance.toString()} CSTK</div> */}
-      {effectiveBalance && effectiveBalance.toString() === '0' && (
+      {effectiveBalance < 450 && (
         <div className="subtitle mb-05">You haven't paid your membership dues yet</div>
       )}
+      <div
+        className="subtitle mb-05 has-text-centered"
+        style={{ color: '#1BDD9D', cursor: 'pointer', fontSize: '16px' }}
+        onClick={addCSTK}
+      >
+        Add CSTK to Metamask
+      </div>
     </>
   );
 };

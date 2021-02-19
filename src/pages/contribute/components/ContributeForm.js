@@ -130,7 +130,7 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
                 <div className="field">
                   <div className="control has-icons-left">
                     <span className="select">
-                      <select>
+                      <select disabled>
                         <option>DAI</option>
                       </select>
                     </span>

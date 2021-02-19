@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import './Success.sass';
 import Confetti from 'react-confetti';
 import { Player } from '@lottiefiles/react-lottie-player';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { TwitterShareButton, TelegramShareButton, TwitterIcon, TelegramIcon } from 'react-share';
 // import checkmark from '../../../assets/success_checkmark.svg';
+import { OnboardContext } from '../../../components/OnboardProvider';
 import cstktoken from '../../../assets/cstk.svg';
 
 const Success = () => {
+  const { addCSTK } = useContext(OnboardContext);
+
   const { width, height } = useWindowSize();
 
   return (
@@ -42,13 +45,26 @@ const Success = () => {
           <strong className="is-size-5 ml-1">(todo: add $value) CSTK</strong>
         </div> */}
         <p className="has-text-centered pt-2">will be transferred to your Ethereum address soon.</p>
+        <div
+          className="subtitle pt-2 has-text-centered"
+          style={{ color: '#1BDD9D', cursor: 'pointer', fontSize: '16px' }}
+          onClick={addCSTK}
+        >
+          Add CSTK to Metamask
+        </div>
         <div className="button-container pt-6">
-          <TwitterShareButton url="https://commonsstack.org" title="I funded the Commons Stack!">
+          <TwitterShareButton
+            url="https://commonsstack.org/apply"
+            title="I've just become a member of Commons Stack's Swiss Association! 🎉🌍🌌🎩🥂 Join us:"
+          >
             <button className="button is-info">
               <TwitterIcon size={32} round className="mr-2" /> Share on Twitter
             </button>
           </TwitterShareButton>
-          <TelegramShareButton url="https://commonsstack.org" title="I funded the Commons Stack!">
+          <TelegramShareButton
+            url="https://commonsstack.org/apply"
+            title="I've just become a member of Commons Stack's Swiss Association! 🎉🌍🌌🎩🥂 Join us!"
+          >
             <button className="button is-info">
               <TelegramIcon size={32} round className="mr-2" /> Share on Telegram
             </button>
