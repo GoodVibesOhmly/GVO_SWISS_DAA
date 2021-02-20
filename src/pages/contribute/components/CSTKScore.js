@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { OnboardContext } from '../../../components/OnboardProvider';
+import CSTK from '../../../assets/cstk.svg';
 
 const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
   const { addCSTK, address, isReady } = useContext(OnboardContext);
@@ -45,9 +46,18 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
   return (
     <>
       <p className="title is-text-overflow mb-2">Your CSTK Score</p>
-      <div className="subtitle mb-05">
-        Pending score: {effectiveBalance >= 450 ? 0 : cstkBalance} CSTK
+      <div className="title level mb-04">
+        <div className="is-size-6 level-left mb-04">
+          <span className="icon has-text-light mr-02">
+            <img src={CSTK} alt="CSTK" />
+            &nbsp;
+          </span>
+          <span className="has-text-weight-bold" style={{ marginLeft: '4px' }}>
+            {cstkBalance || '~'}&nbsp; CSTK
+          </span>
+        </div>
       </div>
+      <div />
       {/* <div className="subtitle mb-05">Effective score: {effectiveBalance.toString()} CSTK</div> */}
       {effectiveBalance < 450 && (
         <div className="subtitle mb-05">You haven't paid your membership dues yet</div>

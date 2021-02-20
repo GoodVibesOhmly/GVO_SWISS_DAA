@@ -73,25 +73,24 @@ const Comp = ({
       return (
         isReady && (
           <div key={coin.symbol} className="title level mb-04">
-            <div className="is-size-7 has-text-grey-light level-left mb-04">
+            <div className="is-size-6 level-left mb-04">
               <span className="icon has-text-light mr-02">
                 <img src={logo.src} alt={coin.symbol} />
                 &nbsp;
               </span>
-              {coin.symbol}
-            </div>
-            <div className="subtitle level-right mb-04">
-              {coin.status || coin.balanceFormatted || '~'}
-              {coin.symbol}
+              <span className="has-text-weight-bold" style={{ marginLeft: '4px' }}>
+                {coin.status || coin.balanceFormatted || '~'}&nbsp;
+                {coin.symbol}
+              </span>
             </div>
           </div>
         )
       );
     });
 
-  // all other known balances - except DAI
+  // all other known balances - except DAI and CSTK
   const otherBalances = coins.reduce((accum, coin) => {
-    if (coin.symbol === 'DAI') return accum;
+    if (['DAI', 'CSTK'].includes(coin.symbol)) return accum;
     const logo = coinLogos.find(coinIcon => {
       return coinIcon.symbol === coin.symbol;
     });
