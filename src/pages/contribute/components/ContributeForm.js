@@ -99,9 +99,9 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
         setDAIError(null);
       }
 
-      if (effectiveBalance && amountDAIFloat < config.minimumContribution.member) {
+      if (effectiveBalance > 0 && amountDAIFloat < config.minimumContribution.member) {
         setDAIError(`Minimum is ${config.minimumContribution.member} DAI`);
-      } else if (!effectiveBalance && amountDAIFloat < config.minimumContribution.nonMember) {
+      } else if (effectiveBalance === 0 && amountDAIFloat < config.minimumContribution.nonMember) {
         setDAIError(`Minimum is ${config.minimumContribution.nonMember} DAI`);
       }
     } catch (e) {
