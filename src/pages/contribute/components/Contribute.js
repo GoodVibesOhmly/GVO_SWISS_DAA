@@ -146,7 +146,7 @@ const Comp = ({
                       <div className="media-content">
                         <div className="content">
                           <p className="heading is-size-2 has-text-weight-bold">
-                            {effectiveBalance >= 450 ? cstkBalance : '0'} CSTK
+                            {effectiveBalance > 0 ? cstkBalance : '0'} CSTK
                           </p>
                         </div>
                       </div>

@@ -59,7 +59,7 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
       </div>
       <div />
       {/* <div className="subtitle mb-05">Effective score: {effectiveBalance.toString()} CSTK</div> */}
-      {effectiveBalance < 450 && (
+      {effectiveBalance === 0 && (
         <div className="subtitle mb-05">You haven't paid your membership dues yet</div>
       )}
       <div

@@ -256,7 +256,7 @@ const reducer = (state = initialState, action) => {
       if (!action.address) {
         return {
           ...state,
-          effectiveBalance: new BigNumber(0),
+          effectiveBalance: 0,
         };
       }
       return {
@@ -285,7 +285,7 @@ const reducer = (state = initialState, action) => {
       delete state.BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS;
       return {
         ...state,
-        effectiveBalance: new BigNumber(0),
+        effectiveBalance: 0,
       };
 
     case 'GET_USER_IS_WHITELISTED':
