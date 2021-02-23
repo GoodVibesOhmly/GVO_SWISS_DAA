@@ -296,15 +296,12 @@ const DonateModal = props => {
       <p className="is-size-5 has-text-centered has-text-weight-bold">Transaction failed!</p>
       <br />
       <h2 className="has-text-centered mb-2">
-        Please try again, or{' '}
-        <a
-          href="mailto:info@commonsstack.foundation"
-          subject="I have a problem getting CSTK tokens"
-          className="support-link"
-        >
-          contact support
-        </a>{' '}
-        if you experience further difficulties.
+        Something went wrong! Check your transaction in your wallet. If you have any questions come
+        talk to us on our&nbsp;
+        <a href="https://t.me/CSTKSwissMembershipDApp" className="support-link">
+          Telegram group
+        </a>
+        .
       </h2>
     </>
   );
