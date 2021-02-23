@@ -12,7 +12,7 @@ import './DonateModal.sass';
 
 const config = require('../../../config');
 
-const Comp = ({ onClose, balances, getBalancesFor }) => {
+const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
   const { isReady, address } = useContext(OnboardContext);
   const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
@@ -90,6 +90,7 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
         const cstkBalance = cstk.balance.toNumber();
         if (maxToReceive <= cstkBalance + cstkToReceive) {
           cstkToReceive = Math.floor(maxToReceive - cstkBalance);
+          cstkToReceive = cstkToReceive > 0 ? cstkToReceive : 0;
           setShowMaxTrustScoreTooltip(true);
         } else {
           setShowMaxTrustScoreTooltip(false);
@@ -98,13 +99,15 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
         setDAIError(null);
       }
 
-      if (amountDAIFloat < config.minimumContribution) {
-        setDAIError(`Minimum is ${config.minimumContribution} Dai`);
+      if (effectiveBalance > 0 && amountDAIFloat < config.minimumContribution.member) {
+        setDAIError(`Minimum is ${config.minimumContribution.member} DAI`);
+      } else if (effectiveBalance === 0 && amountDAIFloat < config.minimumContribution.nonMember) {
+        setDAIError(`Minimum is ${config.minimumContribution.nonMember} DAI`);
       }
     } catch (e) {
       // console.error(e);
     }
-  }, [amountDAI, balances, address, getBalancesFor]);
+  }, [amountDAI, balances, address, getBalancesFor, effectiveBalance, getEffectiveBalancesFor]);
 
   React.useEffect(() => {
     setDonationButtonEnabled(amountCSTK !== 0);
@@ -125,7 +128,7 @@ const Comp = ({ onClose, balances, getBalancesFor }) => {
       <div className="enable has-text-left">
         <div className="contribmain">
           <div className="level">
-            <div className="level-left">
+            <div className="level-left" style={{ display: 'flex', alignItems: 'flex-start' }}>
               <div className="level-item">
                 <div className="field">
                   <div className="control has-icons-left">
@@ -241,12 +244,15 @@ const mapStateToProps = state => {
     hardCap: state.hardCap,
     balances: state.balances,
     totalReceived: state.totalReceived,
+    effectiveBalance: state.effectiveBalance,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     getBalancesFor: address => dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address }),
+    getEffectiveBalancesFor: address =>
+      dispatch({ type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS', address }),
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
   };
