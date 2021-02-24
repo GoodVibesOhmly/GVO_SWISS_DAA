@@ -1,11 +1,13 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
-import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
 import ETH from 'cryptocurrency-icons/svg/color/eth.svg';
+import DAI from '../../../assets/dai.svg';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import CSTK from '../../../assets/cstk.svg';
 import TandC from './TandC';
 import Statutes from './Statutes';
+import tandcData from '../../../assets/tandc.json';
+import statutesData from '../../../assets/statutes.json';
 
 const coinLogos = [
   { symbol: 'DAI', src: DAI },
@@ -71,32 +73,31 @@ const Comp = ({
       return (
         isReady && (
           <div key={coin.symbol} className="title level mb-04">
-            <div className="subtitle level-left mb-04">
+            <div className="is-size-6 level-left mb-04">
               <span className="icon has-text-light mr-02">
                 <img src={logo.src} alt={coin.symbol} />
                 &nbsp;
               </span>
-              {coin.symbol}
-            </div>
-            <div className="subtitle level-right mb-04">
-              {coin.status || coin.balanceFormatted || '~'}
-              {coin.symbol}
+              <span className="has-text-weight-bold" style={{ marginLeft: '4px' }}>
+                {coin.status || coin.balanceFormatted || '~'}&nbsp;
+                {coin.symbol}
+              </span>
             </div>
           </div>
         )
       );
     });
 
-  // all other known balances - except DAI
+  // all other known balances - except DAI and CSTK
   const otherBalances = coins.reduce((accum, coin) => {
-    if (coin.symbol === 'DAI') return accum;
+    if (['DAI', 'CSTK'].includes(coin.symbol)) return accum;
     const logo = coinLogos.find(coinIcon => {
       return coinIcon.symbol === coin.symbol;
     });
 
     accum.push(
       <div key={coin.symbol} className="title level mb-04">
-        <div className="subtitle level-left mb-04">
+        <div className="is-size-7 has-text-grey-light level-left mb-04">
           <span className="icon has-text-light mr-02">
             <img src={logo.src} alt={coin.symbol} />
             &nbsp;
@@ -142,11 +143,29 @@ const Comp = ({
         <div className="title-level">
           <div className="level-left">
             {agreedtandc ? successIcon : failIcon}
-            <span className="is-size-7">Sign Terms and Conditions</span>
+            <span className="is-size-7">
+              Sign{' '}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://ipfs.web3.party/ipfs/${tandcData.hash}`}
+              >
+                Terms and Conditions
+              </a>
+            </span>
           </div>
           <div className="level-left">
             {agreedstatutes ? successIcon : failIcon}
-            <span className="is-size-7">Sign Statutes</span>
+            <span className="is-size-7">
+              Sign{' '}
+              <a
+                target="_blank"
+                rel="noopener noreferrer"
+                href={`https://ipfs.web3.party/ipfs/${statutesData.hash}`}
+              >
+                Statutes
+              </a>
+            </span>
           </div>
 
           <div className="level-left">
@@ -158,13 +177,15 @@ const Comp = ({
       <br />
       <span className="title is-text-overflow mb-2">
         Total Available Balance{' '}
-        <a
-          href={`https://etherscan.io/address/${address}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <i className="fas fa-info-circle is-size-7" />
-        </a>
+        {address && isReady ? (
+          <a
+            href={`https://etherscan.io/address/${address}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <i className="fas fa-info-circle is-size-7" />
+          </a>
+        ) : null}
       </span>
 
       {address && isReady ? (

@@ -61,3 +61,88 @@
 
 .text-color-white
     color: $white !important
+
+
+
+
+.donate-modal-thanks
+  border-radius: 0.31rem
+
+  input
+    margin-right: 1em
+    color: blue
+
+  .modal-card
+    position: absolute
+    // width: 30rem
+    // height: 15rem
+
+    background-color: $element-background
+    border-radius: 0.31rem
+
+  .modal-card-head, .modal-card-body, .modal-card-foot
+    background-color: $element-background
+    border-bottom: none
+    border-top: none
+
+  .modal-card-head, .modal-card-foot
+    height: 5rem
+
+  .modal-card-foot
+    justify-content: center
+    padding-top: 5em
+    padding-bottom: 5em
+
+
+  .modal-card-body
+    width: calc(100% - 1.25rem)
+
+    p, .checkbox, .checkbox a
+      font-size: 1rem
+      line-height: 1.19rem
+      color: $white
+      mix-blend-mode: normal
+      // opacity: 0.6
+      text-align: justify
+
+  .modal-card-title
+    font-size: 1.25rem
+    color: $white
+    text-align: left
+
+  .is-divider
+    height: 1rem
+    background-color: $divider-color
+
+  .level-left
+    padding-left: 0.5rem
+    max-width: 25rem
+
+  .is-size-7
+    padding-left: 0.5rem
+    text-align: justify
+    color: $white
+    mix-blend-mode: normal
+    // opacity: 0.4
+
+.donate-modal-thanks-content
+    white-space: pre-line
+
+.buttonify
+     background-color: #400
+
+.warning 
+    -webkit-background-clip: text
+    -moz-background-clip: text
+    -webkit-text-fill-color: transparent
+    -moz-text-fill-color: transparent
+    background-image: linear-gradient(270deg, #1BDD9D 0%, #2CC9CC 100%)
+
+.exchange 
+    font-weight: bold
+    color: #1BDD9D !important
+    text-decoration: none !important
+
+.select::after
+  display: none !important
+
