@@ -296,15 +296,17 @@ const DonateModal = props => {
       <p className="is-size-5 has-text-centered has-text-weight-bold">Transaction failed!</p>
       <br />
       <h2 className="has-text-centered mb-2">
-        Please try again, or{' '}
+        Something went wrong! Check your transaction in your wallet. If you have any questions come
+        talk to us on our&nbsp;
         <a
-          href="mailto:info@commonsstack.foundation"
-          subject="I have a problem getting CSTK tokens"
+          target="_blank"
+          rel="noreferrer"
+          href="https://t.me/CSTKSwissMembershipDApp"
           className="support-link"
         >
-          contact support
-        </a>{' '}
-        if you experience further difficulties.
+          Telegram group
+        </a>
+        .
       </h2>
     </>
   );
@@ -361,6 +363,8 @@ const DonateModal = props => {
         Please be patient while the Ethereum miners add your transaction to the blockchain. If there
         is an issue please reach out to us on{' '}
         <a
+          target="_blank"
+          rel="noreferrer"
           href="https://t.me/CSTKSwissMembershipDApp"
           style={{ color: '#1BDD9D', textDecoration: 'none' }}
         >
@@ -396,6 +400,8 @@ const DonateModal = props => {
       <h2 className="has-text-centered mb-2">
         Please try again, or{' '}
         <a
+          target="_blank"
+          rel="noreferrer"
           href="mailto:info@commonsstack.foundation"
           subject="I have a problem getting CSTK tokens"
           className="support-link"
