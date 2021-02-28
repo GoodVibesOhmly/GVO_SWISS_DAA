@@ -464,7 +464,7 @@ const DonateModal = props => {
               disabled={!enableDonateButton}
               onClick={donate}
             >
-              Donate
+              Pay dues
             </button>
           )}
         </footer>
