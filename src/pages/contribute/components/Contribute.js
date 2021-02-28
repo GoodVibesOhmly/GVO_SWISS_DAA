@@ -288,7 +288,7 @@ const Comp = ({
                             className="button is-primary"
                             resetButtonStyle={false}
                             url="https://commonsstack.org"
-                            title="I funded the CS!"
+                            title="I've just become a member of Commons Stack's Swiss Association! 🎉🌍🌌🎩🥂 Join us:"
                           >
                             <span className="icon">
                               <TwitterIcon bgStyle={{ fill: 'none' }} size={32} round />
@@ -301,7 +301,7 @@ const Comp = ({
                             className="button is-primary"
                             resetButtonStyle={false}
                             url="https://commonsstack.org"
-                            title="I funded the CS!"
+                            title="I've just become a member of Commons Stack's Swiss Association! 🎉🌍🌌🎩🥂 Join us!"
                           >
                             <span className="icon">
                               <TelegramIcon bgStyle={{ fill: 'none' }} size={32} round />
