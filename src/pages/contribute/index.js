@@ -1,6 +1,6 @@
 import Welcome from './components/Welcome';
 
-const rootPath = '/contribute';
+const rootPath = '/pay-dues';
 
 export default {
   rootPath,
