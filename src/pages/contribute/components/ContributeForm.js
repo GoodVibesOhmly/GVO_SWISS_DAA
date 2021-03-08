@@ -22,6 +22,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
   const [donationButtonEnabled, setDonationButtonEnabled] = React.useState(false);
   const [showMaxTrustScoreTooltip, setShowMaxTrustScoreTooltip] = React.useState(false);
   const [showScholarshipTooltip, setShowScholarshipTooltip] = React.useState(false);
+  const [showApplyToScholarshipTooltip, setShowApplyToScholarshipTooltip] = React.useState(false);
   const [DAIError, setDAIError] = React.useState();
 
   const TooltipMaxTrustScoreContent = () => (
@@ -47,6 +48,28 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
     </>
   );
 
+  const TooltipScholarshipContent = () => (
+    <p>
+      In addition to your membership dues, this will fund {amountScholarship}{' '}
+      {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
+    </p>
+  );
+
+  const TooltipApplyToScholarship = () => (
+    <p>
+      Please obtain more Dai to pay memberships dues and join the Trusted Seed, if 450 Dai is a
+      financial burden, please consider&nbsp;
+      <a
+        href="mailto:info@commonsstack.foundation"
+        className="support-link"
+        style={{ color: '#1BDD9D', textDecoration: 'none' }}
+      >
+        applying for a scholarship
+      </a>
+      .
+    </p>
+  );
+
   React.useEffect(() => {
     const scholarship = Math.floor(amountDAI / 450 - 1);
     if (scholarship >= 1) {
@@ -56,13 +79,6 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
       setShowScholarshipTooltip(false);
     }
   }, [showScholarshipTooltip, amountScholarship, amountDAI]);
-
-  const TooltipScholarshipContent = () => (
-    <p>
-      In addition to your membership dues, this will fund {amountScholarship}{' '}
-      {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
-    </p>
-  );
 
   React.useEffect(() => {
     try {
@@ -77,6 +93,13 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
         setAmountDAI(amountDAIFloat);
         setAmountCSTK(0);
       } else if (balances && balances[address]) {
+        const dai = balances[address].find(b => b.symbol === 'DAI');
+        // const dai = { balance: '342' }
+        if (dai.balance >= 450 && dai.balance <= 900) setAmountDAI(dai.balance);
+        else if (dai.balance < 450) {
+          setAmountDAI(450);
+          setShowApplyToScholarshipTooltip(true);
+        }
         const cstk = balances[address].find(b => b.symbol === 'CSTK');
         const myBalance = new BigNumber(cstk.balance || '0');
         const maxTrust = new BigNumber(cstk.maxtrust);
@@ -110,6 +133,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
   }, [amountDAI, balances, address, getBalancesFor, effectiveBalance, getEffectiveBalancesFor]);
 
   React.useEffect(() => {
+    // TODO: change that
     setDonationButtonEnabled(amountCSTK !== 0);
   }, [amountCSTK]);
 
@@ -150,8 +174,14 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
                 <div className="field" style={{ maxWidth: `100px` }}>
                   <Tooltip
                     className="control"
-                    active={showScholarshipTooltip}
-                    content={<TooltipScholarshipContent />}
+                    active={showScholarshipTooltip || showApplyToScholarshipTooltip}
+                    content={
+                      showScholarshipTooltip ? (
+                        <TooltipScholarshipContent />
+                      ) : (
+                        <TooltipApplyToScholarship />
+                      )
+                    }
                   >
                     <input
                       className="input"
@@ -160,6 +190,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
                       onChange={e => {
                         setAmountDAI(e.target.value);
                       }}
+                      style={{ border: showApplyToScholarshipTooltip ? '1px solid red' : '' }}
                       value={amountDAI}
                     />
                   </Tooltip>
