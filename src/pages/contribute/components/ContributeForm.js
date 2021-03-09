@@ -81,7 +81,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
     } else {
       setShowScholarshipTooltip(false);
     }
-  }, [showScholarshipTooltip, amountScholarship, amountDAI]);
+  }, [showScholarshipTooltip, amountScholarship, amountDAI, hasPaidDues]);
 
   React.useEffect(() => {
     try {
@@ -139,11 +139,19 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
     } catch (e) {
       // console.error(e);
     }
-  }, [amountDAI, balances, address, getBalancesFor, effectiveBalance, getEffectiveBalancesFor]);
+  }, [
+    amountDAI,
+    balances,
+    address,
+    getBalancesFor,
+    effectiveBalance,
+    getEffectiveBalancesFor,
+    hasPaidDues,
+  ]);
 
   React.useEffect(() => {
     setDonationButtonEnabled((hasPaidDues && amountDAI >= 0) || amountCSTK > 0);
-  }, [amountCSTK]);
+  }, [amountCSTK, amountDAI, hasPaidDues]);
 
   return (
     <>
