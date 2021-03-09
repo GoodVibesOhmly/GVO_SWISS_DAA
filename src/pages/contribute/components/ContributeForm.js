@@ -2,8 +2,7 @@ import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import BigNumber from 'bignumber.js';
 import './Contribute.sass';
-// TODO: change this image for '../../../assets/dai.svg'
-import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
+import DAI from '../../../assets/dai.svg';
 import arrow from '../../../assets/arrow.svg';
 import CSTK from '../../../assets/cstk.svg';
 import DonateModal from './DonateModal';
@@ -95,7 +94,6 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
         setAmountCSTK(0);
       } else if (balances && balances[address]) {
         const dai = balances[address].find(b => b.symbol === 'DAI');
-        // const dai = { balance: '912' };
         if (dai.balance >= 450 && dai.balance <= 900) setAmountDAI(dai.balance);
         else if (dai.balance < 450) {
           setAmountDAI(450);
