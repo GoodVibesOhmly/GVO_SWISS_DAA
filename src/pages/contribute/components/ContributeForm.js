@@ -51,12 +51,10 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
   );
 
   const TooltipScholarshipContent = () => (
-    <>
-      <p>
-        {hasPaidDues ? 'This' : 'In addition to your membership dues, this'} will fund{' '}
-        {amountScholarship} {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
-      </p>
-    </>
+    <p>
+      {hasPaidDues ? 'This' : 'In addition to your membership dues, this'} will fund{' '}
+      {amountScholarship} {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
+    </p>
   );
 
   const TooltipApplyToScholarship = () => (
@@ -77,7 +75,6 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
   React.useEffect(() => {
     let scholarship;
     if (!hasPaidDues) scholarship = Math.floor(amountDAI / 450 - 1);
-    // TODO: verify
     else scholarship = Math.floor(amountDAI / 450);
     if (scholarship >= 1) {
       setAmountScholarship(scholarship);
@@ -89,10 +86,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
 
   React.useEffect(() => {
     try {
-      // debugger;
       const amountDAIFloat = parseFloat(amountDAI);
-      // getBalancesFor(address);
-      // console.log(balances);
       if (Number.isNaN(amountDAIFloat)) {
         if (amountDAI && amountDAI !== '') {
           setDAIError('please enter a number');
