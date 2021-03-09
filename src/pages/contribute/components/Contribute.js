@@ -34,6 +34,7 @@ const Comp = ({
 
   const { web3, onboard, isReady, address } = useContext(OnboardContext);
   const [viewState, setViewState] = React.useState(viewStates.INIT);
+  const [hasPaidDues, setHasPaidDues] = React.useState(false);
   const { width, height } = useWindowSize();
 
   const changeViewState = (from, to) => {
@@ -78,7 +79,9 @@ const Comp = ({
       }
     }
     setCstkbalance(balance);
-  }, [balances, address]);
+    // Work only for the first year (dues = 450 DAI = 1125 CSTK)
+    if (balance > 1125) setHasPaidDues(true);
+  }, [balances, address, hasPaidDues]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
@@ -170,7 +173,7 @@ const Comp = ({
                           }}
                           className="button is-success is-medium"
                         >
-                          Pay Membership Dues
+                          {hasPaidDues ? 'Contribute' : 'Pay Membership Dues'}
                         </button>
                       )}
                     </span>
@@ -392,6 +395,7 @@ const mapStateToProps = state => {
     totalReceived: state.totalReceived,
     balances: state.balances,
     hasDonated: state.hasDonated,
+    hasPaidDues: state.hasPaidDues,
     effectiveBalance: state.effectiveBalance,
   };
 };

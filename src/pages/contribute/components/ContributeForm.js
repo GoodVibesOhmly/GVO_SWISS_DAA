@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import BigNumber from 'bignumber.js';
 import './Contribute.sass';
+// TODO: change this image for '../../../assets/dai.svg'
 import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
 import arrow from '../../../assets/arrow.svg';
 import CSTK from '../../../assets/cstk.svg';
@@ -16,6 +17,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
   const { isReady, address } = useContext(OnboardContext);
   const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
+  const [hasPaidDues, setHasPaidDues] = React.useState(false);
   const [amountScholarship, setAmountScholarship] = React.useState(0);
   const [showDonateModal, setShowDonateModal] = React.useState(false);
   // const [showThankYouModal, setShowThankYouModal] = React.useState(false);
@@ -49,10 +51,12 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
   );
 
   const TooltipScholarshipContent = () => (
-    <p>
-      In addition to your membership dues, this will fund {amountScholarship}{' '}
-      {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
-    </p>
+    <>
+      <p>
+        {hasPaidDues ? 'This' : 'In addition to your membership dues, this'} will fund{' '}
+        {amountScholarship} {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
+      </p>
+    </>
   );
 
   const TooltipApplyToScholarship = () => (
@@ -71,7 +75,10 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
   );
 
   React.useEffect(() => {
-    const scholarship = Math.floor(amountDAI / 450 - 1);
+    let scholarship;
+    if (!hasPaidDues) scholarship = Math.floor(amountDAI / 450 - 1);
+    // TODO: verify
+    else scholarship = Math.floor(amountDAI / 450);
     if (scholarship >= 1) {
       setAmountScholarship(scholarship);
       setShowScholarshipTooltip(true);
@@ -94,7 +101,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
         setAmountCSTK(0);
       } else if (balances && balances[address]) {
         const dai = balances[address].find(b => b.symbol === 'DAI');
-        // const dai = { balance: '342' }
+        // const dai = { balance: '912' };
         if (dai.balance >= 450 && dai.balance <= 900) setAmountDAI(dai.balance);
         else if (dai.balance < 450) {
           setAmountDAI(450);
@@ -102,6 +109,8 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
         }
         const cstk = balances[address].find(b => b.symbol === 'CSTK');
         const myBalance = new BigNumber(cstk.balance || '0');
+        // Work only for the first year (dues = 450 DAI = 1125 CSTK)
+        if (myBalance > 1125) setHasPaidDues(true);
         const maxTrust = new BigNumber(cstk.maxtrust);
         const totalSupply = new BigNumber(cstk.totalsupply);
         const maxToReceive = maxTrust
@@ -122,9 +131,17 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
         setDAIError(null);
       }
 
-      if (effectiveBalance > 0 && amountDAIFloat < config.minimumContribution.member) {
+      if (
+        !hasPaidDues &&
+        effectiveBalance > 0 &&
+        amountDAIFloat < config.minimumContribution.member
+      ) {
         setDAIError(`Minimum is ${config.minimumContribution.member} DAI`);
-      } else if (effectiveBalance === 0 && amountDAIFloat < config.minimumContribution.nonMember) {
+      } else if (
+        !hasPaidDues &&
+        effectiveBalance === 0 &&
+        amountDAIFloat < config.minimumContribution.nonMember
+      ) {
         setDAIError(`Minimum is ${config.minimumContribution.nonMember} DAI`);
       }
     } catch (e) {
@@ -133,8 +150,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
   }, [amountDAI, balances, address, getBalancesFor, effectiveBalance, getEffectiveBalancesFor]);
 
   React.useEffect(() => {
-    // TODO: change that
-    setDonationButtonEnabled(amountCSTK !== 0);
+    setDonationButtonEnabled((hasPaidDues && amountDAI >= 0) || amountCSTK > 0);
   }, [amountCSTK]);
 
   return (
@@ -255,7 +271,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
             disabled={!donationButtonEnabled}
             onClick={() => setShowDonateModal(true)}
           >
-            Pay Membership Dues
+            {hasPaidDues ? 'Contribute' : 'Pay Membership Dues'}
           </button>
         </div>
         {/* </article> */}
@@ -275,6 +291,7 @@ const mapStateToProps = state => {
     hardCap: state.hardCap,
     balances: state.balances,
     totalReceived: state.totalReceived,
+    hasPaidDues: state.hasPaidDues,
     effectiveBalance: state.effectiveBalance,
   };
 };
