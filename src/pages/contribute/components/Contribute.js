@@ -214,7 +214,7 @@ const Comp = ({
 
               <br />
               <p>
-                Membership dues are paid with DAI. You can acquire DAI on{' '}
+                {!hasPaidDues ? 'Membership dues are paid with DAI.' : ''} You can acquire DAI on{' '}
                 <a
                   className="exchange"
                   rel="noopener noreferrer"
@@ -395,7 +395,6 @@ const mapStateToProps = state => {
     totalReceived: state.totalReceived,
     balances: state.balances,
     hasDonated: state.hasDonated,
-    hasPaidDues: state.hasPaidDues,
     effectiveBalance: state.effectiveBalance,
   };
 };
