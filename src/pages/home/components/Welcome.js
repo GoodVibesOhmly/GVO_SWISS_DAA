@@ -7,7 +7,7 @@ const Comp = ({ agreed, onSetAgreed }) => {
   //     const TomatoButton = styled(Button)`
   // background: tomato;
   // `
-  return <Redirect to="pay-dues" />;
+  return <Redirect to="contribute" />;
 
   // return (
   //   <>
