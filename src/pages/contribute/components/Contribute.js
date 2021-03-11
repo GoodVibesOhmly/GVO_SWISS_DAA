@@ -34,7 +34,6 @@ const Comp = ({
 
   const { web3, onboard, isReady, address } = useContext(OnboardContext);
   const [viewState, setViewState] = React.useState(viewStates.INIT);
-  const [hasPaidDues, setHasPaidDues] = React.useState(false);
   const { width, height } = useWindowSize();
 
   const changeViewState = (from, to) => {
@@ -79,9 +78,7 @@ const Comp = ({
       }
     }
     setCstkbalance(balance);
-    // Work only for the first year (dues = 450 DAI = 1125 CSTK)
-    if (balance > 1125) setHasPaidDues(true);
-  }, [balances, address, hasPaidDues]);
+  }, [balances, address]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
@@ -173,7 +170,7 @@ const Comp = ({
                           }}
                           className="button is-success is-medium"
                         >
-                          {hasPaidDues ? 'Contribute' : 'Pay Membership Dues'}
+                          Pay Membership Dues
                         </button>
                       )}
                     </span>
@@ -214,7 +211,7 @@ const Comp = ({
 
               <br />
               <p>
-                {!hasPaidDues ? 'Membership dues are paid with DAI.' : ''} You can acquire DAI on{' '}
+                Membership dues are paid with DAI. You can acquire DAI on{' '}
                 <a
                   className="exchange"
                   rel="noopener noreferrer"
