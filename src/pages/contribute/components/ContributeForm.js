@@ -271,7 +271,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
             disabled={!donationButtonEnabled}
             onClick={() => setShowDonateModal(true)}
           >
-            {hasPaidDues ? 'Contribute' : 'Pay Membership Dues'}
+            Pay Membership Dues
           </button>
         </div>
         {/* </article> */}

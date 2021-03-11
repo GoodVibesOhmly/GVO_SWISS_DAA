@@ -173,7 +173,7 @@ const Comp = ({
                           }}
                           className="button is-success is-medium"
                         >
-                          {hasPaidDues ? 'Contribute' : 'Pay Membership Dues'}
+                          Pay Membership Dues
                         </button>
                       )}
                     </span>
