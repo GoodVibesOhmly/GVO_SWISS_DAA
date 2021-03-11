@@ -80,8 +80,8 @@ const Comp = ({
     }
     setCstkbalance(balance);
     // Work only for the first year (dues = 450 DAI = 1125 CSTK)
-    if (balance > 1125) setHasPaidDues(true);
-  }, [balances, address, hasPaidDues]);
+    if (effectiveBalance >= 450) setHasPaidDues(true);
+  }, [balances, effectiveBalance, address, hasPaidDues]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {

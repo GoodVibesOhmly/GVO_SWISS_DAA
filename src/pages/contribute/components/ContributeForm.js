@@ -102,7 +102,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
         const cstk = balances[address].find(b => b.symbol === 'CSTK');
         const myBalance = new BigNumber(cstk.balance || '0');
         // Work only for the first year (dues = 450 DAI = 1125 CSTK)
-        if (myBalance > 1125) setHasPaidDues(true);
+        if (effectiveBalance >= 450) setHasPaidDues(true);
         const maxTrust = new BigNumber(cstk.maxtrust);
         const totalSupply = new BigNumber(cstk.totalsupply);
         const maxToReceive = maxTrust
