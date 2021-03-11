@@ -46,6 +46,9 @@
     justify-content: space-around
     align-items: center
 
+    .is-shrinkable
+      flex-shrink: 1
+
     .item-container
         display: flex
         flex-direction: column
@@ -57,6 +60,9 @@
         p
             text-align: center
             padding: 1rem 0
+
+        .item-image
+            width: 25%
 
 
 .text-color-white
@@ -131,14 +137,14 @@
 .buttonify
      background-color: #400
 
-.warning 
+.warning
     -webkit-background-clip: text
     -moz-background-clip: text
     -webkit-text-fill-color: transparent
     -moz-text-fill-color: transparent
     background-image: linear-gradient(270deg, #1BDD9D 0%, #2CC9CC 100%)
 
-.exchange 
+.exchange
     font-weight: bold
     color: #1BDD9D !important
     text-decoration: none !important

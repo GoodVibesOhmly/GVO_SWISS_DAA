@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import CSTK from '../../../assets/cstk.svg';
+import './CSTKScore.sass';
 
 const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
   const { addCSTK, address, isReady } = useContext(OnboardContext);
