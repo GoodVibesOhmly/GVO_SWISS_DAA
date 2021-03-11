@@ -12,7 +12,7 @@ import './DonateModal.sass';
 
 const config = require('../../../config');
 
-const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
+const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
   const { isReady, address } = useContext(OnboardContext);
   const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
@@ -107,7 +107,21 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
     } catch (e) {
       // console.error(e);
     }
-  }, [amountDAI, balances, address, getBalancesFor, effectiveBalance, getEffectiveBalancesFor]);
+  }, [amountDAI, balances, address, getBalancesFor, effectiveBalance]);
+
+  React.useEffect(() => {
+    try {
+      if (balances && balances[address]) {
+        const dai = balances[address].find(b => b.symbol === 'DAI');
+        if (dai.balance >= 450 && dai.balance <= 900) setAmountDAI(dai.balance);
+        else if (dai.balance < 450) {
+          setAmountDAI(450);
+        }
+      }
+    } catch (e) {
+      // console.error(e);
+    }
+  }, [balances, address]);
 
   React.useEffect(() => {
     setDonationButtonEnabled(amountCSTK !== 0);
