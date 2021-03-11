@@ -116,7 +116,6 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
         if (dai.balance >= 450 && dai.balance <= 900) setAmountDAI(dai.balance);
         else if (dai.balance < 450) {
           setAmountDAI(450);
-          setShowApplyToScholarshipTooltip(true);
         }
       }
     } catch (e) {
