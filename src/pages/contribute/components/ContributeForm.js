@@ -61,7 +61,9 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
       Please obtain more Dai to pay memberships dues and join the Trusted Seed, if 450 Dai is a
       financial burden, please consider&nbsp;
       <a
-        href="mailto:info@commonsstack.foundation"
+        href="https://medium.com/commonsstack/trusted-seed-swiss-membership-scholarship-application-f2d07bc2fc90"
+        target="_blank"
+        rel="noreferrer"
         className="support-link"
         style={{ color: '#1BDD9D', textDecoration: 'none' }}
       >
