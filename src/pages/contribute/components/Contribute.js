@@ -331,10 +331,14 @@ const Comp = ({
             </div>
             <div className="level">
               <div className="items-container">
-                <div className="level-item">
+                <div className="level-item is-shrinkable">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={GovernanceRights} alt="Participation in Community Governance" />
+                      <img
+                        className="item-image"
+                        src={GovernanceRights}
+                        alt="Participation in Community Governance"
+                      />
 
                       <p className="subtitle">
                         <span>Participation in Community Governance</span>
@@ -345,10 +349,14 @@ const Comp = ({
                     </div>
                   </div>
                 </div>
-                <div className="level-item">
+                <div className="level-item is-shrinkable">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={Access} alt="Potential Access to Many Future Hatches" />
+                      <img
+                        className="item-image"
+                        src={Access}
+                        alt="Potential Access to Many Future Hatches"
+                      />
                       <p className="subtitle">
                         <span>Potential Access to Many Future Hatches</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">
@@ -358,10 +366,14 @@ const Comp = ({
                     </div>
                   </div>
                 </div>
-                <div className="level-item">
+                <div className="level-item is-shrinkable">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={Membership} alt="Membership in Commons Stack Swiss Association" />
+                      <img
+                        className="item-image"
+                        src={Membership}
+                        alt="Membership in Commons Stack Swiss Association"
+                      />
                       <p className="subtitle">
                         <span>Membership in Commons Stack Swiss Association</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">
