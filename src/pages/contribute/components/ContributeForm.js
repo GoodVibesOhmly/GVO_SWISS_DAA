@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import BigNumber from 'bignumber.js';
 import './Contribute.sass';
-import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
+import DAI from '../../../assets/dai.svg';
 import arrow from '../../../assets/arrow.svg';
 import CSTK from '../../../assets/cstk.svg';
 import DonateModal from './DonateModal';
