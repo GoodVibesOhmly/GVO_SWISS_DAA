@@ -168,7 +168,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
                     content={<TooltipScholarshipContent />}
                   >
                     <input
-                      className="input"
+                      className="input amount"
                       type="number"
                       placeholder=""
                       onChange={e => {
@@ -201,7 +201,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
                       content={<TooltipMaxTrustScoreContent />}
                     >
                       <input
-                        className="input"
+                        className="input amount"
                         disabled
                         type="text"
                         style={{ border: showMaxTrustScoreTooltip ? '1px solid red' : '' }}
