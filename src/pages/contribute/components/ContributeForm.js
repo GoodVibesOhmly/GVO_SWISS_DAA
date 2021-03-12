@@ -16,6 +16,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
   const { isReady, address } = useContext(OnboardContext);
   const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
+  const [hasPaidDues, setHasPaidDues] = React.useState(false);
   const [amountScholarship, setAmountScholarship] = React.useState(0);
   const [showDonateModal, setShowDonateModal] = React.useState(false);
   // const [showThankYouModal, setShowThankYouModal] = React.useState(false);
@@ -50,8 +51,8 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
 
   const TooltipScholarshipContent = () => (
     <p>
-      In addition to your membership dues, this will fund {amountScholarship}{' '}
-      {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
+      {hasPaidDues ? 'This' : 'In addition to your membership dues, this'} will fund{' '}
+      {amountScholarship} {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
     </p>
   );
 
@@ -71,7 +72,9 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
   );
 
   React.useEffect(() => {
-    const scholarship = Math.floor(amountDAI / 450 - 1);
+    let scholarship;
+    if (!hasPaidDues) scholarship = Math.floor(amountDAI / 450 - 1);
+    else scholarship = Math.floor(amountDAI / 450);
     if (scholarship >= 1) {
       setAmountScholarship(scholarship);
       setShowScholarshipTooltip(true);
@@ -111,11 +114,12 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
         } else {
           setShowMaxTrustScoreTooltip(false);
         }
+        if (effectiveBalance >= 450) setHasPaidDues(true);
         setAmountCSTK(cstkToReceive);
         setDAIError(null);
       }
 
-      if (effectiveBalance > 0 && amountDAIFloat < config.minimumContribution.member) {
+      if (!hasPaidDues && amountDAIFloat < config.minimumContribution.member) {
         setDAIError(`Minimum is ${config.minimumContribution.member} DAI`);
       } else if (effectiveBalance === 0 && amountDAIFloat < config.minimumContribution.nonMember) {
         setDAIError(`Minimum is ${config.minimumContribution.nonMember} DAI`);
@@ -123,7 +127,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
     } catch (e) {
       // console.error(e);
     }
-  }, [amountDAI, balances, address, getBalancesFor, effectiveBalance]);
+  }, [amountDAI, balances, address, getBalancesFor, effectiveBalance, hasPaidDues]);
 
   React.useEffect(() => {
     try {
@@ -141,8 +145,8 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
   }, [balances, address]);
 
   React.useEffect(() => {
-    setDonationButtonEnabled(amountCSTK !== 0);
-  }, [amountCSTK]);
+    setDonationButtonEnabled((hasPaidDues && amountDAI >= 0) || amountCSTK !== 0);
+  }, [amountCSTK, amountDAI, hasPaidDues]);
 
   return (
     <>
