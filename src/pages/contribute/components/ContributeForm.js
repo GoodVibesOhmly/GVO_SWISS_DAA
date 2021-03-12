@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import BigNumber from 'bignumber.js';
 import './Contribute.sass';
-import DAI from '../../../assets/dai.svg';
+import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
 import arrow from '../../../assets/arrow.svg';
 import CSTK from '../../../assets/cstk.svg';
 import DonateModal from './DonateModal';
@@ -12,11 +12,10 @@ import './DonateModal.sass';
 
 const config = require('../../../config');
 
-const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
+const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
   const { isReady, address } = useContext(OnboardContext);
   const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
-  const [hasPaidDues, setHasPaidDues] = React.useState(false);
   const [amountScholarship, setAmountScholarship] = React.useState(0);
   const [showDonateModal, setShowDonateModal] = React.useState(false);
   // const [showThankYouModal, setShowThankYouModal] = React.useState(false);
@@ -51,8 +50,8 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
 
   const TooltipScholarshipContent = () => (
     <p>
-      {hasPaidDues ? 'This' : 'In addition to your membership dues, this'} will fund{' '}
-      {amountScholarship} {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
+      In addition to your membership dues, this will fund {amountScholarship}{' '}
+      {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
     </p>
   );
 
@@ -72,20 +71,21 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
   );
 
   React.useEffect(() => {
-    let scholarship;
-    if (!hasPaidDues) scholarship = Math.floor(amountDAI / 450 - 1);
-    else scholarship = Math.floor(amountDAI / 450);
+    const scholarship = Math.floor(amountDAI / 450 - 1);
     if (scholarship >= 1) {
       setAmountScholarship(scholarship);
       setShowScholarshipTooltip(true);
     } else {
       setShowScholarshipTooltip(false);
     }
-  }, [showScholarshipTooltip, amountScholarship, amountDAI, hasPaidDues]);
+  }, [showScholarshipTooltip, amountScholarship, amountDAI]);
 
   React.useEffect(() => {
     try {
+      // debugger;
       const amountDAIFloat = parseFloat(amountDAI);
+      // getBalancesFor(address);
+      // console.log(balances);
       if (Number.isNaN(amountDAIFloat)) {
         if (amountDAI && amountDAI !== '') {
           setDAIError('please enter a number');
@@ -93,16 +93,8 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
         setAmountDAI(amountDAIFloat);
         setAmountCSTK(0);
       } else if (balances && balances[address]) {
-        const dai = balances[address].find(b => b.symbol === 'DAI');
-        if (dai.balance >= 450 && dai.balance <= 900) setAmountDAI(dai.balance);
-        else if (dai.balance < 450) {
-          setAmountDAI(450);
-          setShowApplyToScholarshipTooltip(true);
-        }
         const cstk = balances[address].find(b => b.symbol === 'CSTK');
         const myBalance = new BigNumber(cstk.balance || '0');
-        // Work only for the first year (dues = 450 DAI = 1125 CSTK)
-        if (effectiveBalance >= 450) setHasPaidDues(true);
         const maxTrust = new BigNumber(cstk.maxtrust);
         const totalSupply = new BigNumber(cstk.totalsupply);
         const maxToReceive = maxTrust
@@ -123,35 +115,34 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
         setDAIError(null);
       }
 
-      if (
-        !hasPaidDues &&
-        effectiveBalance > 0 &&
-        amountDAIFloat < config.minimumContribution.member
-      ) {
+      if (effectiveBalance > 0 && amountDAIFloat < config.minimumContribution.member) {
         setDAIError(`Minimum is ${config.minimumContribution.member} DAI`);
-      } else if (
-        !hasPaidDues &&
-        effectiveBalance === 0 &&
-        amountDAIFloat < config.minimumContribution.nonMember
-      ) {
+      } else if (effectiveBalance === 0 && amountDAIFloat < config.minimumContribution.nonMember) {
         setDAIError(`Minimum is ${config.minimumContribution.nonMember} DAI`);
       }
     } catch (e) {
       // console.error(e);
     }
-  }, [
-    amountDAI,
-    balances,
-    address,
-    getBalancesFor,
-    effectiveBalance,
-    getEffectiveBalancesFor,
-    hasPaidDues,
-  ]);
+  }, [amountDAI, balances, address, getBalancesFor, effectiveBalance]);
 
   React.useEffect(() => {
-    setDonationButtonEnabled((hasPaidDues && amountDAI >= 0) || amountCSTK > 0);
-  }, [amountCSTK, amountDAI, hasPaidDues]);
+    try {
+      if (balances && balances[address]) {
+        const dai = balances[address].find(b => b.symbol === 'DAI');
+        if (dai.balance >= 450 && dai.balance <= 900) setAmountDAI(dai.balance);
+        else if (dai.balance < 450) {
+          setAmountDAI(450);
+          setShowApplyToScholarshipTooltip(true);
+        }
+      }
+    } catch (e) {
+      // console.error(e);
+    }
+  }, [balances, address]);
+
+  React.useEffect(() => {
+    setDonationButtonEnabled(amountCSTK !== 0);
+  }, [amountCSTK]);
 
   return (
     <>
@@ -200,7 +191,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
                     }
                   >
                     <input
-                      className="input"
+                      className="input amount"
                       type="number"
                       placeholder=""
                       onChange={e => {
@@ -234,7 +225,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor, getEffectiv
                       content={<TooltipMaxTrustScoreContent />}
                     >
                       <input
-                        className="input"
+                        className="input amount"
                         disabled
                         type="text"
                         style={{ border: showMaxTrustScoreTooltip ? '1px solid red' : '' }}
@@ -291,7 +282,6 @@ const mapStateToProps = state => {
     hardCap: state.hardCap,
     balances: state.balances,
     totalReceived: state.totalReceived,
-    hasPaidDues: state.hasPaidDues,
     effectiveBalance: state.effectiveBalance,
   };
 };
