@@ -83,7 +83,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
     } else {
       setShowScholarshipTooltip(false);
     }
-  }, [showScholarshipTooltip, amountScholarship, amountDAI]);
+  }, [showScholarshipTooltip, amountScholarship, amountDAI, hasPaidDues]);
 
   React.useEffect(() => {
     try {
