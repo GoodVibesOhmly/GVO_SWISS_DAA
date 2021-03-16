@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import BigNumber from 'bignumber.js';
 import './Contribute.sass';
-import DAI from 'cryptocurrency-icons/svg/color/dai.svg';
+import DAI from '../../../assets/dai.svg';
 import arrow from '../../../assets/arrow.svg';
 import CSTK from '../../../assets/cstk.svg';
 import DonateModal from './DonateModal';
@@ -16,12 +16,14 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
   const { isReady, address } = useContext(OnboardContext);
   const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
+  const [hasPaidDues, setHasPaidDues] = React.useState(false);
   const [amountScholarship, setAmountScholarship] = React.useState(0);
   const [showDonateModal, setShowDonateModal] = React.useState(false);
   // const [showThankYouModal, setShowThankYouModal] = React.useState(false);
   const [donationButtonEnabled, setDonationButtonEnabled] = React.useState(false);
   const [showMaxTrustScoreTooltip, setShowMaxTrustScoreTooltip] = React.useState(false);
   const [showScholarshipTooltip, setShowScholarshipTooltip] = React.useState(false);
+  const [showApplyToScholarshipTooltip, setShowApplyToScholarshipTooltip] = React.useState(false);
   const [DAIError, setDAIError] = React.useState();
 
   const TooltipMaxTrustScoreContent = () => (
@@ -47,22 +49,41 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
     </>
   );
 
+  const TooltipScholarshipContent = () => (
+    <p>
+      {hasPaidDues ? 'This' : 'In addition to your membership dues, this'} will fund{' '}
+      {amountScholarship} {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
+    </p>
+  );
+
+  const TooltipApplyToScholarship = () => (
+    <p>
+      Please obtain more Dai to pay memberships dues and join the Trusted Seed, if 450 Dai is a
+      financial burden, please consider&nbsp;
+      <a
+        href="https://medium.com/commonsstack/trusted-seed-swiss-membership-scholarship-application-f2d07bc2fc90"
+        target="_blank"
+        rel="noreferrer"
+        className="support-link"
+        style={{ color: '#1BDD9D', textDecoration: 'none' }}
+      >
+        applying for a scholarship
+      </a>
+      .
+    </p>
+  );
+
   React.useEffect(() => {
-    const scholarship = Math.floor(amountDAI / 450 - 1);
+    let scholarship;
+    if (!hasPaidDues) scholarship = Math.floor(amountDAI / 450 - 1);
+    else scholarship = Math.floor(amountDAI / 450);
     if (scholarship >= 1) {
       setAmountScholarship(scholarship);
       setShowScholarshipTooltip(true);
     } else {
       setShowScholarshipTooltip(false);
     }
-  }, [showScholarshipTooltip, amountScholarship, amountDAI]);
-
-  const TooltipScholarshipContent = () => (
-    <p>
-      In addition to your membership dues, this will fund {amountScholarship}{' '}
-      {amountScholarship === 1 ? 'scholarship' : 'scholarships'}!
-    </p>
-  );
+  }, [showScholarshipTooltip, amountScholarship, amountDAI, hasPaidDues]);
 
   React.useEffect(() => {
     try {
@@ -95,11 +116,12 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
         } else {
           setShowMaxTrustScoreTooltip(false);
         }
+        if (effectiveBalance >= 450) setHasPaidDues(true);
         setAmountCSTK(cstkToReceive);
         setDAIError(null);
       }
 
-      if (effectiveBalance > 0 && amountDAIFloat < config.minimumContribution.member) {
+      if (!hasPaidDues && amountDAIFloat < config.minimumContribution.member) {
         setDAIError(`Minimum is ${config.minimumContribution.member} DAI`);
       } else if (effectiveBalance === 0 && amountDAIFloat < config.minimumContribution.nonMember) {
         setDAIError(`Minimum is ${config.minimumContribution.nonMember} DAI`);
@@ -107,7 +129,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
     } catch (e) {
       // console.error(e);
     }
-  }, [amountDAI, balances, address, getBalancesFor, effectiveBalance]);
+  }, [amountDAI, balances, address, getBalancesFor, effectiveBalance, hasPaidDues]);
 
   React.useEffect(() => {
     try {
@@ -116,6 +138,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
         if (dai.balance >= 450 && dai.balance <= 900) setAmountDAI(dai.balance);
         else if (dai.balance < 450) {
           setAmountDAI(450);
+          setShowApplyToScholarshipTooltip(true);
         }
       }
     } catch (e) {
@@ -124,8 +147,8 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
   }, [balances, address]);
 
   React.useEffect(() => {
-    setDonationButtonEnabled(amountCSTK !== 0);
-  }, [amountCSTK]);
+    setDonationButtonEnabled((hasPaidDues && amountDAI >= 0) || amountCSTK !== 0);
+  }, [amountCSTK, amountDAI, hasPaidDues]);
 
   return (
     <>
@@ -164,8 +187,14 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
                 <div className="field" style={{ maxWidth: `100px` }}>
                   <Tooltip
                     className="control"
-                    active={showScholarshipTooltip}
-                    content={<TooltipScholarshipContent />}
+                    active={showScholarshipTooltip || showApplyToScholarshipTooltip}
+                    content={
+                      showScholarshipTooltip ? (
+                        <TooltipScholarshipContent />
+                      ) : (
+                        <TooltipApplyToScholarship />
+                      )
+                    }
                   >
                     <input
                       className="input amount"
@@ -174,6 +203,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
                       onChange={e => {
                         setAmountDAI(e.target.value);
                       }}
+                      style={{ border: showApplyToScholarshipTooltip ? '1px solid red' : '' }}
                       value={amountDAI}
                     />
                   </Tooltip>

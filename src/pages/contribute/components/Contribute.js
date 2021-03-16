@@ -78,7 +78,7 @@ const Comp = ({
       }
     }
     setCstkbalance(balance);
-  }, [balances, address]);
+  }, [balances, effectiveBalance, address]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
