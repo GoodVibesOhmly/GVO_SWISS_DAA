@@ -34,7 +34,6 @@ const Comp = ({
 
   const { web3, onboard, isReady, address } = useContext(OnboardContext);
   const [viewState, setViewState] = React.useState(viewStates.INIT);
-  const [hasPaidDues, setHasPaidDues] = React.useState(false);
   const { width, height } = useWindowSize();
 
   const changeViewState = (from, to) => {
@@ -79,9 +78,7 @@ const Comp = ({
       }
     }
     setCstkbalance(balance);
-    // Work only for the first year (dues = 450 DAI = 1125 CSTK)
-    if (balance > 1125) setHasPaidDues(true);
-  }, [balances, address, hasPaidDues]);
+  }, [balances, address]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
@@ -173,7 +170,7 @@ const Comp = ({
                           }}
                           className="button is-success is-medium"
                         >
-                          {hasPaidDues ? 'Contribute' : 'Pay Membership Dues'}
+                          Pay Membership Dues
                         </button>
                       )}
                     </span>
@@ -214,7 +211,7 @@ const Comp = ({
 
               <br />
               <p>
-                {!hasPaidDues ? 'Membership dues are paid with DAI.' : ''} You can acquire DAI on{' '}
+                Membership dues are paid with DAI. You can acquire DAI on{' '}
                 <a
                   className="exchange"
                   rel="noopener noreferrer"
@@ -334,10 +331,14 @@ const Comp = ({
             </div>
             <div className="level">
               <div className="items-container">
-                <div className="level-item">
+                <div className="level-item is-shrinkable">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={GovernanceRights} alt="Participation in Community Governance" />
+                      <img
+                        className="item-image"
+                        src={GovernanceRights}
+                        alt="Participation in Community Governance"
+                      />
 
                       <p className="subtitle">
                         <span>Participation in Community Governance</span>
@@ -348,10 +349,14 @@ const Comp = ({
                     </div>
                   </div>
                 </div>
-                <div className="level-item">
+                <div className="level-item is-shrinkable">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={Access} alt="Potential Access to Many Future Hatches" />
+                      <img
+                        className="item-image"
+                        src={Access}
+                        alt="Potential Access to Many Future Hatches"
+                      />
                       <p className="subtitle">
                         <span>Potential Access to Many Future Hatches</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">
@@ -361,10 +366,14 @@ const Comp = ({
                     </div>
                   </div>
                 </div>
-                <div className="level-item">
+                <div className="level-item is-shrinkable">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={Membership} alt="Membership in Commons Stack Swiss Association" />
+                      <img
+                        className="item-image"
+                        src={Membership}
+                        alt="Membership in Commons Stack Swiss Association"
+                      />
                       <p className="subtitle">
                         <span>Membership in Commons Stack Swiss Association</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">

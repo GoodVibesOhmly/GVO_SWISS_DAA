@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import CSTK from '../../../assets/cstk.svg';
+import './CSTKScore.sass';
 
 const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
   const { addCSTK, address, isReady } = useContext(OnboardContext);
@@ -62,24 +63,31 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
       {effectiveBalance === 0 && (
         <div className="subtitle mb-05">You haven't paid your membership dues yet</div>
       )}
-      <div className="is-flex is-align-items-center">
-        <div className="subtitle mb-05" style={{ marginBottom: '0px' }}>
+      <div className="is-flex is-align-items-center cstk-score">
+        <div className="subtitle cstk-score-text">
           <span>Don't see you CSTK score in Metamask? Add your tokens to make them visible.</span>
         </div>
         <div
-          className="subtitle mb-05"
+          className="subtitle"
           style={{
             color: '#1BDD9D',
             cursor: 'pointer',
             fontSize: '16px',
-            whiteSpace: 'nowrap',
             marginLeft: '14px',
           }}
           onClick={addCSTK}
         >
-          <span style={{ padding: '4px', border: 'solid 1px #1BDD9D', borderRadius: '2px' }}>
+          <div
+            className="cstk-button"
+            style={{
+              padding: '4px',
+              border: 'solid 1px #1BDD9D',
+              borderRadius: '2px',
+              whiteSpace: 'nowrap',
+            }}
+          >
             + Add to Metamask
-          </span>
+          </div>
         </div>
       </div>
     </>
