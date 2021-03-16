@@ -189,9 +189,10 @@ const Comp = ({
                         You're not yet a member of the Trusted Seed
                       </p>
                       <div className="mb-08">
-                        Sorry, but your address is not whitelisted. In order to be able to receive
-                        CSTK tokens you need to apply to become a member of the Trusted Application
-                        may take up to a week. Or you may need to switch to your other wallet.
+                        The connected address is not in the Trusted Seed whitelist. If you have
+                        already been accepted into the Trusted Seed, please connect with the same
+                        Ethereum address that you used to join. If you have not yet applied to be a
+                        member of the Trusted Seed, you will need to do that first.
                       </div>
                       <p className="control">
                         <a
