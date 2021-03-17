@@ -111,20 +111,18 @@ const Comp = ({ onSetAgreedtandc }) => {
             <div className="tile is-ancestor">
               <div className="tile is-vertical ">
                 <div className="level">
-                  <div className="level-left">
-                    <span className="icon has-text-info is-medium">
-                      <i className="fas fa-info-circle" />
-                    </span>
-                    <span className="is-size-7">
-                      Be sure to connect the right wallet which will be whitelisted and from which
-                      you will make contribution
-                    </span>
-                    {signError && <p className="help is-danger">{signError}</p>}
-                  </div>
+                  <span className="icon has-text-info is-medium">
+                    <i className="fas fa-info-circle" />
+                  </span>
+                  <span className="is-size-7 px-4">
+                    Be sure to connect the address you submitted in your Trusted Seed application.
+                    That address will be in the CSTK registry and will be where you hold your CSTK
+                    score and pay membership dues from.
+                  </span>
                 </div>
               </div>
-              <div className="tile is-vertical ">
-                <div className="">
+              <div className="is-vertical ">
+                <div>
                   <button
                     disabled={!enableSubmit}
                     onClick={() => {
@@ -136,6 +134,7 @@ const Comp = ({ onSetAgreedtandc }) => {
                   >
                     Sign with my wallet
                   </button>
+                  {signError && <p className="help is-danger">{signError}</p>}
                 </div>
               </div>
             </div>
