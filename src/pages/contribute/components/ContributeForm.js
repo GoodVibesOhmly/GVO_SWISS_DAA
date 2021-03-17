@@ -12,7 +12,14 @@ import './DonateModal.sass';
 
 const config = require('../../../config');
 
-const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
+const Comp = ({
+  onClose,
+  balances,
+  effectiveBalance,
+  getBalancesFor,
+  setContributeFormAmountDai,
+  contributeFormAmountDai,
+}) => {
   const { isReady, address } = useContext(OnboardContext);
   const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
@@ -95,7 +102,6 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
         if (amountDAI && amountDAI !== '') {
           setDAIError('please enter a number');
         }
-        setAmountDAI(amountDAIFloat);
         setAmountCSTK(0);
       } else if (balances && balances[address]) {
         const cstk = balances[address].find(b => b.symbol === 'CSTK');
@@ -132,6 +138,7 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
   }, [amountDAI, balances, address, getBalancesFor, effectiveBalance, hasPaidDues]);
 
   React.useEffect(() => {
+    if (contributeFormAmountDai) return; // Only change input if no value in global state
     try {
       if (balances && balances[address]) {
         const dai = balances[address].find(b => b.symbol === 'DAI');
@@ -144,7 +151,11 @@ const Comp = ({ onClose, balances, effectiveBalance, getBalancesFor }) => {
     } catch (e) {
       // console.error(e);
     }
-  }, [balances, address]);
+  }, [balances, address, contributeFormAmountDai]);
+
+  React.useEffect(() => {
+    setContributeFormAmountDai(amountDAI);
+  }, [amountDAI, setContributeFormAmountDai]);
 
   React.useEffect(() => {
     setDonationButtonEnabled((hasPaidDues && amountDAI >= 0) || amountCSTK !== 0);
@@ -289,6 +300,7 @@ const mapStateToProps = state => {
     balances: state.balances,
     totalReceived: state.totalReceived,
     effectiveBalance: state.effectiveBalance,
+    contributeFormAmountDai: state.contributeFormAmountDai,
   };
 };
 
@@ -299,6 +311,7 @@ const mapDispatchToProps = dispatch => {
       dispatch({ type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS', address }),
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
+    setContributeFormAmountDai: value => dispatch({ type: 'SET_CONTRIBUTEFORM_AMOUNT_DAI', value }),
   };
 };
 

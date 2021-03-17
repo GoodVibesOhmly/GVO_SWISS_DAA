@@ -24,6 +24,7 @@ const initialState = {
   loading: false,
   userIsWhiteListed: false,
   effectiveBalance: false,
+  contributeFormAmountDai: undefined,
 };
 
 const CSTK = new CSTKToken().contract; // CSTK tokencontract on XDAI
@@ -287,7 +288,11 @@ const reducer = (state = initialState, action) => {
         ...state,
         effectiveBalance: 0,
       };
-
+    case 'SET_CONTRIBUTEFORM_AMOUNT_DAI':
+      return {
+        ...state,
+        contributeFormAmountDai: action.value,
+      };
     case 'GET_USER_IS_WHITELISTED':
       return {
         ...state,
