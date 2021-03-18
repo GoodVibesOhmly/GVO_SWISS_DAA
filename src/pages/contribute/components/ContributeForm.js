@@ -138,7 +138,7 @@ const Comp = ({
   }, [amountDAI, balances, address, getBalancesFor, effectiveBalance, hasPaidDues]);
 
   React.useEffect(() => {
-    if (contributeFormAmountDai) return; // Only change input if no value in global state
+    if (typeof contributeFormAmountDai !== 'undefined') return; // Proceed only if no DAI value has been entered by user
     try {
       if (balances && balances[address]) {
         const dai = balances[address].find(b => b.symbol === 'DAI');
