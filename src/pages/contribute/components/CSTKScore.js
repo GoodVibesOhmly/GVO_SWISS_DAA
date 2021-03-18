@@ -46,7 +46,7 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
 
   return (
     <>
-      <p className="title is-text-overflow mb-2">Your CSTK Score</p>
+      <p className="title is-text-overflow mb-2">Your Pending Membership Score</p>
       <div className="title level mb-04">
         <div className="is-size-6 level-left mb-04">
           <span className="icon has-text-light mr-02">
