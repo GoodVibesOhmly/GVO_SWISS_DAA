@@ -5,7 +5,7 @@ import CSTK from '../../../assets/cstk.svg';
 import './CSTKScore.sass';
 
 const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
-  const { addCSTK, address, isReady } = useContext(OnboardContext);
+  const { address, isReady } = useContext(OnboardContext);
 
   React.useEffect(() => {
     if (isReady) {
@@ -46,7 +46,7 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
 
   return (
     <>
-      <p className="title is-text-overflow mb-2">Your CSTK Score</p>
+      <p className="title is-text-overflow mb-2">Your Pending Membership Score</p>
       <div className="title level mb-04">
         <div className="is-size-6 level-left mb-04">
           <span className="icon has-text-light mr-02">
@@ -63,7 +63,8 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
       {effectiveBalance === 0 && (
         <div className="subtitle mb-05">You haven't paid your membership dues yet</div>
       )}
-      <div className="is-flex is-align-items-center cstk-score">
+      {/* The following lines are commented to avoid confusion among users */}
+      {/* <div className="is-flex is-align-items-center cstk-score">
         <div className="subtitle cstk-score-text">
           <span>Don't see you CSTK score in Metamask? Add your tokens to make them visible.</span>
         </div>
@@ -89,7 +90,7 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
             + Add to Metamask
           </div>
         </div>
-      </div>
+      </div> */}
     </>
   );
 };

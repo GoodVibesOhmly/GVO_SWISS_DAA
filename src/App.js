@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import pages from './pages';
 import './sass/style.sass';
@@ -33,6 +33,8 @@ function App({ bootstrap }) {
                 )}
               />
             ))}
+            <Redirect from="/pay-dues" to="/" />
+            <Redirect from="/contribute" to="/" />
           </Switch>
         </BrowserRouter>
       </section>

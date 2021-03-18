@@ -8,6 +8,7 @@ import TandC from './TandC';
 import Statutes from './Statutes';
 import tandcData from '../../../assets/tandc.json';
 import statutesData from '../../../assets/statutes.json';
+import InfoTooltip from './InfoTooltip';
 
 const coinLogos = [
   { symbol: 'DAI', src: DAI },
@@ -153,6 +154,11 @@ const Comp = ({
                 Terms and Conditions
               </a>
             </span>
+            <InfoTooltip>
+              The Terms & Conditions apply to your membership of the Trusted Seed's Swiss
+              Association. It covers planned activities, membership, rights & duties, membership
+              score, risks, etc.
+            </InfoTooltip>
           </div>
           <div className="level-left">
             {agreedstatutes ? successIcon : failIcon}
@@ -166,6 +172,10 @@ const Comp = ({
                 Statutes
               </a>
             </span>
+            <InfoTooltip>
+              The Statutes describe and regulate the structure and governance of the Trusted Seed's
+              Swiss Association.
+            </InfoTooltip>
           </div>
 
           <div className="level-left">
