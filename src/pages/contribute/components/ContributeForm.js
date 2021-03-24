@@ -96,10 +96,7 @@ const Comp = ({
 
   React.useEffect(() => {
     try {
-      // debugger;
       const amountDAIFloat = parseFloat(amountDAI);
-      // getBalancesFor(address);
-      // console.log(balances);
       if (Number.isNaN(amountDAIFloat)) {
         if (amountDAI && amountDAI !== '') {
           setDAIError('please enter a number');
@@ -229,10 +226,8 @@ const Comp = ({
             </div>
             <div className="level-item">
               <div className="field">
-                <div className="control">
-                  &nbsp;
+                <div className="control is-flex">
                   <img alt="arrow right" src={arrow} />
-                  &nbsp;
                 </div>
               </div>
             </div>
@@ -284,8 +279,6 @@ const Comp = ({
             Pay Membership Dues
           </button>
         </div>
-        {/* </article> */}
-        {/* </div > */}
       </div>
     </>
   );
