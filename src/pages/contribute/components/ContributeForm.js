@@ -80,6 +80,8 @@ const Comp = ({
     </p>
   );
 
+  const TooltipDAIError = () => <p>{DAIError}</p>;
+
   React.useEffect(() => {
     let scholarship;
     if (!hasPaidDues) scholarship = Math.floor(amountDAI / 450 - 1);
@@ -191,19 +193,21 @@ const Comp = ({
                       </figure>
                     </span>
                   </div>
-                  <p className="help is-danger">&nbsp;</p>
                 </div>
               </div>
               <div className="level-item">
                 <div className="field" style={{ maxWidth: `100px` }}>
                   <Tooltip
                     className="control"
-                    active={showScholarshipTooltip || showApplyToScholarshipTooltip}
+                    active={showScholarshipTooltip || showApplyToScholarshipTooltip || !!DAIError}
                     content={
+                      // eslint-disable-next-line no-nested-ternary
                       showScholarshipTooltip ? (
                         <TooltipScholarshipContent />
-                      ) : (
+                      ) : showApplyToScholarshipTooltip ? (
                         <TooltipApplyToScholarship />
+                      ) : (
+                        <TooltipDAIError />
                       )
                     }
                   >
@@ -214,11 +218,12 @@ const Comp = ({
                       onChange={e => {
                         setAmountDAI(e.target.value);
                       }}
-                      style={{ border: showApplyToScholarshipTooltip ? '1px solid red' : '' }}
+                      style={{
+                        border: showApplyToScholarshipTooltip || !!DAIError ? '1px solid red' : '',
+                      }}
                       value={amountDAI}
                     />
                   </Tooltip>
-                  <p className="help is-danger">{DAIError || <>&nbsp;</>}</p>
                 </div>
               </div>
             </div>
@@ -228,7 +233,6 @@ const Comp = ({
                   &nbsp;
                   <img alt="arrow right" src={arrow} />
                   &nbsp;
-                  {/* <p class="help is-danger">&nbsp;</p> */}
                 </div>
               </div>
             </div>
@@ -250,7 +254,6 @@ const Comp = ({
                         placeholder=""
                       />
                     </Tooltip>
-                    <p className="help is-danger">&nbsp;</p>
                   </div>
                 </div>
                 <div className="level-item">
@@ -267,7 +270,6 @@ const Comp = ({
                         </figure>
                       </span>
                     </div>
-                    <p className="help is-danger">&nbsp;</p>
                   </div>
                 </div>
               </div>
