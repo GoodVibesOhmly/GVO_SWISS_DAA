@@ -170,7 +170,7 @@ const Comp = ({
                           }}
                           className="button is-success is-medium"
                         >
-                          Pay Membership Dues
+                          {effectiveBalance > 0 ? 'Pay Additional Dues' : 'Pay Membership Dues'}
                         </button>
                       )}
                     </span>
@@ -212,7 +212,18 @@ const Comp = ({
 
               <br />
               <p>
-                Membership dues are paid with DAI. You can acquire DAI on{' '}
+                {effectiveBalance > 0 ? (
+                  <>
+                    <span className="icon has-text-success">
+                      <i className="fas fa-check-circle" />
+                    </span>
+                    Your membership dues are paid. By paying more membership dues you will further
+                    help the mission of the organization.
+                  </>
+                ) : (
+                  'Membership dues are paid with DAI.'
+                )}{' '}
+                You can acquire DAI on{' '}
                 <a
                   className="exchange"
                   rel="noopener noreferrer"
