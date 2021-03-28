@@ -4,7 +4,7 @@ import WalletView from './WalletView';
 import Contribute from './Contribute';
 import CSTKScore from './CSTKScore';
 
-const Comp = () => {
+const Comp = ({ effectiveBalance }) => {
   return (
     <>
       <section className="section has-text-left">
@@ -13,9 +13,11 @@ const Comp = () => {
             <article className="is-child notification is-primary">
               <WalletView />
             </article>
-            <article className="is-child notification is-primary">
-              <CSTKScore />
-            </article>
+            {effectiveBalance > 0 ? null : (
+              <article className="is-child notification is-primary">
+                <CSTKScore />
+              </article>
+            )}
           </div>
           <div className="tile is-parent">
             <Contribute />
@@ -26,8 +28,10 @@ const Comp = () => {
   );
 };
 
-const mapStateToProps = () => {
-  return {};
+const mapStateToProps = state => {
+  return {
+    effectiveBalance: state.effectiveBalance,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
