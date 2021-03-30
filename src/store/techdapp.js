@@ -8,6 +8,7 @@ import tandc from '../assets/tandc.json';
 import statutes from '../assets/statutes.json';
 
 const initialState = {
+  showwelcome: true,
   loadedtandc: false,
   agreedtandc: false,
   loadedstatutes: false,
@@ -50,6 +51,11 @@ const reducer = (state = initialState, action) => {
     case 'BOOTSTRAP':
       return {
         ...state,
+      };
+    case 'SET_SHOW_WELCOME':
+      return {
+        ...state,
+        showwelcome: action.value,
       };
     case 'READ_SHOW_TANDC':
       return {
@@ -257,7 +263,6 @@ const reducer = (state = initialState, action) => {
       if (!action.address) {
         return {
           ...state,
-          effectiveBalance: 0,
         };
       }
       return {

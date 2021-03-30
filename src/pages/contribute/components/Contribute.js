@@ -13,8 +13,10 @@ import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import donationConfirmed from '../../../assets/donation-confirmed.svg';
+import WelcomeModal from './WelcomeModal';
 
 const Comp = ({
+  showwelcome,
   agreedtandc,
   agreedstatutes,
   userIsWhiteListed,
@@ -129,10 +131,12 @@ const Comp = ({
 
   return (
     <div className="tile is-child">
+      {(!web3 || effectiveBalance === 0) && showwelcome ? <WelcomeModal /> : null}
+
       <article className=" notification is-primary">
         <div className="contribmain">
           <p className="subtitle mb-2">YOUR MEMBERSHIP SCORE</p>
-          {web3 && (
+          {web3 && address && (
             <>
               <div className="level">
                 <div className="level-left">
@@ -186,13 +190,12 @@ const Comp = ({
                         <img alt="CS Egg" src={GreyLogo} />
                       </div>
                       <p className="is-size-3 mb-08 warning">
-                        You're not yet a member of the Trusted Seed
+                        The connected address is not in the Trusted Seed whitelist
                       </p>
                       <div className="mb-08">
-                        The connected address is not in the Trusted Seed whitelist. If you have
-                        already been accepted into the Trusted Seed, please connect with the same
-                        Ethereum address that you used to join. If you have not yet applied to be a
-                        member of the Trusted Seed, you will need to do that first.
+                        If you have already been accepted into the Trusted Seed, please connect with
+                        the same Ethereum address that you used to join. If you have not yet applied
+                        to be a member of the Trusted Seed, you will need to do that first.
                       </div>
                       <p className="control">
                         <a
@@ -328,7 +331,7 @@ const Comp = ({
               )}
             </>
           )}
-          {!web3 && (
+          {(!web3 || !address) && (
             <div className="enable has-text-centered">
               <p className="title">
                 Want to contribute to Commons Stack? Connect your wallet below.
@@ -406,6 +409,7 @@ const Comp = ({
 
 const mapStateToProps = state => {
   return {
+    showwelcome: state.showwelcome,
     agreedtandc: state.agreedtandc,
     agreedstatutes: state.agreedstatutes,
     userIsWhiteListed: state.userIsWhiteListed,
