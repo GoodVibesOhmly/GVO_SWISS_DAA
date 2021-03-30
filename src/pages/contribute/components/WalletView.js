@@ -117,10 +117,10 @@ const Comp = ({
     return accum;
   }, []);
 
-  if (loadedtandc && !agreedtandc && address) {
+  if (userIsWhiteListed && loadedtandc && !agreedtandc && address) {
     return <TandC />;
   }
-  if (loadedstatutes && !agreedstatutes && address) {
+  if (agreedtandc && loadedstatutes && !agreedstatutes && address) {
     return <Statutes />;
   }
 
