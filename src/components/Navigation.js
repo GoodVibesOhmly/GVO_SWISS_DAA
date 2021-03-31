@@ -58,7 +58,7 @@ const Comp = () => {
               </div> */}
               <div className={activeNavItem === 3 ? 'navbar-item is-active' : 'navbar-item'}>
                 <Link to="/help">
-                  <span>Need help?</span>
+                  <span>FAQ</span>
                 </Link>
               </div>
             </div>
