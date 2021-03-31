@@ -13,15 +13,17 @@ import Cstk from '../../../assets/cstk.svg';
 import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import donationConfirmed from '../../../assets/donation-confirmed.svg';
+import WelcomeModal from './WelcomeModal';
 
 const Comp = ({
+  showwelcome,
   agreedtandc,
   agreedstatutes,
   userIsWhiteListed,
-  // balances,
+  balances,
   hasDonated,
   effectiveBalance,
-  // getBalancesFor,
+  getBalancesFor,
   getEffectiveBalancesFor,
   onCloseContributeThanks,
 }) => {
@@ -47,7 +49,7 @@ const Comp = ({
   };
 
   const updateBalances = useCallback(() => {
-    // getBalancesFor(address);
+    getBalancesFor(address);
     getEffectiveBalancesFor(address);
     // if (balances && balances[address]) {
     //   const userBalance = balances[address];
@@ -56,7 +58,7 @@ const Comp = ({
     //     setCstkbalance(cstk.balanceFormatted);
     //   }
     // }
-  }, [address, getEffectiveBalancesFor]);
+  }, [address, getBalancesFor, getEffectiveBalancesFor]);
 
   useEffect(() => {
     updateBalances();
@@ -66,19 +68,19 @@ const Comp = ({
     };
   }, [updateBalances]);
 
-  // const [cstkBalance, setCstkbalance] = useState('');
+  const [cstkBalance, setCstkbalance] = React.useState('');
 
-  // useEffect(() => {
-  //   let balance = '0';
-  //   if (balances && balances[address]) {
-  //     const userBalance = balances[address];
-  //     const cstk = userBalance.find(b => b.symbol === 'CSTK');
-  //     if (cstk) {
-  //       balance = cstk.balanceFormatted;
-  //     }
-  //   }
-  //   setCstkbalance(balance);
-  // }, [balances, address]);
+  useEffect(() => {
+    let balance = '0';
+    if (balances && balances[address]) {
+      const userBalance = balances[address];
+      const cstk = userBalance.find(b => b.symbol === 'CSTK');
+      if (cstk) {
+        balance = cstk.balanceFormatted;
+      }
+    }
+    setCstkbalance(balance);
+  }, [balances, effectiveBalance, address]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
@@ -129,10 +131,12 @@ const Comp = ({
 
   return (
     <div className="tile is-child">
+      {(!web3 || effectiveBalance === 0) && showwelcome ? <WelcomeModal /> : null}
+
       <article className=" notification is-primary">
         <div className="contribmain">
           <p className="subtitle mb-2">YOUR MEMBERSHIP SCORE</p>
-          {web3 && (
+          {web3 && address && (
             <>
               <div className="level">
                 <div className="level-left">
@@ -146,7 +150,7 @@ const Comp = ({
                       <div className="media-content">
                         <div className="content">
                           <p className="heading is-size-2 has-text-weight-bold">
-                            {effectiveBalance.toString()} CSTK
+                            {effectiveBalance > 0 ? cstkBalance : '0'} CSTK
                           </p>
                         </div>
                       </div>
@@ -170,7 +174,7 @@ const Comp = ({
                           }}
                           className="button is-success is-medium"
                         >
-                          Pay Membership Dues
+                          {effectiveBalance > 0 ? 'Pay Additional Dues' : 'Pay Membership Dues'}
                         </button>
                       )}
                     </span>
@@ -186,12 +190,12 @@ const Comp = ({
                         <img alt="CS Egg" src={GreyLogo} />
                       </div>
                       <p className="is-size-3 mb-08 warning">
-                        You're not yet a member of the Trusted Seed
+                        The connected address is not in the Trusted Seed whitelist
                       </p>
                       <div className="mb-08">
-                        Sorry, but your address is not whitelisted. In order to be able to receive
-                        CSTK tokens you need to apply to become a member of the Trusted Application
-                        may take up to a week. Or you may need to switch to your other wallet.
+                        If you have already been accepted into the Trusted Seed, please connect with
+                        the same Ethereum address that you used to join. If you have not yet applied
+                        to be a member of the Trusted Seed, you will need to do that first.
                       </div>
                       <p className="control">
                         <a
@@ -211,7 +215,18 @@ const Comp = ({
 
               <br />
               <p>
-                Membership dues are paid with DAI. You can acquire DAI on{' '}
+                {effectiveBalance > 0 ? (
+                  <>
+                    <span className="icon has-text-success">
+                      <i className="fas fa-check-circle" />
+                    </span>
+                    Your membership dues are paid. By paying more membership dues you will further
+                    help the mission of the organization.
+                  </>
+                ) : (
+                  'Membership dues are paid with DAI.'
+                )}{' '}
+                You can acquire DAI on{' '}
                 <a
                   className="exchange"
                   rel="noopener noreferrer"
@@ -288,7 +303,7 @@ const Comp = ({
                             className="button is-primary"
                             resetButtonStyle={false}
                             url="https://commonsstack.org"
-                            title="I funded the CS!"
+                            title="I've just become a member of Commons Stack's Swiss Association! 🎉🌍🌌🎩🥂 Join us:"
                           >
                             <span className="icon">
                               <TwitterIcon bgStyle={{ fill: 'none' }} size={32} round />
@@ -301,7 +316,7 @@ const Comp = ({
                             className="button is-primary"
                             resetButtonStyle={false}
                             url="https://commonsstack.org"
-                            title="I funded the CS!"
+                            title="I've just become a member of Commons Stack's Swiss Association! 🎉🌍🌌🎩🥂 Join us!"
                           >
                             <span className="icon">
                               <TelegramIcon bgStyle={{ fill: 'none' }} size={32} round />
@@ -316,7 +331,7 @@ const Comp = ({
               )}
             </>
           )}
-          {!web3 && (
+          {(!web3 || !address) && (
             <div className="enable has-text-centered">
               <p className="title">
                 Want to contribute to Commons Stack? Connect your wallet below.
@@ -331,10 +346,14 @@ const Comp = ({
             </div>
             <div className="level">
               <div className="items-container">
-                <div className="level-item">
+                <div className="level-item is-shrinkable">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={GovernanceRights} alt="Participation in Community Governance" />
+                      <img
+                        className="item-image"
+                        src={GovernanceRights}
+                        alt="Participation in Community Governance"
+                      />
 
                       <p className="subtitle">
                         <span>Participation in Community Governance</span>
@@ -345,10 +364,14 @@ const Comp = ({
                     </div>
                   </div>
                 </div>
-                <div className="level-item">
+                <div className="level-item is-shrinkable">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={Access} alt="Potential Access to Many Future Hatches" />
+                      <img
+                        className="item-image"
+                        src={Access}
+                        alt="Potential Access to Many Future Hatches"
+                      />
                       <p className="subtitle">
                         <span>Potential Access to Many Future Hatches</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">
@@ -358,10 +381,14 @@ const Comp = ({
                     </div>
                   </div>
                 </div>
-                <div className="level-item">
+                <div className="level-item is-shrinkable">
                   <div className="title-level">
                     <div className="item-container">
-                      <img src={Membership} alt="Membership in Commons Stack Swiss Association" />
+                      <img
+                        className="item-image"
+                        src={Membership}
+                        alt="Membership in Commons Stack Swiss Association"
+                      />
                       <p className="subtitle">
                         <span>Membership in Commons Stack Swiss Association</span>
                         {/* <span className="icon info-icon-small is-small has-text-info">
@@ -382,6 +409,7 @@ const Comp = ({
 
 const mapStateToProps = state => {
   return {
+    showwelcome: state.showwelcome,
     agreedtandc: state.agreedtandc,
     agreedstatutes: state.agreedstatutes,
     userIsWhiteListed: state.userIsWhiteListed,

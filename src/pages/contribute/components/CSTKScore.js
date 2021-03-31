@@ -1,6 +1,8 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { OnboardContext } from '../../../components/OnboardProvider';
+import CSTK from '../../../assets/cstk.svg';
+import './CSTKScore.sass';
 
 const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
   const { address, isReady } = useContext(OnboardContext);
@@ -44,12 +46,51 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
 
   return (
     <>
-      <p className="title is-text-overflow mb-2">Your CSTK Score</p>
-      <div className="subtitle mb-05">Pending score: {cstkBalance || 0} CSTK</div>
+      <p className="title is-text-overflow mb-2">Your Pending Membership Score</p>
+      <div className="title level mb-04">
+        <div className="is-size-6 level-left mb-04">
+          <span className="icon has-text-light mr-02">
+            <img src={CSTK} alt="CSTK" />
+            &nbsp;
+          </span>
+          <span className="has-text-weight-bold" style={{ marginLeft: '4px' }}>
+            {cstkBalance || '~'}&nbsp; CSTK
+          </span>
+        </div>
+      </div>
+      <div />
       {/* <div className="subtitle mb-05">Effective score: {effectiveBalance.toString()} CSTK</div> */}
-      {effectiveBalance && effectiveBalance.toString() === '0' && (
+      {effectiveBalance === 0 && (
         <div className="subtitle mb-05">You haven't paid your membership dues yet</div>
       )}
+      {/* The following lines are commented to avoid confusion among users */}
+      {/* <div className="is-flex is-align-items-center cstk-score">
+        <div className="subtitle cstk-score-text">
+          <span>Don't see you CSTK score in Metamask? Add your tokens to make them visible.</span>
+        </div>
+        <div
+          className="subtitle"
+          style={{
+            color: '#1BDD9D',
+            cursor: 'pointer',
+            fontSize: '16px',
+            marginLeft: '14px',
+          }}
+          onClick={addCSTK}
+        >
+          <div
+            className="cstk-button"
+            style={{
+              padding: '4px',
+              border: 'solid 1px #1BDD9D',
+              borderRadius: '2px',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            + Add to Metamask
+          </div>
+        </div>
+      </div> */}
     </>
   );
 };

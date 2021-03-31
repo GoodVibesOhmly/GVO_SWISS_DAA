@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from 'react';
 import Web3 from 'web3';
 import { connect } from 'react-redux';
 import { initOnboard } from '../blockchain/onboard';
+import Cstk from '../assets/cstk.png';
 
 export const OnboardContext = createContext({});
 
@@ -58,6 +59,22 @@ const Comp = ({ onWeb3Ready, children }) => {
     return ready;
   };
 
+  const addCSTK = async () => {
+    const provider = window.web3.currentProvider;
+    provider.sendAsync({
+      method: 'metamask_watchAsset',
+      params: {
+        type: 'ERC20',
+        options: {
+          address: '0xc4fbE68522ba81a28879763C3eE33e08b13c499E',
+          symbol: 'CSTK',
+          decimals: 0,
+          image: Cstk,
+        },
+      },
+    });
+  };
+
   useEffect(() => {
     const check = async () => {
       let ready = false;
@@ -87,6 +104,7 @@ const Comp = ({ onWeb3Ready, children }) => {
         network,
         onboard,
         isReady,
+        addCSTK,
         checkIsReady,
         changeWallet,
       }}

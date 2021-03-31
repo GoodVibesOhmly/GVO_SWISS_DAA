@@ -12,7 +12,6 @@ import spinner from '../../../assets/spinner.svg';
 import Success from './Success';
 import DAI from '../../../assets/dai.svg';
 import CSTK from '../../../assets/cstk.svg';
-import approveSuccess from '../../../assets/approve-success.svg';
 
 const { DAITokenAddress, givethBridgeAddress } = config;
 
@@ -297,15 +296,17 @@ const DonateModal = props => {
       <p className="is-size-5 has-text-centered has-text-weight-bold">Transaction failed!</p>
       <br />
       <h2 className="has-text-centered mb-2">
-        Please try again, or{' '}
+        Something went wrong! Check your transaction in your wallet. If you have any questions come
+        talk to us on our&nbsp;
         <a
-          href="mailto:info@commonsstack.foundation"
-          subject="I have a problem getting CSTK tokens"
+          target="_blank"
+          rel="noreferrer"
+          href="https://t.me/CSTKSwissMembershipDApp"
           className="support-link"
         >
-          contact support
-        </a>{' '}
-        if you experience further difficulties.
+          Telegram group
+        </a>
+        .
       </h2>
     </>
   );
@@ -316,9 +317,14 @@ const DonateModal = props => {
         <div className="level-item">
           <div className="card">
             <div className="card-image">
-              <p className="image is-64x64">
-                <img src={approveSuccess} alt="Donation confirmed" />
-              </p>
+              <p className="image is-64x64">{/* <img src={DAI} alt="DAI logo" /> */}</p>
+            </div>
+            <div className="is-overlay">
+              <Player
+                autoplay
+                src="https://assets2.lottiefiles.com/packages/lf20_tAtUrg.json"
+                style={{ height: '64px', width: '64px' }}
+              />
             </div>
           </div>
         </div>
@@ -353,7 +359,19 @@ const DonateModal = props => {
       </div>
       <p className="is-size-5 has-text-centered has-text-weight-bold">Transaction sent</p>
       <br />
-      <h2 className="has-text-centered mb-2">Waiting for the transaction to be completed</h2>
+      <h2 className="has-text-centered mb-2">
+        Please be patient while the Ethereum miners add your transaction to the blockchain. If there
+        is an issue please reach out to us on{' '}
+        <a
+          target="_blank"
+          rel="noreferrer"
+          href="https://t.me/CSTKSwissMembershipDApp"
+          style={{ color: '#1BDD9D', textDecoration: 'none' }}
+        >
+          Telegram
+        </a>
+        .
+      </h2>
     </>
   );
 
@@ -382,6 +400,8 @@ const DonateModal = props => {
       <h2 className="has-text-centered mb-2">
         Please try again, or{' '}
         <a
+          target="_blank"
+          rel="noreferrer"
           href="mailto:info@commonsstack.foundation"
           subject="I have a problem getting CSTK tokens"
           className="support-link"
@@ -444,7 +464,7 @@ const DonateModal = props => {
               disabled={!enableDonateButton}
               onClick={donate}
             >
-              Donate
+              Pay dues
             </button>
           )}
         </footer>

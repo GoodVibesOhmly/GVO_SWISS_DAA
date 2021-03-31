@@ -1,11 +1,9 @@
-import home from './home';
 import contribute from './contribute';
 import help from './help';
 import whitelist from './whitelist';
 
 export default {
-  home,
+  contribute,
   whitelist,
   help,
-  contribute,
 };

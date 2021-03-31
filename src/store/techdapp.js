@@ -8,6 +8,7 @@ import tandc from '../assets/tandc.json';
 import statutes from '../assets/statutes.json';
 
 const initialState = {
+  showwelcome: true,
   loadedtandc: false,
   agreedtandc: false,
   loadedstatutes: false,
@@ -24,6 +25,7 @@ const initialState = {
   loading: false,
   userIsWhiteListed: false,
   effectiveBalance: false,
+  contributeFormAmountDai: undefined,
 };
 
 const CSTK = new CSTKToken().contract; // CSTK tokencontract on XDAI
@@ -49,6 +51,11 @@ const reducer = (state = initialState, action) => {
     case 'BOOTSTRAP':
       return {
         ...state,
+      };
+    case 'SET_SHOW_WELCOME':
+      return {
+        ...state,
+        showwelcome: action.value,
       };
     case 'READ_SHOW_TANDC':
       return {
@@ -256,7 +263,6 @@ const reducer = (state = initialState, action) => {
       if (!action.address) {
         return {
           ...state,
-          effectiveBalance: new BigNumber(0),
         };
       }
       return {
@@ -275,15 +281,7 @@ const reducer = (state = initialState, action) => {
     case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_SUCCESS':
       delete state.BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS;
       // eslint-disable-next-line no-case-declarations
-      const effectiveBalance = new BigNumber(action.res.balance).toFormat(
-        BigNumber.min(2, 18).toNumber(),
-        BigNumber.ROUND_DOWN,
-        {
-          decimalSeparator: '.',
-          groupSeparator: ',',
-          groupSize: 3,
-        },
-      );
+      const effectiveBalance = new BigNumber(action.res).div(new BigNumber(10).pow(18)).toNumber();
       return {
         ...state,
         effectiveBalance,
@@ -293,9 +291,13 @@ const reducer = (state = initialState, action) => {
       delete state.BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS;
       return {
         ...state,
-        effectiveBalance: new BigNumber(0),
+        effectiveBalance: 0,
       };
-
+    case 'SET_CONTRIBUTEFORM_AMOUNT_DAI':
+      return {
+        ...state,
+        contributeFormAmountDai: action.value,
+      };
     case 'GET_USER_IS_WHITELISTED':
       return {
         ...state,
