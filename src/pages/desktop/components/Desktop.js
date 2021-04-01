@@ -10,7 +10,7 @@ const Comp = () => {
         <div className="tile is-horizontal is-parent">
           <article className="tile is-child notification desktop-card">
             <div className="pb-4 is-size-4">
-              <i className="fas fa-mobile-alt" />
+              <i className="fas fa-mobile-alt desktop-icon" />
             </div>
             <div className="pb-4">The Commons Stack Membership DApp is currently desktop only.</div>
             <div>
