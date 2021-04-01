@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useLocation, Link } from 'react-router-dom';
 import WalletButton from './WalletButton';
 import ChangeWallet from './ChangeWallet';
 import csLogo from '../assets/headerlogo.svg';
@@ -7,19 +7,19 @@ import './Navigation.sass';
 
 const Comp = () => {
   const location = useLocation();
-  // const [activeNavItem, setActiveNavItem] = useState(1);
+  const [activeNavItem, setActiveNavItem] = useState(1);
 
   useEffect(() => {
     switch (location.pathname) {
-      // case '/':
-      //   setActiveNavItem(1);
-      //   break;
-      // case '/contribute':
-      //   setActiveNavItem(2);
-      //   break;
-      // case "/help":
-      // setActiveNavItem(3)
-      // break
+      case '/':
+        setActiveNavItem(1);
+        break;
+      case '/contribute':
+        setActiveNavItem(2);
+        break;
+      case '/help':
+        setActiveNavItem(3);
+        break;
       default:
         break;
     }
@@ -55,12 +55,12 @@ const Comp = () => {
                 <Link to="/contribute">
                   <span>Membership</span>
                 </Link>
-              </div>
+              </div> */}
               <div className={activeNavItem === 3 ? 'navbar-item is-active' : 'navbar-item'}>
                 <Link to="/help">
-                  <span>Need help?</span>
-                </a>
-              </div> */}
+                  <span>FAQ</span>
+                </Link>
+              </div>
             </div>
 
             <div className="navbar-end">

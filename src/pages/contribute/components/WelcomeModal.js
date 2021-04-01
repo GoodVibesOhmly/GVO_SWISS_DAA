@@ -33,13 +33,13 @@ const Comp = ({ setShowWelcome }) => {
               <div className="column is-narrow">
                 <span className="numberCircle">1</span>
               </div>
-              <div className="column ">Sign in with you wallet</div>
+              <div className="column ">Sign in with your Trusted Seed address</div>
             </div>
             <div className="columns is-2 is-variable">
               <div className="column is-narrow">
                 <span className="numberCircle">2</span>
               </div>
-              <div className="column ">Sign the Statutes and the Terms & Conditions</div>
+              <div className="column ">Accept the Statutes and the Terms & Conditions</div>
             </div>
             <div className="columns is-2 is-variable">
               <div className="column is-narrow">
@@ -47,7 +47,7 @@ const Comp = ({ setShowWelcome }) => {
               </div>
               <div className="column ">
                 Pay your membership dues (for which you will need DAI and a little ETH in your
-                wallet)
+                address)
               </div>
             </div>
             <div>
