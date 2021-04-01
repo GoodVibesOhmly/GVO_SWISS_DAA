@@ -36,6 +36,7 @@ function App({ bootstrap }) {
             <Redirect from="/pay-dues" to="/" />
             <Redirect from="/contribute" to="/" />
           </Switch>
+          {window.screen.width < 640 ? <Redirect to="/desktop" /> : null}
         </BrowserRouter>
       </section>
     </div>
