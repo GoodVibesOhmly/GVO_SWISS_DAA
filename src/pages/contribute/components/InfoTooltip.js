@@ -11,7 +11,7 @@ const InfoTooltip = ({ children }) => {
   };
 
   return (
-    <div className="info-tooltip">
+    <div className="info-tooltip is-inline-block">
       {showToolTip && <div className="info-tooltip-content is-size-7">{children}</div>}
       <span
         className="icon info-icon"
