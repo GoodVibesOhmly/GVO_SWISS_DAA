@@ -71,6 +71,20 @@ const Comp = () => {
             </div>
           </article>
         </div>
+        <div className="tile has-text-left is-horizontal is-parent">
+          <article className="tile is-child">
+            <p className="is-size-4 title has-text-weight-bold">
+              What liabilities are removed by the legal protection of the Swiss Association?
+            </p>
+            <div>
+              The Trusted Seed doesn't remove any liabilities. Unfortunately, if you hold tokens in
+              a DAO or Commons, in many jurisdictions you can be held 100% individually liable for
+              any actions made by the DAO. However, if you are a Member of our Trusted Seed, and you
+              were acting in good faith as a member of a qualified DAO, we will fight for you! We
+              will pay your legal fees and rally support from the greater community.
+            </div>
+          </article>
+        </div>
       </section>
     </>
   );
