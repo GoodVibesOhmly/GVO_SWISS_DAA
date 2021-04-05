@@ -34,26 +34,20 @@ const Comp = ({
   const [DAIError, setDAIError] = React.useState();
 
   const TooltipMaxTrustScoreContent = () => (
-    <>
-      <p>
-        If you contribute this amount you will have reached your max. trust score, the max amount of
-        CSTK tokens you will receive. If you want to increase the max. score please&nbsp;
-        <a
-          href="mailto:info@commonsstack.foundation"
-          subject="I have a problem getting CSTK tokens"
-          className="support-link"
-          style={{ color: '#1BDD9D', textDecoration: 'none' }}
-        >
-          contact us
-        </a>
-        .
-      </p>
-      <br />
-      <p>
-        You can decrease contribution to match you max. trust score or continue and remaning funs
-        will be donated to the Commons Stack.
-      </p>
-    </>
+    <p>
+      If you send that much DAI, you will have reached your Max Trust Score. To increase your Max
+      Trust Score, and be able to get a higher CSTK Score, please reach out to the&nbsp;
+      <a
+        href="https://discord.gg/tXYmXVJx"
+        target="_blank"
+        rel="noreferrer"
+        className="support-link"
+        style={{ color: '#1BDD9D', textDecoration: 'none' }}
+      >
+        Commons Stack team on Discord
+      </a>
+      .
+    </p>
   );
 
   const TooltipScholarshipContent = () => (
