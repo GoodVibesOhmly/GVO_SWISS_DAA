@@ -27,6 +27,16 @@ const Comp = ({ setShowWelcome }) => {
             <p className="modal-card-title">Welcome to the Trusted Seed's Swiss Membership DApp!</p>
             <p className="modal-card-subtitle">
               If you have already been accepted into the Trusted Seed, activate your membership now.
+              If you have not yet applied to be a member of the Trusted Seed, you will need to{' '}
+              <a
+                className="exchange"
+                rel="noreferrer"
+                target="_blank"
+                href="https://commonsstack.org/apply"
+              >
+                do that first
+              </a>
+              .
             </p>
             <p>Your next steps:</p>
             <div className="columns is-2 is-variable">
