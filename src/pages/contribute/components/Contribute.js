@@ -190,7 +190,7 @@ const Comp = ({
                         <img alt="CS Egg" src={GreyLogo} />
                       </div>
                       <p className="is-size-3 mb-08 warning">
-                        The connected address is not in the Trusted Seed whitelist
+                        The connected address is not in the Trusted Seed registry
                       </p>
                       <div className="mb-08">
                         If you have already been accepted into the Trusted Seed, please connect with
@@ -205,7 +205,7 @@ const Comp = ({
                           className="button is-success"
                           style={{ marginTop: '16px' }}
                         >
-                          Apply for the whitelist
+                          Apply for membership
                         </a>
                       </p>
                     </article>
