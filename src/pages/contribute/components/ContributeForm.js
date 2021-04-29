@@ -135,8 +135,9 @@ const Comp = ({
     try {
       if (balances && balances[address]) {
         const dai = balances[address].find(b => b.symbol === 'DAI');
-        if (dai.balance >= 450 && dai.balance <= 900) setAmountDAI(dai.balance);
-        else if (dai.balance < 450) {
+        if (effectiveBalance >= 450) {
+          setAmountDAI(dai.balance);
+        } else {
           setAmountDAI(450);
           setShowApplyToScholarshipTooltip(true);
         }
@@ -144,7 +145,7 @@ const Comp = ({
     } catch (e) {
       // console.error(e);
     }
-  }, [balances, address, contributeFormAmountDai]);
+  }, [balances, address, effectiveBalance, contributeFormAmountDai]);
 
   React.useEffect(() => {
     setContributeFormAmountDai(amountDAI);
