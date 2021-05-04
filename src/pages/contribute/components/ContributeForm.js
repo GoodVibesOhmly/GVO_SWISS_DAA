@@ -138,10 +138,10 @@ const Comp = ({
         const dai = balances[address].find(b => b.symbol === 'DAI');
         setBalanceDAI(dai.balance);
         if (effectiveBalance >= 450) {
-          setAmountDAI(balanceDAI);
+          setAmountDAI(dai.balance);
         } else {
           setAmountDAI(450);
-          if (balanceDAI < 450) setShowApplyToScholarshipTooltip(true);
+          setShowApplyToScholarshipTooltip(true);
         }
       }
     } catch (e) {
