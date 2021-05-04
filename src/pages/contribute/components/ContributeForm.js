@@ -23,6 +23,7 @@ const Comp = ({
   const { isReady, address } = useContext(OnboardContext);
   const [amountDAI, setAmountDAI] = React.useState(config.defaultContribution);
   const [amountCSTK, setAmountCSTK] = React.useState(0);
+  const [balanceDAI, setBalanceDAI] = React.useState(0);
   const [hasPaidDues, setHasPaidDues] = React.useState(false);
   const [amountScholarship, setAmountScholarship] = React.useState(0);
   const [showDonateModal, setShowDonateModal] = React.useState(false);
@@ -59,8 +60,8 @@ const Comp = ({
 
   const TooltipApplyToScholarship = () => (
     <p>
-      Please obtain more Dai to pay memberships dues and join the Trusted Seed, if 450 Dai is a
-      financial burden, please consider&nbsp;
+      You need 450 Dai to pay memberships dues and join the Trusted Seed, if 450 Dai is a financial
+      burden, please consider&nbsp;
       <a
         href="https://medium.com/commonsstack/trusted-seed-swiss-membership-scholarship-application-f2d07bc2fc90"
         target="_blank"
@@ -135,11 +136,12 @@ const Comp = ({
     try {
       if (balances && balances[address]) {
         const dai = balances[address].find(b => b.symbol === 'DAI');
+        setBalanceDAI(dai.balance);
         if (effectiveBalance >= 450) {
-          setAmountDAI(dai.balance);
+          setAmountDAI(balanceDAI);
         } else {
           setAmountDAI(450);
-          setShowApplyToScholarshipTooltip(true);
+          if (balanceDAI < 450) setShowApplyToScholarshipTooltip(true);
         }
       }
     } catch (e) {
@@ -211,7 +213,10 @@ const Comp = ({
                         setAmountDAI(e.target.value);
                       }}
                       style={{
-                        border: showApplyToScholarshipTooltip || !!DAIError ? '1px solid red' : '',
+                        border:
+                          (showApplyToScholarshipTooltip && balanceDAI < 450) || !!DAIError
+                            ? '1px solid red'
+                            : '',
                       }}
                       value={amountDAI}
                     />
