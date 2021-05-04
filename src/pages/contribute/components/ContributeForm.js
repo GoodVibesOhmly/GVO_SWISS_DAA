@@ -155,7 +155,7 @@ const Comp = ({
 
   React.useEffect(() => {
     setDonationButtonEnabled(
-      (hasPaidDues && amountDAI >= 0) || amountDAI >= 450 || amountCSTK !== 0,
+      (hasPaidDues && amountDAI > 0) || amountDAI >= 450 || amountCSTK !== 0,
     );
   }, [amountCSTK, amountDAI, hasPaidDues]);
 
@@ -211,6 +211,7 @@ const Comp = ({
                       className="input amount"
                       type="number"
                       placeholder=""
+                      min="0"
                       onChange={e => {
                         setAmountDAI(e.target.value);
                       }}
