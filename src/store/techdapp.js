@@ -19,6 +19,7 @@ const initialState = {
   currentIteration: undefined,
   cstackBalance: undefined,
   rcstackBalance: undefined,
+  pendingBalance: 0,
   softCap: undefined,
   hardCap: undefined,
   softCapTimestamp: undefined,
@@ -202,6 +203,37 @@ const reducer = (state = initialState, action) => {
         // denominator: 2,
       };
 
+    case 'GET_PENDING_BALANCE_FOR_ADDRESS':
+      if (!action.address || !state.web3) {
+        return {
+          ...state,
+        };
+      }
+      return {
+        ...state,
+        BB_GET_PENDING_BALANCE_FOR_ADDRESS: new PromiseBlackBox(() =>
+          getPendingBalance(action.address)
+            .then(res => ({
+              type: 'GET_PENDING_BALANCE_FOR_ADDRESS_SUCCESS',
+              res,
+              address: action.address,
+            }))
+            .catch(e => ({ type: 'GET_PENDING_BALANCE_FOR_ADDRESS_FAILURE', e })),
+        ),
+      };
+    case 'GET_PENDING_BALANCE_FOR_ADDRESS_SUCCESS':
+      delete state.BB_GET_PENDING_BALANCE_FOR_ADDRESS;
+      return {
+        ...state,
+        pendingBalance: action.res,
+      };
+    case 'GET_PENDING_BALANCE_FOR_ADDRESS_FAILURE':
+      delete state.BB_GET_PENDING_BALANCE_FOR_ADDRESS;
+      return {
+        ...state,
+        pendingBalance: 0,
+      };
+
     case 'READ_FUNDING_CONTRACT_FAIL':
       delete state.BB_READ_FUNDING_CONTRACT;
       // console.warn('fail');
@@ -267,7 +299,8 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS: new PromiseBlackBox(() =>
-          getPendingBalance(action.address)
+          api
+            .getEffectiveBalance(action.address)
             .then(res => ({
               type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_SUCCESS',
               res,
@@ -314,7 +347,6 @@ const reducer = (state = initialState, action) => {
         ...state,
         userIsWhiteListed: action.res,
       };
-
     case 'GET_USER_IS_WHITELISTED_FAIL':
       delete state.BB_GET_USER_IS_WHITELISTED;
       return state;

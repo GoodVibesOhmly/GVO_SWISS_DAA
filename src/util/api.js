@@ -6,6 +6,11 @@ export default {
     return axios.get(`${config.apiGateway.URL}/signature/${address}_${type}`);
   },
 
+  getEffectiveBalance: async address => {
+    const res = await axios.get(`${config.apiGateway.URL}/balance/${address}`);
+    return res.data.balance;
+  },
+
   postSignature: (message, signature, address, type) => {
     return axios.post(`${config.apiGateway.URL}/signature`, {
       type,
