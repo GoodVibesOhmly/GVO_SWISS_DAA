@@ -13,7 +13,7 @@ const Comp = ({ effectiveBalance }) => {
     if (isReady) {
       setShowPendingScore(effectiveBalance > 0);
     }
-  }, [isReady, showPendingScore]);
+  }, [isReady, showPendingScore, effectiveBalance]);
 
   return (
     <>
