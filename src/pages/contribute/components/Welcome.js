@@ -1,20 +1,10 @@
-import React, { useState, useContext } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import WalletView from './WalletView';
 import Contribute from './Contribute';
 import CSTKScore from './CSTKScore';
-import { OnboardContext } from '../../../components/OnboardProvider';
 
 const Comp = ({ effectiveBalance }) => {
-  const { isReady } = useContext(OnboardContext);
-  const [showPendingScore, setShowPendingScore] = useState(false);
-
-  React.useEffect(() => {
-    if (isReady) {
-      setShowPendingScore(effectiveBalance > 0);
-    }
-  }, [isReady, effectiveBalance]);
-
   return (
     <>
       <section className="section has-text-left">
@@ -23,7 +13,7 @@ const Comp = ({ effectiveBalance }) => {
             <article className="is-child notification is-primary">
               <WalletView />
             </article>
-            {showPendingScore ? null : (
+            {effectiveBalance > 0 && (
               <article className="is-child notification is-primary">
                 <CSTKScore />
               </article>
@@ -38,9 +28,9 @@ const Comp = ({ effectiveBalance }) => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ({ effectiveBalance }) => {
   return {
-    effectiveBalance: state.effectiveBalance,
+    effectiveBalance,
   };
 };
 
