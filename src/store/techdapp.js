@@ -1,8 +1,10 @@
 import { PromiseBlackBox } from '@oqton/redux-black-box';
+import Web3 from 'web3';
 import ERC20Contract from 'erc20-contract-js';
 import BigNumber from 'bignumber.js';
 import api from '../util/api';
 import CSTKToken from '../blockchain/contracts/CSTKToken';
+import registryABI from '../blockchain/contracts/Registry.json';
 import config from '../config';
 import tandc from '../assets/tandc.json';
 import statutes from '../assets/statutes.json';
@@ -28,6 +30,10 @@ const initialState = {
   contributeFormAmountDai: undefined,
 };
 
+const web3 = new Web3(config.ETH.rpcEndpointXdai);
+
+const registryContract = new web3.eth.Contract(registryABI, config.registryAddress);
+
 const CSTK = new CSTKToken().contract; // CSTK tokencontract on XDAI
 
 const coins = [
@@ -40,10 +46,6 @@ const coins = [
     erc20Contract: CSTK,
   },
 ];
-
-// const CSTKContract = CSTK.contract;
-// const m = CSTKContract.methods;
-// debugger;
 
 const reducer = (state = initialState, action) => {
   // const newState = { ...state };
@@ -268,8 +270,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS: new PromiseBlackBox(() =>
-          api
-            .getEffectiveBalance(action.address)
+          getPendingBalance(action.address)
             .then(res => ({
               type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_SUCCESS',
               res,
@@ -302,8 +303,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         BB_GET_USER_IS_WHITELISTED: new PromiseBlackBox(() => {
-          return api
-            .getUserWhiteListed(action.address)
+          return getUserWhiteListed(action.address)
             .then(res => {
               return {
                 type: 'GET_USER_IS_WHITELISTED_SUCCESS',
@@ -344,6 +344,44 @@ const reducer = (state = initialState, action) => {
   }
 };
 
+const getMaxTrust = async address => {
+  const contributors = await new Promise((resolve, reject) => {
+    registryContract.methods.getMaxTrust(address).call((err, res) => {
+      if (err) reject(err);
+      resolve(res);
+    });
+  });
+
+  return contributors;
+};
+
+const getContributors = async () => {
+  const contributors = await new Promise((resolve, reject) => {
+    registryContract.methods.getContributors().call((err, res) => {
+      if (err) reject(err);
+      resolve(res);
+    });
+  });
+
+  return contributors;
+};
+
+const getPendingBalance = async address => {
+  const contributors = await new Promise((resolve, reject) => {
+    registryContract.methods.getPendingBalance(address).call((err, res) => {
+      if (err) reject(err);
+      resolve(res);
+    });
+  });
+
+  return contributors;
+};
+
+const getUserWhiteListed = async address => {
+  const contributors = (await getContributors()).map(item => item.toLowerCase());
+  return contributors.includes(address.toLowerCase());
+};
+
 // eslint-disable-next-line no-shadow
 const getBalances = async (web3, address, coins) => {
   return Promise.all([
@@ -356,7 +394,7 @@ const getBalances = async (web3, address, coins) => {
           .then(b => new BigNumber(b)),
         erc20Contract.decimals().call(),
         erc20Contract.totalSupply().call(),
-        api.getMaxTrust(address),
+        getMaxTrust(address),
       ]);
       return {
         symbol: coin.symbol,

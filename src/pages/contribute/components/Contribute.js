@@ -51,13 +51,6 @@ const Comp = ({
   const updateBalances = useCallback(() => {
     getBalancesFor(address);
     getEffectiveBalancesFor(address);
-    // if (balances && balances[address]) {
-    //   const userBalance = balances[address];
-    //   const cstk = userBalance.find(b => b.symbol === 'CSTK');
-    //   if (cstk) {
-    //     setCstkbalance(cstk.balanceFormatted);
-    //   }
-    // }
   }, [address, getBalancesFor, getEffectiveBalancesFor]);
 
   useEffect(() => {
