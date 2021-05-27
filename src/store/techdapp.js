@@ -1,10 +1,9 @@
 import { PromiseBlackBox } from '@oqton/redux-black-box';
-import Web3 from 'web3';
 import ERC20Contract from 'erc20-contract-js';
 import BigNumber from 'bignumber.js';
 import api from '../util/api';
 import CSTKToken from '../blockchain/contracts/CSTKToken';
-import registryABI from '../blockchain/contracts/Registry.json';
+import Registry from '../blockchain/contracts/Registry';
 import config from '../config';
 import tandc from '../assets/tandc.json';
 import statutes from '../assets/statutes.json';
@@ -30,11 +29,10 @@ const initialState = {
   contributeFormAmountDai: undefined,
 };
 
-const web3 = new Web3(config.ETH.rpcEndpointXdai);
-
-const registryContract = new web3.eth.Contract(registryABI, config.registryAddress);
-
-const CSTK = new CSTKToken().contract; // CSTK tokencontract on XDAI
+// Registry contract on XDAI
+const registryContract = new Registry().contract;
+// CSTK token contract on XDAI
+const CSTK = new CSTKToken().contract;
 
 const coins = [
   {
@@ -339,6 +337,7 @@ const reducer = (state = initialState, action) => {
         hasDonated: false,
       };
     default:
+      // eslint-disable-next-line no-console
       console.log(`unknown action ${action.type}`);
       return state;
   }
