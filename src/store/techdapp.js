@@ -46,7 +46,6 @@ const coins = [
 ];
 
 const reducer = (state = initialState, action) => {
-  // const newState = { ...state };
   switch (action.type) {
     case 'BOOTSTRAP':
       return {
