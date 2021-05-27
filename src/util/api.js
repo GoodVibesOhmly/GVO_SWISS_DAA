@@ -6,21 +6,6 @@ export default {
     return axios.get(`${config.apiGateway.URL}/signature/${address}_${type}`);
   },
 
-  getUserWhiteListed: async address => {
-    const res = await axios.get(`${config.apiGateway.URL}/whitelist/${address}`);
-    return !!res && !!res.data && !!res.data.whitelisted;
-  },
-
-  getMaxTrust: async address => {
-    const res = await axios.get(`${config.apiGateway.URL}/maxtrust/${address}`);
-    return res.data.maxtrust;
-  },
-
-  getEffectiveBalance: async address => {
-    const res = await axios.get(`${config.apiGateway.URL}/balance/${address}`);
-    return res.data.balance;
-  },
-
   postSignature: (message, signature, address, type) => {
     return axios.post(`${config.apiGateway.URL}/signature`, {
       type,
