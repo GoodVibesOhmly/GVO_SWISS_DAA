@@ -343,41 +343,30 @@ const reducer = (state = initialState, action) => {
 };
 
 const getMaxTrust = async address => {
-  const contributors = await new Promise((resolve, reject) => {
+  const maxTrust = await new Promise((resolve, reject) => {
     registryContract.methods.getMaxTrust(address).call((err, res) => {
       if (err) reject(err);
       resolve(res);
     });
   });
 
-  return contributors;
-};
-
-const getContributors = async () => {
-  const contributors = await new Promise((resolve, reject) => {
-    registryContract.methods.getContributors().call((err, res) => {
-      if (err) reject(err);
-      resolve(res);
-    });
-  });
-
-  return contributors;
+  return maxTrust;
 };
 
 const getPendingBalance = async address => {
-  const contributors = await new Promise((resolve, reject) => {
+  const pendingBalance = await new Promise((resolve, reject) => {
     registryContract.methods.getPendingBalance(address).call((err, res) => {
       if (err) reject(err);
       resolve(res);
     });
   });
 
-  return contributors;
+  return pendingBalance;
 };
 
 const getUserWhiteListed = async address => {
-  const contributors = (await getContributors()).map(item => item.toLowerCase());
-  return contributors.includes(address.toLowerCase());
+  const maxTrust = await getMaxTrust(address);
+  return maxTrust > 0;
 };
 
 // eslint-disable-next-line no-shadow
