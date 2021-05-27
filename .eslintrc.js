@@ -6,6 +6,7 @@ module.exports = {
     'prettier/flowtype',
     'prettier/react',
     'prettier/standard',
+    'plugin:react-hooks/recommended'
   ],
   rules: {
     'react/jsx-props-no-spreading': 'off',

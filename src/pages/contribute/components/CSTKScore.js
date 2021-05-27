@@ -1,22 +1,14 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import CSTK from '../../../assets/cstk.svg';
 import './CSTKScore.sass';
 
-const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalancesFor }) => {
+const Comp = ({ effectiveBalance, getEffectiveBalancesFor }) => {
   const { address, isReady } = useContext(OnboardContext);
 
   React.useEffect(() => {
     if (isReady) {
-      getBalancesFor(address);
-      // getEffectiveBalancesFor(address);
-    }
-  }, [isReady, address, getBalancesFor]);
-
-  React.useEffect(() => {
-    if (isReady) {
-      // getBalancesFor(address);
       getEffectiveBalancesFor(address);
     }
   }, [isReady, address, getEffectiveBalancesFor]);
@@ -30,20 +22,6 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
     };
   });
 
-  const [cstkBalance, setCstkbalance] = useState();
-
-  useEffect(() => {
-    let balance; // = '0';
-    if (balances && balances[address]) {
-      const userBalance = balances[address];
-      const cstk = userBalance.find(b => b.symbol === 'CSTK');
-      if (cstk) {
-        balance = cstk.balanceFormatted;
-      }
-    }
-    setCstkbalance(balance);
-  }, [balances, address]);
-
   return (
     <>
       <p className="title is-text-overflow mb-2">Your Pending Membership Score</p>
@@ -54,12 +32,11 @@ const Comp = ({ balances, effectiveBalance, getBalancesFor, getEffectiveBalances
             &nbsp;
           </span>
           <span className="has-text-weight-bold" style={{ marginLeft: '4px' }}>
-            {cstkBalance || '~'}&nbsp; CSTK
+            {effectiveBalance || '~'}&nbsp; CSTK
           </span>
         </div>
       </div>
       <div />
-      {/* <div className="subtitle mb-05">Effective score: {effectiveBalance.toString()} CSTK</div> */}
       {effectiveBalance === 0 && (
         <div className="subtitle mb-05">You haven't paid your membership dues yet</div>
       )}
@@ -104,7 +81,6 @@ const mapStateToProps = ({ balances, effectiveBalance }) => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getBalancesFor: address => dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address }),
     getEffectiveBalancesFor: address =>
       dispatch({ type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS', address }),
   };

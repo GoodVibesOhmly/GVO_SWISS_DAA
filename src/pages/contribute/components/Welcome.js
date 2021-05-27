@@ -13,7 +13,7 @@ const Comp = ({ effectiveBalance }) => {
             <article className="is-child notification is-primary">
               <WalletView />
             </article>
-            {effectiveBalance > 0 ? null : (
+            {effectiveBalance > 0 && (
               <article className="is-child notification is-primary">
                 <CSTKScore />
               </article>
@@ -28,9 +28,9 @@ const Comp = ({ effectiveBalance }) => {
   );
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = ({ effectiveBalance }) => {
   return {
-    effectiveBalance: state.effectiveBalance,
+    effectiveBalance,
   };
 };
 
