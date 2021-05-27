@@ -278,11 +278,9 @@ const reducer = (state = initialState, action) => {
       };
     case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_SUCCESS':
       delete state.BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS;
-      // eslint-disable-next-line no-case-declarations
-      const effectiveBalance = new BigNumber(action.res).div(new BigNumber(10).pow(18)).toNumber();
       return {
         ...state,
-        effectiveBalance,
+        effectiveBalance: action.res,
       };
 
     case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_FAIL':
