@@ -137,7 +137,9 @@ const Comp = ({
         const dai = balances[address].find(b => b.symbol === 'DAI');
         setBalanceDAI(dai.balance);
         setAmountDAI(450);
-        setShowApplyToScholarshipTooltip(!hasPaidDues);
+        if (dai.balance < 450 && !hasPaidDues) {
+          setShowApplyToScholarshipTooltip(true);
+        }
       }
     } catch (e) {
       // console.error(e);
@@ -193,7 +195,7 @@ const Comp = ({
                     active={showScholarshipTooltip || showApplyToScholarshipTooltip || !!DAIError}
                     content={
                       // eslint-disable-next-line no-nested-ternary
-                      showScholarshipTooltip ? (
+                      showScholarshipTooltip && balanceDAI > 450 ? (
                         <TooltipScholarshipContent />
                       ) : showApplyToScholarshipTooltip ? (
                         <TooltipApplyToScholarship />
