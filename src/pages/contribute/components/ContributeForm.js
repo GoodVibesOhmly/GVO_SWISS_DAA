@@ -78,8 +78,11 @@ const Comp = ({
 
   React.useEffect(() => {
     let scholarship;
-    if (!hasPaidDues) scholarship = Math.floor(amountDAI / 450 - 1);
-    else scholarship = Math.floor(amountDAI / 450);
+    if (!hasPaidDues) {
+      scholarship = Math.floor(amountDAI / 450 - 1);
+    } else {
+      scholarship = Math.floor(amountDAI / 450);
+    }
     if (scholarship >= 1) {
       setAmountScholarship(scholarship);
       setShowScholarshipTooltip(true);
@@ -136,10 +139,16 @@ const Comp = ({
       if (balances && balances[address]) {
         const dai = balances[address].find(b => b.symbol === 'DAI');
         setBalanceDAI(dai.balance);
-        setAmountDAI(450);
-        if (dai.balance < 450 && !hasPaidDues) {
-          setShowApplyToScholarshipTooltip(true);
+        setShowApplyToScholarshipTooltip(dai.balance.lt(450) && !hasPaidDues);
+        if (dai.balance.gt(450)) {
+          if (dai.balance.gt(900)) {
+            setAmountDAI(900);
+            return;
+          }
+          setAmountDAI(dai.balance.integerValue());
+          return;
         }
+        setAmountDAI(450);
       }
     } catch (e) {
       // console.error(e);
@@ -195,7 +204,7 @@ const Comp = ({
                     active={showScholarshipTooltip || showApplyToScholarshipTooltip || !!DAIError}
                     content={
                       // eslint-disable-next-line no-nested-ternary
-                      showScholarshipTooltip && balanceDAI > 450 ? (
+                      showScholarshipTooltip ? (
                         <TooltipScholarshipContent />
                       ) : showApplyToScholarshipTooltip ? (
                         <TooltipApplyToScholarship />
@@ -276,7 +285,7 @@ const Comp = ({
             disabled={!donationButtonEnabled}
             onClick={() => setShowDonateModal(true)}
           >
-            Pay Membership Dues
+            {hasPaidDues ? 'Pay Additional Dues' : 'Pay Membership Dues'}
           </button>
         </div>
       </div>
