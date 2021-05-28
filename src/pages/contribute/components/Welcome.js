@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import WalletView from './WalletView';
 import Contribute from './Contribute';
-import CSTKScore from './CSTKScore';
+import PendingBalance from './PendingBalance';
 
-const Comp = ({ effectiveBalance }) => {
+const Comp = () => {
   return (
     <>
       <section className="section has-text-left">
@@ -13,11 +13,7 @@ const Comp = ({ effectiveBalance }) => {
             <article className="is-child notification is-primary">
               <WalletView />
             </article>
-            {effectiveBalance > 0 && (
-              <article className="is-child notification is-primary">
-                <CSTKScore />
-              </article>
-            )}
+            <PendingBalance />
           </div>
           <div className="tile is-parent">
             <Contribute />
@@ -28,16 +24,10 @@ const Comp = ({ effectiveBalance }) => {
   );
 };
 
-const mapStateToProps = ({ effectiveBalance }) => {
-  return {
-    effectiveBalance,
-  };
-};
-
 const mapDispatchToProps = dispatch => {
   return {
     onSetAgreed: () => dispatch({ type: 'AGREE_TANDC' }),
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Comp);
+export default connect(mapDispatchToProps)(Comp);

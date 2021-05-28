@@ -258,37 +258,37 @@ const reducer = (state = initialState, action) => {
         : (state.balances[action.address] = { status: 'error fetching' });
       return state;
 
-    case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS':
-      if (!action.address) {
+    case 'GET_PENDING_BALANCE_FOR_ADDRESS':
+      if (!action.address || !state.web3) {
         return {
           ...state,
         };
       }
       return {
         ...state,
-        BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS: new PromiseBlackBox(() =>
+        BB_GET_PENDING_BALANCE_FOR_ADDRESS: new PromiseBlackBox(() =>
           getPendingBalance(action.address)
             .then(res => ({
-              type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_SUCCESS',
+              type: 'GET_PENDING_BALANCE_FOR_ADDRESS_SUCCESS',
               res,
               address: action.address,
             }))
-            .catch(e => ({ type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_FAIL', e })),
+            .catch(e => ({ type: 'GET_PENDING_BALANCE_FOR_ADDRESS_FAILURE', e })),
         ),
       };
-    case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_SUCCESS':
-      delete state.BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS;
+    case 'GET_PENDING_BALANCE_FOR_ADDRESS_SUCCESS':
+      delete state.BB_GET_PENDING_BALANCE_FOR_ADDRESS;
       return {
         ...state,
-        effectiveBalance: action.res,
+        pendingBalance: action.res,
+      };
+    case 'GET_PENDING_BALANCE_FOR_ADDRESS_FAILURE':
+      delete state.BB_GET_PENDING_BALANCE_FOR_ADDRESS;
+      return {
+        ...state,
+        pendingBalance: 0,
       };
 
-    case 'GET_EFFECTIVEBALANCE_FOR_ADDRESS_FAIL':
-      delete state.BB_GET_EFFECTIVEBALANCE_FOR_ADDRESS;
-      return {
-        ...state,
-        effectiveBalance: 0,
-      };
     case 'SET_CONTRIBUTEFORM_AMOUNT_DAI':
       return {
         ...state,
