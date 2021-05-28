@@ -22,9 +22,8 @@ const Comp = ({
   userIsWhiteListed,
   balances,
   hasDonated,
-  effectiveBalance,
   getBalancesFor,
-  getEffectiveBalancesFor,
+  getPendingBalancesFor,
   onCloseContributeThanks,
 }) => {
   const viewStates = Object.freeze({
@@ -50,8 +49,8 @@ const Comp = ({
 
   const updateBalances = useCallback(() => {
     getBalancesFor(address);
-    getEffectiveBalancesFor(address);
-  }, [address, getBalancesFor, getEffectiveBalancesFor]);
+    getPendingBalancesFor(address);
+  }, [address, getBalancesFor, getPendingBalancesFor]);
 
   useEffect(() => {
     updateBalances();
@@ -73,7 +72,7 @@ const Comp = ({
       }
     }
     setCstkbalance(balance);
-  }, [balances, effectiveBalance, address]);
+  }, [balances, address]);
 
   useEffect(() => {
     if (web3 && agreedtandc && agreedstatutes && userIsWhiteListed) {
@@ -124,57 +123,60 @@ const Comp = ({
 
   return (
     <div className="tile is-child">
-      {(!web3 || effectiveBalance === 0) && showwelcome ? <WelcomeModal /> : null}
+      {!web3 && showwelcome ? <WelcomeModal /> : null}
 
       <article className=" notification is-primary">
         <div className="contribmain">
-          <p className="subtitle mb-2">YOUR MEMBERSHIP SCORE</p>
           {web3 && address && (
             <>
-              <div className="level">
-                <div className="level-left">
-                  <div className="level-item">
-                    <article className="media">
-                      <figure className="media-left">
-                        <p className="image is-64x64">
-                          <img alt="CSTK logo" src={Cstk} />
-                        </p>
-                      </figure>
-                      <div className="media-content">
-                        <div className="content">
-                          <p className="heading is-size-2 has-text-weight-bold">
-                            {effectiveBalance > 0 ? cstkBalance : '0'} CSTK
-                          </p>
-                        </div>
+              {viewState !== viewStates.INIT && (
+                <>
+                  <p className="subtitle mb-2">YOUR MEMBERSHIP SCORE</p>
+                  <div className="level">
+                    <div className="level-left">
+                      <div className="level-item">
+                        <article className="media">
+                          <figure className="media-left">
+                            <p className="image is-64x64">
+                              <img alt="CSTK logo" src={Cstk} />
+                            </p>
+                          </figure>
+                          <div className="media-content">
+                            <div className="content">
+                              <p className="heading is-size-2 has-text-weight-bold">
+                                {cstkBalance} CSTK
+                              </p>
+                            </div>
+                          </div>
+                        </article>
                       </div>
-                    </article>
+                    </div>
+                    <div className="level-right">
+                      <div className="level-item">
+                        <span>
+                          {viewState === viewStates.WAITINGTOCONTRIBUTE && (
+                            <button
+                              onClick={() => {
+                                onboard.walletCheck().then(readyToTransact => {
+                                  if (readyToTransact) {
+                                    changeViewState(
+                                      viewStates.WAITINGTOCONTRIBUTE,
+                                      viewStates.STARTDONATING,
+                                    );
+                                  }
+                                });
+                              }}
+                              className="button is-success is-medium"
+                            >
+                              {cstkBalance !== '0' ? 'Pay Additional Dues' : 'Pay Membership Dues'}
+                            </button>
+                          )}
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="level-right">
-                  <div className="level-item">
-                    <span>
-                      {viewState === viewStates.WAITINGTOCONTRIBUTE && (
-                        <button
-                          onClick={() => {
-                            onboard.walletCheck().then(readyToTransact => {
-                              if (readyToTransact) {
-                                changeViewState(
-                                  viewStates.WAITINGTOCONTRIBUTE,
-                                  viewStates.STARTDONATING,
-                                );
-                              }
-                            });
-                          }}
-                          className="button is-success is-medium"
-                        >
-                          {effectiveBalance > 0 ? 'Pay Additional Dues' : 'Pay Membership Dues'}
-                        </button>
-                      )}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
+                </>
+              )}
               {viewState === viewStates.INIT && (
                 <div>
                   <div className="tile is-child">
@@ -208,7 +210,7 @@ const Comp = ({
 
               <br />
               <p>
-                {effectiveBalance > 0 ? (
+                {cstkBalance !== '0' ? (
                   <>
                     <span className="icon has-text-success">
                       <i className="fas fa-check-circle" />
@@ -413,15 +415,14 @@ const mapStateToProps = state => {
     totalReceived: state.totalReceived,
     balances: state.balances,
     hasDonated: state.hasDonated,
-    effectiveBalance: state.effectiveBalance,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     getBalancesFor: address => dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address }),
-    getEffectiveBalancesFor: address =>
-      dispatch({ type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS', address }),
+    getPendingBalancesFor: address =>
+      dispatch({ type: 'GET_PENDING_BALANCE_FOR_ADDRESS', address }),
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
     onCloseContributeThanks: () => dispatch({ type: 'CLOSE_CONTRIBUTE_THANKS' }),

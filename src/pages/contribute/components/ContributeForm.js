@@ -15,7 +15,6 @@ const config = require('../../../config');
 const Comp = ({
   onClose,
   balances,
-  effectiveBalance,
   getBalancesFor,
   setContributeFormAmountDai,
   contributeFormAmountDai,
@@ -116,20 +115,20 @@ const Comp = ({
         } else {
           setShowMaxTrustScoreTooltip(false);
         }
-        if (effectiveBalance >= 450) setHasPaidDues(true);
+        if (cstkBalance > 0) setHasPaidDues(true);
         setAmountCSTK(cstkToReceive);
         setDAIError(null);
-      }
 
-      if (!hasPaidDues && amountDAIFloat < config.minimumContribution.member) {
-        setDAIError(`Minimum is ${config.minimumContribution.member} DAI`);
-      } else if (effectiveBalance === 0 && amountDAIFloat < config.minimumContribution.nonMember) {
-        setDAIError(`Minimum is ${config.minimumContribution.nonMember} DAI`);
+        if (!hasPaidDues && amountDAIFloat < config.minimumContribution.member) {
+          setDAIError(`Minimum is ${config.minimumContribution.member} DAI`);
+        } else if (cstkBalance === 0 && amountDAIFloat < config.minimumContribution.nonMember) {
+          setDAIError(`Minimum is ${config.minimumContribution.nonMember} DAI`);
+        }
       }
     } catch (e) {
       // console.error(e);
     }
-  }, [amountDAI, balances, address, getBalancesFor, effectiveBalance, hasPaidDues]);
+  }, [amountDAI, balances, address, getBalancesFor, hasPaidDues]);
 
   React.useEffect(() => {
     if (typeof contributeFormAmountDai !== 'undefined') return; // Proceed only if no DAI value has been entered by user
@@ -137,17 +136,13 @@ const Comp = ({
       if (balances && balances[address]) {
         const dai = balances[address].find(b => b.symbol === 'DAI');
         setBalanceDAI(dai.balance);
-        if (effectiveBalance >= 450) {
-          setAmountDAI(dai.balance);
-        } else {
-          setAmountDAI(450);
-          setShowApplyToScholarshipTooltip(true);
-        }
+        setAmountDAI(450);
+        setShowApplyToScholarshipTooltip(!hasPaidDues);
       }
     } catch (e) {
       // console.error(e);
     }
-  }, [balances, address, effectiveBalance, contributeFormAmountDai]);
+  }, [balances, address, contributeFormAmountDai, hasPaidDues]);
 
   React.useEffect(() => {
     setContributeFormAmountDai(amountDAI);
@@ -297,7 +292,6 @@ const mapStateToProps = state => {
     hardCap: state.hardCap,
     balances: state.balances,
     totalReceived: state.totalReceived,
-    effectiveBalance: state.effectiveBalance,
     contributeFormAmountDai: state.contributeFormAmountDai,
   };
 };
@@ -305,8 +299,6 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     getBalancesFor: address => dispatch({ type: 'GET_BALANCES_FOR_ADDRESS', address }),
-    getEffectiveBalancesFor: address =>
-      dispatch({ type: 'GET_EFFECTIVEBALANCE_FOR_ADDRESS', address }),
     onSetAgreedtandc: signature => dispatch({ type: 'AGREE_TANDC', signature }),
     setShowTandC: value => dispatch({ type: 'SET_SHOW_TANDC', value }),
     setContributeFormAmountDai: value => dispatch({ type: 'SET_CONTRIBUTEFORM_AMOUNT_DAI', value }),
