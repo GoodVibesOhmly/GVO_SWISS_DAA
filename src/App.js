@@ -37,7 +37,6 @@ function App({ bootstrap }) {
             <Redirect from="/contribute" to="/" />
           </Switch>
           {window.screen.width < 640 ? <Redirect to="/desktop" /> : null}
-          {!window.location.search.includes('burn') ? <Redirect to="/burn" /> : null}
         </BrowserRouter>
       </section>
     </div>
