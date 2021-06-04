@@ -216,20 +216,42 @@ const Comp = ({
                       <i className="fas fa-check-circle" />
                     </span>
                     Your membership dues are paid. By paying more membership dues you will further
-                    help the mission of the organization.
+                    help the mission of the organization. You can acquire DAI on{' '}
+                    <a
+                      className="exchange"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      href="https://1inch.exchange/#/r/0x8110d1D04ac316fdCACe8f24fD60C86b810AB15A"
+                    >
+                      1inch.exchange
+                    </a>
+                    .
                   </>
                 ) : (
-                  'Membership dues are paid with DAI.'
-                )}{' '}
-                You can acquire DAI on{' '}
-                <a
-                  className="exchange"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  href="https://1inch.exchange/#/r/0x8110d1D04ac316fdCACe8f24fD60C86b810AB15A"
-                >
-                  1inch.exchange
-                </a>
+                  <>
+                    Membership dues are paid with DAI. You can acquire DAI on{' '}
+                    <a
+                      className="exchange"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      href="https://1inch.exchange/#/r/0x8110d1D04ac316fdCACe8f24fD60C86b810AB15A"
+                    >
+                      1inch.exchange
+                    </a>
+                    .
+                    <br />
+                    Paying the membership dues also earns you{' '}
+                    <a
+                      className="exchange"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      href="https://medium.com/commonsstack/using-cslove-to-get-your-free-commons-stack-swag-4b74eb425d90"
+                    >
+                      CSLove tokens
+                    </a>{' '}
+                    you can use to claim free swag!
+                  </>
+                )}
               </p>
 
               {viewState === viewStates.STARTDONATING && (
