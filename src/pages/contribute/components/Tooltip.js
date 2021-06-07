@@ -11,7 +11,11 @@ const Tooltip = ({ children, active, content }) => {
   };
 
   return (
-    <div className="tooltip" onMouseEnter={() => setShowToolTip(true)}>
+    <div
+      className="tooltip"
+      onMouseEnter={() => setShowToolTip(true)}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="tooltip-arrow" />
       {active && showToolTip && (
         <div className="tooltip-content" onMouseLeave={handleMouseLeave}>
