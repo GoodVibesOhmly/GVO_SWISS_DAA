@@ -25,8 +25,6 @@ const WalletButton = () => {
       </button>
     );
   }
-
-  // `web3` and `account` loaded 🎉
   return null;
 };
 
