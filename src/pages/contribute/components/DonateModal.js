@@ -8,6 +8,7 @@ import GivethBridge from '../../../blockchain/contracts/GivethBridge';
 // import './DonateModal.sass';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import AllowanceHelper from '../../../blockchain/allowanceHelper';
+import monitorTransaction from '../../../blockchain/monitorTransaction';
 import spinner from '../../../assets/spinner.svg';
 import Success from './Success';
 import DAI from '../../../assets/dai.svg';
@@ -203,18 +204,38 @@ const DonateModal = props => {
   };
 
   const donate = async () => {
+    let cancelMonitor = () => {};
     dispatch({ type: ACTION_DONATE });
     try {
-      await givethBridge.donateAndCreateGiver(
-        address,
-        config.targetProjectId,
-        DAITokenAddress,
-        toWei(amount),
-      );
+      await new Promise((resolve, reject) => {
+        givethBridge
+          .donateAndCreateGiver(address, config.targetProjectId, DAITokenAddress, toWei(amount))
+          .on('transactionHash', async transactionHash => {
+            const monitor = await monitorTransaction(
+              web3,
+              transactionHash,
+              toWei(amount).toString(),
+            );
+            cancelMonitor = monitor.cancelMonitor;
+            monitor.promise
+              .then(donationWasSuccessful => {
+                if (donationWasSuccessful) {
+                  resolve();
+                } else {
+                  reject();
+                }
+              })
+              .catch(console.error);
+          })
+          .then(resolve)
+          .catch(reject);
+      });
       dispatch({ type: ACTION_DONATE_SUCCESS });
       onDonate();
     } catch (e) {
       dispatch({ type: ACTION_DONATE_FAIL });
+    } finally {
+      cancelMonitor();
     }
   };
 
