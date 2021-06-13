@@ -27,26 +27,28 @@ const monitorTransaction = async (web3, originalTransactionHash, donateAmount) =
   const givethBridge = new GivethBridge(web3, config.givethBridgeAddress);
 
   const checkTransactionIsDone = async () => {
-    const events = await givethBridge.contract.getPastEvents('DonateAndCreateGiver', {
-      fromBlock,
-      toBlock: 'latest',
-    });
-
-    const found = events.some(e => {
-      const { giver, receiverId, token, amount } = e.returnValues;
-      return (
-        giver === from &&
-        Number(receiverId) === config.targetProjectId &&
-        token === config.DAITokenAddress &&
-        amount === donateAmount
-      );
-    });
-
-    if (found) return status.SUCCESSFUL;
-
     const transactionCount = await web3.eth.getTransactionCount(from);
 
-    return transactionCount > nonce ? status.CANCELED : status.NOTHING;
+    if (transactionCount > nonce) {
+      const events = await givethBridge.contract.getPastEvents('DonateAndCreateGiver', {
+        fromBlock,
+        toBlock: 'latest',
+      });
+
+      const found = events.some(e => {
+        const { giver, receiverId, token, amount } = e.returnValues;
+        return (
+          giver === from &&
+          Number(receiverId) === config.targetProjectId &&
+          token === config.DAITokenAddress &&
+          amount === donateAmount
+        );
+      });
+
+      return found ? status.SUCCESSFUL : status.CANCELED;
+    }
+
+    return status.NOTHING;
   };
 
   const promise = new Promise(resolve => {

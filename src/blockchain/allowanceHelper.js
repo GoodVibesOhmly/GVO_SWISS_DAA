@@ -4,15 +4,50 @@ import config from '../config';
 const INFINITE_ALLOWANCE = new BigNumber(2).pow(256).minus(1).toFixed();
 
 const createAllowance = async (ERC20Cotract, account, amount) => {
-  return ERC20Cotract.approve(config.givethBridgeAddress, amount)
-    .send({ from: account })
-    .on('transactionHash', () => {
-      if (amount === 0) {
-        // TODO: notification of 'You will be asked to make another transaction to set the correct allowance!'
-      } else {
-        // TODO: notification of 'You will be asked to make another transaction for your donation!'
-      }
-    });
+  let subscription;
+
+  const clear = () => {
+    if (subscription) {
+      subscription.unsubscribe();
+      subscription = undefined;
+    }
+  };
+
+  return new Promise((resolve, reject) => {
+    ERC20Cotract.approve(config.givethBridgeAddress, amount)
+      .send({ from: account })
+      .on('transactionHash', async transactionHash => {
+        const web3 = ERC20Cotract.getWeb3();
+        const { from, nonce } = await web3.eth.getTransaction(transactionHash);
+        const fromBlock = await web3.eth.getBlockNumber();
+
+        subscription = web3.eth
+          .subscribe('newBlockHeaders')
+          .on('data', async block => {
+            if (!block.number) return;
+            const transactionCount = await web3.eth.getTransactionCount(from);
+
+            if (transactionCount > nonce) {
+              const events = await ERC20Cotract.peApproval({
+                fromBlock,
+                toBlock: 'latest',
+                _owner: from,
+                _spender: config.givethBridgeAddress,
+                _value: amount,
+              });
+
+              if (events.length > 0) {
+                resolve();
+              } else {
+                reject();
+              }
+            }
+          })
+          .on('error', err => console.error('SUBSCRIPTION ERROR: ', err));
+      })
+      .then(resolve)
+      .catch(reject);
+  }).finally(clear);
 };
 
 const approveERC20tokenTransfer = async (ERC20Contract, account, amount = INFINITE_ALLOWANCE) => {
