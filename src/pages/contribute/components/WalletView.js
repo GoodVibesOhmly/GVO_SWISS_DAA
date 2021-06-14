@@ -14,8 +14,7 @@ const coinLogos = [
   { symbol: 'DAI', src: DAI },
   { symbol: 'ETH', src: ETH },
   { symbol: 'CSTK', src: CSTK },
-  // { symbol: "ANT", src: ANT },
-  // { symbol: "BAT", src: BAT },
+  { symbol: 'CSLOVE', src: CSTK },
 ];
 
 const Comp = ({
@@ -46,52 +45,50 @@ const Comp = ({
   // TODO: Will be pulled form the state, just for now
   const defaultCoins = [
     {
+      symbol: 'CSLOVE',
+      contractaddress: '0x4D64A862e0eFb94b1d2A84A67F7a2d669AFA8eDf',
+    },
+    {
       symbol: 'DAI',
       contractaddress: '0xad6d458402f60fd3bd25163575031acdce07538d',
     },
     {
       symbol: 'ETH',
     },
-    // {
-    //   symbol: "ANT",
-    // },
-    // {
-    //   symbol: "BAT",
-    // },
   ];
 
   const coins = (balances && balances[address] && balances[address]) || defaultCoins;
 
   // DAI balance
-  const daiBalance = coins
-    .filter(coin => {
-      return coin.symbol === 'DAI';
-    })
-    .map(coin => {
-      const logo = coinLogos.find(coinIcon => {
-        return coinIcon.symbol === coin.symbol;
-      });
-      return (
-        isReady && (
-          <div key={coin.symbol} className="title level mb-04">
-            <div className="is-size-6 level-left mb-04">
-              <span className="icon has-text-light mr-02">
-                <img src={logo.src} alt={coin.symbol} />
-                &nbsp;
-              </span>
-              <span className="has-text-weight-bold" style={{ marginLeft: '4px' }}>
-                {coin.status || coin.balanceFormatted || '~'}&nbsp;
-                {coin.symbol}
-              </span>
-            </div>
-          </div>
-        )
-      );
-    });
+  // const daiBalance = coins
+  //   .filter(coin => {
+  //     return coin.symbol === 'DAI';
+  //   })
+  //   .map(coin => {
+  //     const logo = coinLogos.find(coinIcon => {
+  //       return coinIcon.symbol === coin.symbol;
+  //     });
+  //     return (
+  //       isReady && (
+  //         <div key={coin.symbol} className="title level mb-04">
+  //           <div className="is-size-6 level-left mb-04">
+  //             <span className="icon has-text-light mr-02">
+  //               <img src={logo.src} alt={coin.symbol} />
+  //               &nbsp;
+  //             </span>
+  //             <span className="has-text-weight-bold" style={{ marginLeft: '4px' }}>
+  //               {coin.status || coin.balanceFormatted || '~'}&nbsp;
+  //               {coin.symbol}
+  //             </span>
+  //           </div>
+  //         </div>
+  //       )
+  //     );
+  //   });
 
   // all other known balances - except DAI and CSTK
-  const otherBalances = coins.reduce((accum, coin) => {
-    if (['DAI', 'CSTK'].includes(coin.symbol)) return accum;
+  const coinBalances = coins.reduce((accum, coin) => {
+    if (['CSTK'].includes(coin.symbol)) return accum;
     const logo = coinLogos.find(coinIcon => {
       return coinIcon.symbol === coin.symbol;
     });
@@ -99,10 +96,10 @@ const Comp = ({
     accum.push(
       <div key={coin.symbol} className="title level mb-04">
         <div className="is-size-7 has-text-grey-light level-left mb-04">
-          <span className="icon has-text-light mr-02">
+          <span className="icon has-text-light mr-2">
             <img src={logo.src} alt={coin.symbol} />
             &nbsp;
-          </span>{' '}
+          </span>
           {coin.symbol}
         </div>
         {balances && balances[address] ? (
@@ -201,8 +198,7 @@ const Comp = ({
       {address && isReady ? (
         <>
           <p className="truncate is-size-7 mb-2">{address}</p>
-          {daiBalance}
-          {otherBalances}
+          {coinBalances}
         </>
       ) : (
         <>

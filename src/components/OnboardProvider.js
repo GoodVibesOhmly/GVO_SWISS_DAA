@@ -75,6 +75,22 @@ const Comp = ({ onWeb3Ready, children }) => {
     });
   };
 
+  const addCSLove = async () => {
+    const provider = window.web3.currentProvider;
+    await provider.request({
+      method: 'metamask_watchAsset',
+      params: {
+        type: 'ERC20',
+        options: {
+          address: '0x4D64A862e0eFb94b1d2A84A67F7a2d669AFA8eDf',
+          symbol: 'CSLOVE',
+          decimals: 0,
+          image: Cstk,
+        },
+      },
+    });
+  };
+
   useEffect(() => {
     const check = async () => {
       let ready = false;
@@ -105,6 +121,7 @@ const Comp = ({ onWeb3Ready, children }) => {
         onboard,
         isReady,
         addCSTK,
+        addCSLove,
         checkIsReady,
         changeWallet,
       }}

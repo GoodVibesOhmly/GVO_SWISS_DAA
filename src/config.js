@@ -7,8 +7,10 @@ const configs = {
     ETH: {
       // rpcEndpoint: "https://ropsten.infura.io/v3/766661aa3a1e414584b9d2c2b73e6930",
       rpcEndpointXdai: 'https://rpc.xdaichain.com/',
+      rpcEndpointRinkeby: 'https://rinkeby.infura.io/v3/562a234e32b3428c8177872117142691',
     },
     CSSTKTokenAddress: '0xc4fbE68522ba81a28879763C3eE33e08b13c499E', // XDAI
+    CSLoveTokenAddress: '0x4D64A862e0eFb94b1d2A84A67F7a2d669AFA8eDf', // Rinkeby
     DAITokenAddress: '0xE690E380740a682E2b8CEAEa33584Ea2cb59849E', // Ropsten
     registryAddress: '0x28512FB7681c8615aef25a8EF3bcb90aFAC502cB', // XDAI
     ratio: 2.5, // how much CSTK you get for 1 DAI
@@ -33,8 +35,10 @@ const configs = {
     ETH: {
       // rpcEndpoint: "https://mainnet.eth.cloud.ava.do",
       rpcEndpointXdai: 'https://rpc.xdaichain.com/',
+      rpcEndpointRinkeby: 'https://rinkeby.infura.io/v3/562a234e32b3428c8177872117142691',
     },
     CSSTKTokenAddress: '0xc4fbE68522ba81a28879763C3eE33e08b13c499E', // XDAI
+    CSLoveTokenAddress: '0x4D64A862e0eFb94b1d2A84A67F7a2d669AFA8eDf', // Rinkeby
     DAITokenAddress: '0x6b175474e89094c44da98b954eedeac495271d0f', // Mainnet
     registryAddress: '0x28512FB7681c8615aef25a8EF3bcb90aFAC502cB', // XDAI
     ratio: 2.5, // how much CSTK you get for 1 DAI
