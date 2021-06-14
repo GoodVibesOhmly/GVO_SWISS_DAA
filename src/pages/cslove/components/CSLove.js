@@ -90,8 +90,11 @@ const Comp = ({ balances, getBalancesFor }) => {
               <>
                 <div className="mb-3 title">Use your CSLove, claim your swag!</div>
                 <div className="mb-3">
-                  <span className="mr-3">🛍</span>Step 1: Go to the shop. Choose any two items you
-                  like. Check out and add your shipping info.
+                  <span className="mr-3" role="img" aria-label="shopping">
+                    🛍
+                  </span>
+                  Step 1: Go to the shop. Choose any two items you like. Check out and add your
+                  shipping info.
                 </div>
                 <div className="mb-3">
                   <p className="control">
@@ -106,9 +109,11 @@ const Comp = ({ balances, getBalancesFor }) => {
                   </p>
                 </div>
                 <div className="mb-3">
-                  <span className="mr-3">💸</span>Step 2: Connect Metamask and switch to the Rinkeby
-                  network. Choose Cryptocurrency and CSLove as payment method and hit the pay
-                  button!
+                  <span className="mr-3" role="img" aria-label="money">
+                    💸
+                  </span>
+                  Step 2: Connect Metamask and switch to the Rinkeby network. Choose Cryptocurrency
+                  and CSLove as payment method and hit the pay button!
                 </div>
                 <div className="mb-3 title">
                   We can't wait to see you sporting Commons Stack swag!!
