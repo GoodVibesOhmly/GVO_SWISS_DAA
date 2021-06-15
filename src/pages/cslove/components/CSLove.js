@@ -1,7 +1,7 @@
 import React, { useContext, useCallback, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { OnboardContext } from '../../../components/OnboardProvider';
-import Cstk from '../../../assets/cstk.svg';
+import Cstk from '../../../assets/cslove.svg';
 
 const Comp = ({ balances, getBalancesFor }) => {
   const { web3, address } = useContext(OnboardContext);

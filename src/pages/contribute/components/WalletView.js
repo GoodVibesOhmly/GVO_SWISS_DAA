@@ -4,6 +4,7 @@ import ETH from 'cryptocurrency-icons/svg/color/eth.svg';
 import DAI from '../../../assets/dai.svg';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import CSTK from '../../../assets/cstk.svg';
+import CSLove from '../../../assets/cslove.svg';
 import TandC from './TandC';
 import Statutes from './Statutes';
 import tandcData from '../../../assets/tandc.json';
@@ -14,7 +15,7 @@ const coinLogos = [
   { symbol: 'DAI', src: DAI },
   { symbol: 'ETH', src: ETH },
   { symbol: 'CSTK', src: CSTK },
-  { symbol: 'CSLOVE', src: CSTK },
+  { symbol: 'CSLOVE', src: CSLove },
 ];
 
 const Comp = ({
