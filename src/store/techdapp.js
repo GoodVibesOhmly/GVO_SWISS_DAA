@@ -3,6 +3,7 @@ import ERC20Contract from 'erc20-contract-js';
 import BigNumber from 'bignumber.js';
 import api from '../util/api';
 import CSTKToken from '../blockchain/contracts/CSTKToken';
+import CSLoveToken from '../blockchain/contracts/CSLoveToken';
 import Registry from '../blockchain/contracts/Registry';
 import config from '../config';
 import tandc from '../assets/tandc.json';
@@ -33,6 +34,8 @@ const initialState = {
 const registryContract = new Registry().contract;
 // CSTK token contract on XDAI
 const CSTK = new CSTKToken().contract;
+// CSLOVE token on Rinkeby
+const CSLOVE = new CSLoveToken().contract;
 
 const coins = [
   {
@@ -42,6 +45,10 @@ const coins = [
   {
     symbol: 'CSTK',
     erc20Contract: CSTK,
+  },
+  {
+    symbol: 'CSLOVE',
+    erc20Contract: CSLOVE,
   },
 ];
 

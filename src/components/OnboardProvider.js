@@ -61,13 +61,29 @@ const Comp = ({ onWeb3Ready, children }) => {
 
   const addCSTK = async () => {
     const provider = window.web3.currentProvider;
-    provider.sendAsync({
+    await provider.request({
       method: 'metamask_watchAsset',
       params: {
         type: 'ERC20',
         options: {
           address: '0xc4fbE68522ba81a28879763C3eE33e08b13c499E',
           symbol: 'CSTK',
+          decimals: 0,
+          image: Cstk,
+        },
+      },
+    });
+  };
+
+  const addCSLove = async () => {
+    const provider = window.web3.currentProvider;
+    await provider.request({
+      method: 'metamask_watchAsset',
+      params: {
+        type: 'ERC20',
+        options: {
+          address: '0x4D64A862e0eFb94b1d2A84A67F7a2d669AFA8eDf',
+          symbol: 'CSLOVE',
           decimals: 0,
           image: Cstk,
         },
@@ -105,6 +121,7 @@ const Comp = ({ onWeb3Ready, children }) => {
         onboard,
         isReady,
         addCSTK,
+        addCSLove,
         checkIsReady,
         changeWallet,
       }}
