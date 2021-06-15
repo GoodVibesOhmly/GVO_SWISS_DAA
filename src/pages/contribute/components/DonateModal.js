@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { connect } from 'react-redux';
 import ERC20Contract from 'erc20-contract-js';
 import Web3 from 'web3';
@@ -13,7 +13,12 @@ import spinner from '../../../assets/spinner.svg';
 import Success from './Success';
 import DAI from '../../../assets/dai.svg';
 import CSTK from '../../../assets/cstk.svg';
+import CSTKToken from '../../../blockchain/contracts/CSTKToken';
+import CSLoveToken from '../../../blockchain/contracts/CSLoveToken';
 
+
+const CSTKContract = new CSTKToken().contract;
+const CSLOVEContract = new CSLoveToken().contract;
 const { DAITokenAddress, givethBridgeAddress } = config;
 
 const VIEW_STATES = {
@@ -155,6 +160,9 @@ const reducerWrapper = (_state, _action) => {
 const DonateModal = props => {
   const { onClose, amount, onDonate } = props;
   const { web3, address, network } = useContext(OnboardContext);
+  const [alreadyHadCSLOVEToken, setAlreadyHadCSLOVEToken] = useState(false);
+  const [CSLOVETransferred, setCSLOVETransferred] = useState(false);
+  const [CSTKTransferred, setCSTKTransferred] = useState(false);
 
   const [state, dispatch] = useReducer(reducerWrapper, {
     viewState: initialViewState,
@@ -186,6 +194,27 @@ const DonateModal = props => {
   useEffect(() => {
     if (network !== config.networkId) onClose();
   }, [network, onClose]);
+
+  useEffect(() => {
+    const checkPastEvents = async () => {
+      const events = await CSLOVEContract.peTransfer({
+        fromBlock: 0,
+        toBlock: 'latest',
+        filter: {
+          _from: [
+            '0xcf79C7EaEC5BDC1A9e32D099C5D6BdF67E4cF6e8',
+            '0xb760FE1bbC4A2752aBCBb28291a57Cb0cA99fF44',
+            '0x99311936bda01d5ff4880614c24d65bf867b8e43',
+            '0xd152f549545093347a162dce210e7293f1452150',
+          ],
+          _to: address,
+        },
+      });
+      if (events.length > 0)
+        setAlreadyHadCSLOVEToken(events.some(event => event.returnValues._descriptionHash));
+    };
+    checkPastEvents();
+  }, [address]);
 
   if (!web3) return null;
 
@@ -378,11 +407,11 @@ const DonateModal = props => {
           </div>
         </div>
       </div>
-      <p className="is-size-5 has-text-centered has-text-weight-bold">Transaction sent</p>
+      <p className="is-size-5 has-text-centered has-text-weight-bold">Minting tokens</p>
       <br />
       <h2 className="has-text-centered mb-2">
-        Please be patient while the Ethereum miners add your transaction to the blockchain. If there
-        is an issue please reach out to us on{' '}
+        Please be patient while the your tokens are mined to the blockchain. If there is an issue
+        please reach out to us on{' '}
         <a
           target="_blank"
           rel="noreferrer"
@@ -393,6 +422,7 @@ const DonateModal = props => {
         </a>
         .
       </h2>
+      {!alreadyHadCSLOVEToken && <div />}
     </>
   );
 
