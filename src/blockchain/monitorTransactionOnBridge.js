@@ -1,3 +1,6 @@
+import config from '../config';
+import GivethBridge from './contracts/GivethBridge';
+
 const status = {
   NOTHING: 1,
   SUCCESSFUL: 2,
@@ -7,7 +10,8 @@ const status = {
 /**
  * @return {boolean} success whether the transaction is successful or replaced by different tx
  */
-const monitorTransaction = async (web3, to, value, erc20contract) => {
+const monitorTransactionOnBridge = async (web3, originalTransactionHash, donateAmount) => {
+  const { from, nonce } = await web3.eth.getTransaction(originalTransactionHash);
   let subscription;
   let finish = false;
 
@@ -20,22 +24,31 @@ const monitorTransaction = async (web3, to, value, erc20contract) => {
   };
 
   const fromBlock = await web3.eth.getBlockNumber();
+  const givethBridge = new GivethBridge(web3, config.givethBridgeAddress);
 
   const checkTransactionIsDone = async () => {
-    const events = await erc20contract.getPastEvents('Transfer', {
-      fromBlock,
-      toBlock: 'latest',
-    });
+    const transactionCount = await web3.eth.getTransactionCount(from);
 
-    console.log('erc20contract', erc20contract);
-    console.log('events', events);
+    if (transactionCount > nonce) {
+      const events = await givethBridge.contract.getPastEvents('DonateAndCreateGiver', {
+        fromBlock,
+        toBlock: 'latest',
+      });
 
-    const found = events.some(e => {
-      const { _to, _value } = e.returnValues;
-      return _to === to && _value === value;
-    });
+      const found = events.some(e => {
+        const { giver, receiverId, token, amount } = e.returnValues;
+        return (
+          giver === from &&
+          Number(receiverId) === config.targetProjectId &&
+          token === config.DAITokenAddress &&
+          amount === donateAmount
+        );
+      });
 
-    return found ? status.SUCCESSFUL : status.CANCELED;
+      return found ? status.SUCCESSFUL : status.CANCELED;
+    }
+
+    return status.NOTHING;
   };
 
   const promise = new Promise(resolve => {
@@ -67,4 +80,4 @@ const monitorTransaction = async (web3, to, value, erc20contract) => {
   return { promise, cancelMonitor };
 };
 
-export default monitorTransaction;
+export default monitorTransactionOnBridge;

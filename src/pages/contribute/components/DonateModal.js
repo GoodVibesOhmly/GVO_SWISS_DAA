@@ -8,6 +8,7 @@ import GivethBridge from '../../../blockchain/contracts/GivethBridge';
 // import './DonateModal.sass';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import AllowanceHelper from '../../../blockchain/allowanceHelper';
+import monitorTransactionOnBridge from '../../../blockchain/monitorTransactionOnBridge';
 import monitorTransaction from '../../../blockchain/monitorTransaction';
 import spinner from '../../../assets/spinner.svg';
 import Success from './Success';
@@ -15,7 +16,6 @@ import DAI from '../../../assets/dai.svg';
 import CSTK from '../../../assets/cstk.svg';
 import CSTKToken from '../../../blockchain/contracts/CSTKToken';
 import CSLoveToken from '../../../blockchain/contracts/CSLoveToken';
-
 
 const CSTKContract = new CSTKToken().contract;
 const CSLOVEContract = new CSLoveToken().contract;
@@ -81,7 +81,7 @@ const reducerWrapper = (_state, _action) => {
   // return _state
 
   const reducer = (state, action) => {
-    const { type, web3, amount, allowance } = action;
+    const { type, web3, amountDAI, allowance } = action;
     switch (type) {
       case ACTION_INIT:
         return {
@@ -93,7 +93,7 @@ const reducerWrapper = (_state, _action) => {
 
       case ACTION_UPDATE_AMOUNT: {
         let { viewState } = state;
-        const amountWei = toWei(amount);
+        const amountWei = toWei(amountDAI);
         const amountBN = toBN(amountWei);
 
         if (state.viewState !== VIEW_LOADING) {
@@ -103,13 +103,13 @@ const reducerWrapper = (_state, _action) => {
         }
         return {
           ...state,
-          amount,
+          amountDAI,
           viewState,
         };
       }
 
       case ACTION_UPDATE_ALLOWANCE: {
-        const amountBN = toBN(toWei(state.amount));
+        const amountBN = toBN(toWei(state.amountDAI));
         return {
           ...state,
           allowance,
@@ -158,7 +158,7 @@ const reducerWrapper = (_state, _action) => {
 };
 
 const DonateModal = props => {
-  const { onClose, amount, onDonate } = props;
+  const { onClose, amountDAI, amountCSTK, onDonate } = props;
   const { web3, address, network } = useContext(OnboardContext);
   const [alreadyHadCSLOVEToken, setAlreadyHadCSLOVEToken] = useState(false);
   const [CSLOVETransferred, setCSLOVETransferred] = useState(false);
@@ -168,7 +168,7 @@ const DonateModal = props => {
     viewState: initialViewState,
     daiTokenContract: new ERC20Contract(web3, DAITokenAddress),
     givethBridge: new GivethBridge(web3, givethBridgeAddress),
-    amount,
+    amountDAI,
     allowance: 0,
   });
 
@@ -188,8 +188,8 @@ const DonateModal = props => {
   }, [address]);
 
   useEffect(() => {
-    dispatch({ type: ACTION_UPDATE_AMOUNT, amount });
-  }, [amount]);
+    dispatch({ type: ACTION_UPDATE_AMOUNT, amountDAI });
+  }, [amountDAI]);
 
   useEffect(() => {
     if (network !== config.networkId) onClose();
@@ -210,11 +210,60 @@ const DonateModal = props => {
           _to: address,
         },
       });
-      if (events.length > 0)
-        setAlreadyHadCSLOVEToken(events.some(event => event.returnValues._descriptionHash));
+      if (events.length > 0) setAlreadyHadCSLOVEToken(true);
     };
     checkPastEvents();
   }, [address]);
+
+  const transferCSLOVEIsDone = async () => {
+    const web3Rinkeby = new Web3(config.ETH.rpcEndpointRinkeby);
+    let cancelMonitor = () => {};
+    try {
+      const monitor = await monitorTransaction(
+        web3Rinkeby,
+        CSLOVEContract,
+        address,
+        toWei(1).toString(),
+      );
+      cancelMonitor = monitor.cancelMonitor;
+      monitor.promise
+        .then(donationWasSuccessful => {
+          if (donationWasSuccessful) {
+            setCSTKTransferred(true);
+          }
+        })
+        .catch(console.error);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      cancelMonitor();
+    }
+  };
+
+  const transferCSTKIsDone = async () => {
+    const web3XDAI = new Web3(config.ETH.rpcEndpointXdai);
+    let cancelMonitor = () => {};
+    try {
+      const monitor = await monitorTransaction(
+        web3XDAI,
+        CSTKContract,
+        address,
+        toWei(amountCSTK).toString(),
+      );
+      cancelMonitor = monitor.cancelMonitor;
+      monitor.promise
+        .then(donationWasSuccessful => {
+          if (donationWasSuccessful) {
+            setCSLOVETransferred(true);
+          }
+        })
+        .catch(console.error);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      cancelMonitor();
+    }
+  };
 
   if (!web3) return null;
 
@@ -238,12 +287,12 @@ const DonateModal = props => {
     try {
       await new Promise((resolve, reject) => {
         givethBridge
-          .donateAndCreateGiver(address, config.targetProjectId, DAITokenAddress, toWei(amount))
+          .donateAndCreateGiver(address, config.targetProjectId, DAITokenAddress, toWei(amountDAI))
           .on('transactionHash', async transactionHash => {
-            const monitor = await monitorTransaction(
+            const monitor = await monitorTransactionOnBridge(
               web3,
               transactionHash,
-              toWei(amount).toString(),
+              toWei(amountDAI).toString(),
             );
             cancelMonitor = monitor.cancelMonitor;
             monitor.promise
@@ -259,6 +308,8 @@ const DonateModal = props => {
           .then(resolve)
           .catch(reject);
       });
+      await transferCSLOVEIsDone();
+      if (!alreadyHadCSLOVEToken) await transferCSTKIsDone();
       dispatch({ type: ACTION_DONATE_SUCCESS });
       onDonate();
     } catch (e) {
@@ -422,7 +473,38 @@ const DonateModal = props => {
         </a>
         .
       </h2>
-      {!alreadyHadCSLOVEToken && <div />}
+      <div className="level-item">
+        <div className="is-flex-direction-column">
+          {!alreadyHadCSLOVEToken && (
+            <div className="is-flex is-align-items-center">
+              {CSLOVETransferred ? (
+                <span className="icon has-text-success">
+                  <i className="fas fa-check-circle" />
+                </span>
+              ) : (
+                <figure className="image is-32x32">
+                  <img alt="spinner" src={spinner} />
+                </figure>
+              )}
+              <div>1 CSLOVE Token</div>
+            </div>
+          )}
+          {amountCSTK > 0 && (
+            <div className="is-flex is-align-items-center">
+              {CSTKTransferred ? (
+                <span className="icon has-text-success">
+                  <i className="fas fa-check-circle" />
+                </span>
+              ) : (
+                <figure className="image is-32x32">
+                  <img alt="spinner" src={spinner} />
+                </figure>
+              )}
+              <div>{amountCSTK} CSTK Tokens</div>
+            </div>
+          )}
+        </div>
+      </div>
     </>
   );
 

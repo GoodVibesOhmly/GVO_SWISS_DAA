@@ -174,7 +174,8 @@ const Comp = ({
             onClose();
             // setShowThankYouModal(true)
           }}
-          amount={amountDAI}
+          amountDAI={amountDAI}
+          amountCSTK={amountCSTK}
         />
       )}
       <div className="enable has-text-left">
