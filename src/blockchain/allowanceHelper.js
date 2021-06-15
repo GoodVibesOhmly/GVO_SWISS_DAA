@@ -3,7 +3,7 @@ import config from '../config';
 
 const INFINITE_ALLOWANCE = new BigNumber(2).pow(256).minus(1).toFixed();
 
-const createAllowance = async (ERC20Cotract, account, amount) => {
+const createAllowance = async (ERC20Contract, account, amount) => {
   let subscription;
 
   const clear = () => {
@@ -14,10 +14,10 @@ const createAllowance = async (ERC20Cotract, account, amount) => {
   };
 
   return new Promise((resolve, reject) => {
-    ERC20Cotract.approve(config.givethBridgeAddress, amount)
+    ERC20Contract.approve(config.givethBridgeAddress, amount)
       .send({ from: account })
       .on('transactionHash', async transactionHash => {
-        const web3 = ERC20Cotract.getWeb3();
+        const web3 = ERC20Contract.getWeb3();
         const { from, nonce } = await web3.eth.getTransaction(transactionHash);
         const fromBlock = await web3.eth.getBlockNumber();
 
@@ -28,7 +28,7 @@ const createAllowance = async (ERC20Cotract, account, amount) => {
             const transactionCount = await web3.eth.getTransactionCount(from);
 
             if (transactionCount > nonce) {
-              const events = await ERC20Cotract.peApproval({
+              const events = await ERC20Contract.peApproval({
                 fromBlock,
                 toBlock: 'latest',
                 _owner: from,
