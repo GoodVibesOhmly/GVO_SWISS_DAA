@@ -61,7 +61,7 @@ const Comp = ({ onWeb3Ready, children }) => {
 
   const addCSTK = async () => {
     const provider = window.web3.currentProvider;
-    provider.sendAsync({
+    await provider.request({
       method: 'metamask_watchAsset',
       params: {
         type: 'ERC20',
