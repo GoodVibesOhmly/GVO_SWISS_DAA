@@ -201,29 +201,41 @@ const DonateModal = props => {
         fromBlock: 0,
         toBlock: 'latest',
         filter: {
-          _from: [
-            '0xcf79C7EaEC5BDC1A9e32D099C5D6BdF67E4cF6e8',
-            '0xb760FE1bbC4A2752aBCBb28291a57Cb0cA99fF44',
-            '0x99311936bda01d5ff4880614c24d65bf867b8e43',
-            '0xd152f549545093347a162dce210e7293f1452150',
-          ],
+          _from: config.CSLOVESender,
           _to: address,
         },
       });
+      await monitorCSLOVETransaction();
       if (events.length > 0) setAlreadyHadCSLOVEToken(true);
     };
     checkPastEvents();
   }, [address]);
 
-  const transferCSLOVEIsDone = async () => {
+  if (!web3) return null;
+
+  const approve = async () => {
+    dispatch({ type: ACTION_APPROVE_ALLOWANCE });
+
+    // setViewState(APPROVING);
+    try {
+      await AllowanceHelper.approveERC20tokenTransfer(daiTokenContract, address);
+      dispatch({ type: ACTION_APPROVE_ALLOWANCE_SUCCESS });
+    } catch (e) {
+      dispatch({ type: ACTION_APPROVE_ALLOWANCE_FAIL });
+    } finally {
+      updateAllowance();
+    }
+  };
+
+  const monitorCSLOVETransaction = async () => {
     const web3Rinkeby = new Web3(config.ETH.rpcEndpointRinkeby);
     let cancelMonitor = () => {};
     try {
       const monitor = await monitorTransaction(
         web3Rinkeby,
-        CSLOVEContract,
         address,
-        toWei(1).toString(),
+        toWei(config.CSLOVETokenAmountSent).toString(),
+        CSLOVEContract,
       );
       cancelMonitor = monitor.cancelMonitor;
       monitor.promise
@@ -240,15 +252,15 @@ const DonateModal = props => {
     }
   };
 
-  const transferCSTKIsDone = async () => {
+  const monitorCSTKTransaction = async () => {
     const web3XDAI = new Web3(config.ETH.rpcEndpointXdai);
     let cancelMonitor = () => {};
     try {
       const monitor = await monitorTransaction(
         web3XDAI,
-        CSTKContract,
         address,
         toWei(amountCSTK).toString(),
+        CSTKContract,
       );
       cancelMonitor = monitor.cancelMonitor;
       monitor.promise
@@ -262,22 +274,6 @@ const DonateModal = props => {
       console.log(e);
     } finally {
       cancelMonitor();
-    }
-  };
-
-  if (!web3) return null;
-
-  const approve = async () => {
-    dispatch({ type: ACTION_APPROVE_ALLOWANCE });
-
-    // setViewState(APPROVING);
-    try {
-      await AllowanceHelper.approveERC20tokenTransfer(daiTokenContract, address);
-      dispatch({ type: ACTION_APPROVE_ALLOWANCE_SUCCESS });
-    } catch (e) {
-      dispatch({ type: ACTION_APPROVE_ALLOWANCE_FAIL });
-    } finally {
-      updateAllowance();
     }
   };
 
@@ -308,10 +304,12 @@ const DonateModal = props => {
           .then(resolve)
           .catch(reject);
       });
-      await transferCSLOVEIsDone();
-      if (!alreadyHadCSLOVEToken) await transferCSTKIsDone();
-      dispatch({ type: ACTION_DONATE_SUCCESS });
-      onDonate();
+      await monitorCSLOVETransaction();
+      if (alreadyHadCSLOVEToken) await monitorCSTKTransaction();
+      setTimeout(() => {
+        dispatch({ type: ACTION_DONATE_SUCCESS });
+        onDonate();
+      }, 2000);
     } catch (e) {
       dispatch({ type: ACTION_DONATE_FAIL });
     } finally {

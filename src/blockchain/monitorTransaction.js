@@ -5,9 +5,9 @@ const status = {
 };
 
 /**
- * @return {boolean} success whether the transaction is successful or replaced by different tx
+ * @return {boolean} success whether the transaction is successful
  */
-const monitorTransaction = async (web3, to, value, erc20contract) => {
+const monitorTransaction = async (web3, _to, _value, erc20contract) => {
   let subscription;
   let finish = false;
 
@@ -22,20 +22,16 @@ const monitorTransaction = async (web3, to, value, erc20contract) => {
   const fromBlock = await web3.eth.getBlockNumber();
 
   const checkTransactionIsDone = async () => {
-    const events = await erc20contract.getPastEvents('Transfer', {
+    const events = await erc20contract.peTransfer({
       fromBlock,
       toBlock: 'latest',
+      filter: {
+        _to,
+        _value,
+      },
     });
 
-    console.log('erc20contract', erc20contract);
-    console.log('events', events);
-
-    const found = events.some(e => {
-      const { _to, _value } = e.returnValues;
-      return _to === to && _value === value;
-    });
-
-    return found ? status.SUCCESSFUL : status.CANCELED;
+    return events.length > 0 ? status.SUCCESSFUL : status.CANCELED;
   };
 
   const promise = new Promise(resolve => {
@@ -47,10 +43,7 @@ const monitorTransaction = async (web3, to, value, erc20contract) => {
     }, 100);
 
     subscription = web3.eth
-      .subscribe('newBlockHeaders')
-      .on('data', block => {
-        if (!block.number) return;
-
+      .subscribe('logs', {}, () => {
         checkTransactionIsDone()
           .then(result => {
             if (result === status.SUCCESSFUL) {
