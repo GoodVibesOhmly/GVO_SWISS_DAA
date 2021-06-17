@@ -160,7 +160,7 @@ const reducerWrapper = (_state, _action) => {
 const DonateModal = props => {
   const { onClose, amountDAI, amountCSTK, onDonate } = props;
   const { web3, address, network } = useContext(OnboardContext);
-  const [alreadyHadCSLOVEToken, setAlreadyHadCSLOVEToken] = useState(false);
+  const [alreadyReceivedCSLOVE, setAlreadyReceivedCSLOVE] = useState(false);
   const [CSLOVETransferred, setCSLOVETransferred] = useState(false);
   const [CSTKTransferred, setCSTKTransferred] = useState(false);
 
@@ -205,8 +205,7 @@ const DonateModal = props => {
           _to: address,
         },
       });
-      await monitorCSLOVETransaction();
-      if (events.length > 0) setAlreadyHadCSLOVEToken(true);
+      if (events.length > 0) setAlreadyReceivedCSLOVE(true);
     };
     checkPastEvents();
   }, [address]);
@@ -227,61 +226,49 @@ const DonateModal = props => {
     }
   };
 
-  const monitorCSLOVETransaction = async () => {
-    const web3Rinkeby = new Web3(config.ETH.rpcEndpointRinkeby);
-    let cancelMonitor = () => {};
-    try {
-      const monitor = await monitorTransaction(
-        web3Rinkeby,
-        address,
-        toWei(config.CSLOVETokenAmountSent).toString(),
-        CSLOVEContract,
-      );
-      cancelMonitor = monitor.cancelMonitor;
-      monitor.promise
-        .then(donationWasSuccessful => {
-          if (donationWasSuccessful) {
-            setCSTKTransferred(true);
-          }
-        })
-        .catch(console.error);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      cancelMonitor();
-    }
-  };
-
-  const monitorCSTKTransaction = async () => {
-    const web3XDAI = new Web3(config.ETH.rpcEndpointXdai);
-    let cancelMonitor = () => {};
-    try {
-      const monitor = await monitorTransaction(
-        web3XDAI,
-        address,
-        toWei(amountCSTK).toString(),
-        CSTKContract,
-      );
-      cancelMonitor = monitor.cancelMonitor;
-      monitor.promise
-        .then(donationWasSuccessful => {
-          if (donationWasSuccessful) {
-            setCSLOVETransferred(true);
-          }
-        })
-        .catch(console.error);
-    } catch (e) {
-      console.log(e);
-    } finally {
-      cancelMonitor();
-    }
-  };
-
   const donate = async () => {
-    let cancelMonitor = () => {};
+    let cancelMonitorBridge = () => {};
+    let cancelMonitorCSLOVE = () => {};
+    let cancelMonitorCSTK = () => {};
+    const web3Rinkeby = new Web3(config.ETH.rpcEndpointRinkeby);
+    const web3XDAI = new Web3(config.ETH.rpcEndpointXdai);
     dispatch({ type: ACTION_DONATE });
     try {
-      await new Promise((resolve, reject) => {
+      const CSLOVEPromise = new Promise((resolve, reject) => {
+        monitorTransaction(web3Rinkeby, address, toWei(1).toString(), CSLOVEContract).then(
+          monitor => {
+            cancelMonitorCSLOVE = monitor.cancelMonitor;
+            monitor.promise
+              .then(donationWasSuccessful => {
+                if (donationWasSuccessful) {
+                  setCSLOVETransferred(true);
+                  resolve();
+                } else {
+                  reject();
+                }
+              })
+              .catch(console.error);
+          },
+        );
+      });
+      const CSTKPromise = new Promise((resolve, reject) => {
+        monitorTransaction(web3XDAI, address, toWei(amountCSTK).toString(), CSTKContract).then(
+          monitor => {
+            cancelMonitorCSTK = monitor.cancelMonitor;
+            monitor.promise
+              .then(donationWasSuccessful => {
+                if (donationWasSuccessful) {
+                  setCSTKTransferred(true);
+                  resolve();
+                } else {
+                  reject();
+                }
+              })
+              .catch(console.error);
+          },
+        );
+      });
+      const bridgePromise = new Promise((resolve, reject) => {
         givethBridge
           .donateAndCreateGiver(address, config.targetProjectId, DAITokenAddress, toWei(amountDAI))
           .on('transactionHash', async transactionHash => {
@@ -290,7 +277,7 @@ const DonateModal = props => {
               transactionHash,
               toWei(amountDAI).toString(),
             );
-            cancelMonitor = monitor.cancelMonitor;
+            cancelMonitorBridge = monitor.cancelMonitor;
             monitor.promise
               .then(donationWasSuccessful => {
                 if (donationWasSuccessful) {
@@ -304,16 +291,20 @@ const DonateModal = props => {
           .then(resolve)
           .catch(reject);
       });
-      await monitorCSLOVETransaction();
-      if (alreadyHadCSLOVEToken) await monitorCSTKTransaction();
-      setTimeout(() => {
-        dispatch({ type: ACTION_DONATE_SUCCESS });
-        onDonate();
-      }, 2000);
+      const promises = [bridgePromise, CSLOVEPromise];
+      if (!alreadyReceivedCSLOVE) promises.push(CSTKPromise);
+      Promise.allSettled(promises).then(() => {
+        setTimeout(() => {
+          dispatch({ type: ACTION_DONATE_SUCCESS });
+          onDonate();
+        }, 4000);
+      });
     } catch (e) {
       dispatch({ type: ACTION_DONATE_FAIL });
     } finally {
-      cancelMonitor();
+      cancelMonitorBridge();
+      cancelMonitorCSLOVE();
+      cancelMonitorCSTK();
     }
   };
 
@@ -473,7 +464,7 @@ const DonateModal = props => {
       </h2>
       <div className="level-item">
         <div className="is-flex-direction-column">
-          {!alreadyHadCSLOVEToken && (
+          {!alreadyReceivedCSLOVE && (
             <div className="is-flex is-align-items-center">
               {CSLOVETransferred ? (
                 <span className="icon has-text-success">

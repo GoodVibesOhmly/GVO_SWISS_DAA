@@ -1,9 +1,3 @@
-const status = {
-  NOTHING: 1,
-  SUCCESSFUL: 2,
-  CANCELED: 3, // Replaced by different transaction with same nonce
-};
-
 /**
  * @return {boolean} success whether the transaction is successful
  */
@@ -31,7 +25,7 @@ const monitorTransaction = async (web3, _to, _value, erc20contract) => {
       },
     });
 
-    return events.length > 0 ? status.SUCCESSFUL : status.CANCELED;
+    return events.length > 0;
   };
 
   const promise = new Promise(resolve => {
@@ -46,9 +40,9 @@ const monitorTransaction = async (web3, _to, _value, erc20contract) => {
       .subscribe('logs', {}, () => {
         checkTransactionIsDone()
           .then(result => {
-            if (result === status.SUCCESSFUL) {
+            if (result) {
               resolve(true);
-            } else if (result === status.CANCELED) {
+            } else {
               resolve(false);
             }
           })
