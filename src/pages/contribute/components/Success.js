@@ -39,20 +39,17 @@ const Success = () => {
           Thank you for the contribution
         </p>
         <br />
-        <p className="has-text-centered pt-2">Your new CSTK score</p>
-        {/* <div className="is-flex is-justify-content-center is-align-content-center">
-          <img src={cstktoken} alt="CSTK Token" width="32px" height="32px" />
-          <strong className="is-size-5 ml-1">(todo: add $value) CSTK</strong>
-        </div> */}
-        <p className="has-text-centered pt-2">will be transferred to your Ethereum address soon.</p>
-        {/* The following lines are commented to avoid confusion among users */}
-        {/* <div
-          className="subtitle pt-2 has-text-centered"
-          style={{ color: '#1BDD9D', cursor: 'pointer', fontSize: '16px' }}
-          onClick={addCSTK}
-        >
-          Add CSTK to Metamask
-        </div> */}
+        <p className="has-text-centered pt-2">
+          Redeem the Commons Stack swag with your CSLove tokens.
+        </p>
+        <p className="has-text-centered">
+          <p className="control">
+            <button aria-label="twitter" className="react-share__ShareButton button is-primary">
+              <span className="icon" />
+              <span>Share on Twitter</span>
+            </button>
+          </p>
+        </p>
         <div className="button-container pt-6">
           <TwitterShareButton
             url="https://commonsstack.org/apply"

@@ -16,6 +16,7 @@ import DAI from '../../../assets/dai.svg';
 import CSTK from '../../../assets/cstk.svg';
 import CSTKToken from '../../../blockchain/contracts/CSTKToken';
 import CSLoveToken from '../../../blockchain/contracts/CSLoveToken';
+import donationConfirmed from '../../../assets/donation-confirmed.svg';
 
 const CSTKContract = new CSTKToken().contract;
 const CSLOVEContract = new CSLoveToken().contract;
@@ -376,6 +377,7 @@ const DonateModal = props => {
             <div className="is-overlay">
               <Player
                 autoplay
+                keepLastFrame
                 src="https://assets2.lottiefiles.com/packages/lf20_h3Bz5a.json"
                 style={{ height: '64px', width: '64px' }}
               />
@@ -410,11 +412,7 @@ const DonateModal = props => {
               <p className="image is-64x64">{/* <img src={DAI} alt="DAI logo" /> */}</p>
             </div>
             <div className="is-overlay">
-              <Player
-                autoplay
-                src="https://assets2.lottiefiles.com/packages/lf20_tAtUrg.json"
-                style={{ height: '64px', width: '64px' }}
-              />
+              <img src={donationConfirmed} className="image is-64x64" alt="Donation confirmed" />
             </div>
           </div>
         </div>
@@ -462,7 +460,7 @@ const DonateModal = props => {
         </a>
         .
       </h2>
-      <div className="level-item">
+      <div className="level-item mb-1">
         <div className="is-flex-direction-column">
           {!alreadyReceivedCSLOVE && (
             <div className="is-flex is-align-items-center">
@@ -471,7 +469,7 @@ const DonateModal = props => {
                   <i className="fas fa-check-circle" />
                 </span>
               ) : (
-                <figure className="image is-32x32">
+                <figure className="image is-32x32 mr-1">
                   <img alt="spinner" src={spinner} />
                 </figure>
               )}
@@ -485,7 +483,7 @@ const DonateModal = props => {
                   <i className="fas fa-check-circle" />
                 </span>
               ) : (
-                <figure className="image is-32x32">
+                <figure className="image is-32x32 mr-1">
                   <img alt="spinner" src={spinner} />
                 </figure>
               )}
@@ -510,6 +508,7 @@ const DonateModal = props => {
             <div className="is-overlay">
               <Player
                 autoplay
+                keepLastFrame
                 src="https://assets2.lottiefiles.com/packages/lf20_h3Bz5a.json"
                 style={{ height: '64px', width: '64px' }}
               />
@@ -542,9 +541,7 @@ const DonateModal = props => {
   );
 
   const enableDonateButton = [VIEW_ENOUGH_ALLOWANCE, VIEW_DONATING_FAILED].includes(viewState);
-  const showDonateButton = [VIEW_ENOUGH_ALLOWANCE, VIEW_DONATING_FAILED, VIEW_DONATING].includes(
-    viewState,
-  );
+  const showDonateButton = [VIEW_ENOUGH_ALLOWANCE, VIEW_DONATING_FAILED].includes(viewState);
 
   const enableApproveButton = viewState === VIEW_READY_TO_APPROVE;
   const showApproveButton = [VIEW_APPROVING, VIEW_READY_TO_APPROVE].includes(viewState);
@@ -557,7 +554,7 @@ const DonateModal = props => {
           <p className="modal-card-title" />
           <button className="delete" aria-label="close" onClick={onClose} />
         </header>
-        <section className="modal-card-body">
+        <section className="px-5 py-5">
           {/* This is to show all states in one screen  - should be replaces  bythe function above modalContent()
           in the final version after Kay has done his work ! */}
           {/* {Object.keys(contents).map(k => {
@@ -570,26 +567,28 @@ const DonateModal = props => {
           })} */}
           {contents[viewState]}
         </section>
-        <footer className="modal-card-foot">
-          {showApproveButton && (
-            <button
-              className={`button is-primary ${viewState === VIEW_APPROVING ? 'is-loading' : ''}`}
-              disabled={!enableApproveButton}
-              onClick={approve}
-            >
-              Approve
-            </button>
-          )}
-          {showDonateButton && (
-            <button
-              className={`button is-success ${viewState === VIEW_DONATING ? 'is-loading' : ''}`}
-              disabled={!enableDonateButton}
-              onClick={donate}
-            >
-              Pay dues
-            </button>
-          )}
-        </footer>
+        {showApproveButton || showDonateButton ? (
+          <footer className="modal-card-foot">
+            {showApproveButton && (
+              <button
+                className={`button is-primary ${viewState === VIEW_APPROVING ? 'is-loading' : ''}`}
+                disabled={!enableApproveButton}
+                onClick={approve}
+              >
+                Approve
+              </button>
+            )}
+            {showDonateButton && (
+              <button
+                className={`button is-success ${viewState === VIEW_DONATING ? 'is-loading' : ''}`}
+                disabled={!enableDonateButton}
+                onClick={donate}
+              >
+                Pay dues
+              </button>
+            )}
+          </footer>
+        ) : null}
       </div>
     </div>
   );
