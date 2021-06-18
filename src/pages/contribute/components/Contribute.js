@@ -246,7 +246,7 @@ const Comp = ({
                       className="exchange"
                       rel="noopener noreferrer"
                       target="_blank"
-                      href="https://medium.com/commonsstack/using-cslove-to-get-your-free-commons-stack-swag-4b74eb425d90"
+                      href="/cslove"
                     >
                       CSLove tokens
                     </a>{' '}
