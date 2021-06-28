@@ -248,7 +248,7 @@ const DonateModal = props => {
                   reject();
                 }
               })
-              .catch(console.error);
+              .catch(reject);
           },
         );
       });
@@ -294,11 +294,15 @@ const DonateModal = props => {
       });
       const promises = [bridgePromise, CSLOVEPromise];
       if (!alreadyReceivedCSLOVE) promises.push(CSTKPromise);
-      Promise.allSettled(promises).then(() => {
-        setTimeout(() => {
-          dispatch({ type: ACTION_DONATE_SUCCESS });
-          onDonate();
-        }, 4000);
+      Promise.allSettled(promises).then(results => {
+        if (results[0].status === 'rejected') {
+          dispatch({ type: ACTION_DONATE_FAIL });
+        } else {
+          setTimeout(() => {
+            dispatch({ type: ACTION_DONATE_SUCCESS });
+            onDonate();
+          }, 4000);
+        }
       });
     } catch (e) {
       dispatch({ type: ACTION_DONATE_FAIL });
