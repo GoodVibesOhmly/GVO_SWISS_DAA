@@ -9,8 +9,9 @@ import DonateModal from './DonateModal';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import Tooltip from './Tooltip';
 import './DonateModal.sass';
+import config from '../../../config';
 
-const config = require('../../../config');
+const minContribution = config.minimumContribution.nonMember;
 
 const Comp = ({
   onClose,
@@ -59,8 +60,8 @@ const Comp = ({
 
   const TooltipApplyToScholarship = () => (
     <p>
-      You need 450 Dai to pay memberships dues and join the Trusted Seed, if 450 Dai is a financial
-      burden, please consider&nbsp;
+      You need {minContribution} Dai to pay memberships dues and join the Trusted Seed, if{' '}
+      {minContribution} Dai is a financial burden, please consider&nbsp;
       <a
         href="https://medium.com/commonsstack/trusted-seed-swiss-membership-scholarship-application-f2d07bc2fc90"
         target="_blank"
@@ -79,9 +80,9 @@ const Comp = ({
   React.useEffect(() => {
     let scholarship;
     if (!hasPaidDues) {
-      scholarship = Math.floor(amountDAI / 450 - 1);
+      scholarship = Math.floor(amountDAI / minContribution - 1);
     } else {
-      scholarship = Math.floor(amountDAI / 450);
+      scholarship = Math.floor(amountDAI / minContribution);
     }
     if (scholarship >= 1) {
       setAmountScholarship(scholarship);
@@ -124,8 +125,8 @@ const Comp = ({
 
         if (!hasPaidDues && amountDAIFloat < config.minimumContribution.member) {
           setDAIError(`Minimum is ${config.minimumContribution.member} DAI`);
-        } else if (cstkBalance === 0 && amountDAIFloat < config.minimumContribution.nonMember) {
-          setDAIError(`Minimum is ${config.minimumContribution.nonMember} DAI`);
+        } else if (cstkBalance === 0 && amountDAIFloat < minContribution) {
+          setDAIError(`Minimum is ${minContribution} DAI`);
         }
       }
     } catch (e) {
@@ -139,8 +140,8 @@ const Comp = ({
       if (balances && balances[address]) {
         const dai = balances[address].find(b => b.symbol === 'DAI');
         setBalanceDAI(dai.balance);
-        setShowApplyToScholarshipTooltip(dai.balance.lt(450) && !hasPaidDues);
-        if (dai.balance.gt(450)) {
+        setShowApplyToScholarshipTooltip(dai.balance.lt(minContribution) && !hasPaidDues);
+        if (dai.balance.gt(minContribution)) {
           if (dai.balance.gt(900)) {
             setAmountDAI(900);
             return;
@@ -148,7 +149,7 @@ const Comp = ({
           setAmountDAI(dai.balance.integerValue());
           return;
         }
-        setAmountDAI(450);
+        setAmountDAI(minContribution);
       }
     } catch (e) {
       // console.error(e);
@@ -161,7 +162,7 @@ const Comp = ({
 
   React.useEffect(() => {
     setDonationButtonEnabled(
-      (hasPaidDues && amountDAI > 0) || amountDAI >= 450 || amountCSTK !== 0,
+      (hasPaidDues && amountDAI > 0) || amountDAI >= minContribution || amountCSTK !== 0,
     );
   }, [amountCSTK, amountDAI, hasPaidDues]);
 
@@ -224,7 +225,8 @@ const Comp = ({
                       }}
                       style={{
                         border:
-                          (showApplyToScholarshipTooltip && balanceDAI < 450) || !!DAIError
+                          (showApplyToScholarshipTooltip && balanceDAI < minContribution) ||
+                          !!DAIError
                             ? '1px solid red'
                             : '',
                       }}

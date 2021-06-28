@@ -18,7 +18,7 @@ const configs = {
     CSSTKTokenAddress: '0xc4fbE68522ba81a28879763C3eE33e08b13c499E', // XDAI
     CSLoveTokenAddress: '0x4D64A862e0eFb94b1d2A84A67F7a2d669AFA8eDf', // Rinkeby
     DAITokenAddress: '0xE690E380740a682E2b8CEAEa33584Ea2cb59849E', // Ropsten
-    registryAddress: '0x28512FB7681c8615aef25a8EF3bcb90aFAC502cB', // XDAI
+    registryAddress: '0x26B451E9ADdf304a1261F5e5A420E6230fFFCBC7', // XDAI
     ratio: 2.5, // how much CSTK you get for 1 DAI
     CSLOVETokenAmountSent: 1, // how much CSLOVE tokens are sent to new memmber
     givethBridgeAddress: '0x279277482F13aeF92914317a0417DD591145aDc9',
@@ -29,7 +29,7 @@ const configs = {
     appUrl: 'http://localhost:3000',
     defaultContribution: 900,
     minimumContribution: {
-      nonMember: 450,
+      nonMember: 13,
       member: 1,
     },
   },
