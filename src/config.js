@@ -9,11 +9,18 @@ const configs = {
       rpcEndpointXdai: 'https://rpc.xdaichain.com/',
       rpcEndpointRinkeby: 'https://rinkeby.infura.io/v3/562a234e32b3428c8177872117142691',
     },
+    CSLOVESender: [
+      '0xcf79C7EaEC5BDC1A9e32D099C5D6BdF67E4cF6e8',
+      '0xb760FE1bbC4A2752aBCBb28291a57Cb0cA99fF44',
+      '0x99311936bda01d5ff4880614c24d65bf867b8e43',
+      '0xd152f549545093347a162dce210e7293f1452150',
+    ],
     CSSTKTokenAddress: '0xc4fbE68522ba81a28879763C3eE33e08b13c499E', // XDAI
     CSLoveTokenAddress: '0x4D64A862e0eFb94b1d2A84A67F7a2d669AFA8eDf', // Rinkeby
     DAITokenAddress: '0xE690E380740a682E2b8CEAEa33584Ea2cb59849E', // Ropsten
-    registryAddress: '0x28512FB7681c8615aef25a8EF3bcb90aFAC502cB', // XDAI
+    registryAddress: '0x26B451E9ADdf304a1261F5e5A420E6230fFFCBC7', // XDAI
     ratio: 2.5, // how much CSTK you get for 1 DAI
+    CSLOVETokenAmountSent: 1, // how much CSLOVE tokens are sent to new memmber
     givethBridgeAddress: '0x279277482F13aeF92914317a0417DD591145aDc9',
     targetProjectId: 514,
     onboardApiKey: '818d425c-a8f6-4c11-bbbe-52eb6058877e',
@@ -22,7 +29,7 @@ const configs = {
     appUrl: 'http://localhost:3000',
     defaultContribution: 900,
     minimumContribution: {
-      nonMember: 450,
+      nonMember: 13,
       member: 1,
     },
   },
@@ -37,11 +44,18 @@ const configs = {
       rpcEndpointXdai: 'https://rpc.xdaichain.com/',
       rpcEndpointRinkeby: 'https://rinkeby.infura.io/v3/562a234e32b3428c8177872117142691',
     },
+    CSLOVESender: [
+      '0xcf79C7EaEC5BDC1A9e32D099C5D6BdF67E4cF6e8',
+      '0xb760FE1bbC4A2752aBCBb28291a57Cb0cA99fF44',
+      '0x99311936bda01d5ff4880614c24d65bf867b8e43',
+      '0xd152f549545093347a162dce210e7293f1452150',
+    ],
     CSSTKTokenAddress: '0xc4fbE68522ba81a28879763C3eE33e08b13c499E', // XDAI
     CSLoveTokenAddress: '0x4D64A862e0eFb94b1d2A84A67F7a2d669AFA8eDf', // Rinkeby
     DAITokenAddress: '0x6b175474e89094c44da98b954eedeac495271d0f', // Mainnet
     registryAddress: '0x28512FB7681c8615aef25a8EF3bcb90aFAC502cB', // XDAI
     ratio: 2.5, // how much CSTK you get for 1 DAI
+    CSLOVETokenAmountSent: 1, // how much CSLOVE tokens are sent to new memmber
     givethBridgeAddress: '0x30f938fED5dE6e06a9A7Cd2Ac3517131C317B1E7',
     targetProjectId: 2349, // verified 29/12/2020
     onboardApiKey: '25c39144-b224-4275-954c-e6e708b236e9',

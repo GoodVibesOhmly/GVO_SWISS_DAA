@@ -14,6 +14,7 @@ import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import donationConfirmed from '../../../assets/donation-confirmed.svg';
 import WelcomeModal from './WelcomeModal';
+import shoppingCart from '../../../assets/shopping-cart-solid.svg';
 
 const Comp = ({
   showwelcome,
@@ -245,7 +246,7 @@ const Comp = ({
                       className="exchange"
                       rel="noopener noreferrer"
                       target="_blank"
-                      href="https://medium.com/commonsstack/using-cslove-to-get-your-free-commons-stack-swag-4b74eb425d90"
+                      href="/cslove"
                     >
                       CSLove tokens
                     </a>{' '}
@@ -310,7 +311,26 @@ const Comp = ({
                       <br />
                       <br />
                       <p className="has-text-centered is-size-5">
-                        Your CSTK score will be updated soon!
+                        If you received CSLove tokens, don't forget to redeem your Commons Stack
+                        Swag!
+                      </p>
+                      <p className="control has-text-centered mt-6">
+                        <button
+                          aria-label="store"
+                          className="react-share__ShareButton button is-primary"
+                          onClick={() => {
+                            window.location.href = 'https://cslove.commonsstack.org/';
+                          }}
+                        >
+                          <span className="icon">
+                            <img
+                              src={shoppingCart}
+                              className="image is-16x16"
+                              alt="Donation confirmed"
+                            />
+                          </span>
+                          <span>Go to swag shop</span>
+                        </button>
                       </p>
                     </section>
                     <footer className="modal-card-foot">

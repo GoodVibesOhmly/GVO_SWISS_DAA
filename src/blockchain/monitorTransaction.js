@@ -1,17 +1,7 @@
-import config from '../config';
-import GivethBridge from './contracts/GivethBridge';
-
-const status = {
-  NOTHING: 1,
-  SUCCESSFUL: 2,
-  CANCELED: 3, // Replaced by different transaction with same nonce
-};
-
 /**
- * @return {boolean} success whether the transaction is successful or replaced by different tx
+ * @return {boolean} success whether the transaction is successful
  */
-const monitorTransaction = async (web3, originalTransactionHash, donateAmount) => {
-  const { from, nonce } = await web3.eth.getTransaction(originalTransactionHash);
+const monitorTransaction = async (web3, _to, _value, erc20contract) => {
   let subscription;
   let finish = false;
 
@@ -24,31 +14,18 @@ const monitorTransaction = async (web3, originalTransactionHash, donateAmount) =
   };
 
   const fromBlock = await web3.eth.getBlockNumber();
-  const givethBridge = new GivethBridge(web3, config.givethBridgeAddress);
 
   const checkTransactionIsDone = async () => {
-    const transactionCount = await web3.eth.getTransactionCount(from);
+    const events = await erc20contract.peTransfer({
+      fromBlock,
+      toBlock: 'latest',
+      filter: {
+        _to,
+        _value,
+      },
+    });
 
-    if (transactionCount > nonce) {
-      const events = await givethBridge.contract.getPastEvents('DonateAndCreateGiver', {
-        fromBlock,
-        toBlock: 'latest',
-      });
-
-      const found = events.some(e => {
-        const { giver, receiverId, token, amount } = e.returnValues;
-        return (
-          giver === from &&
-          Number(receiverId) === config.targetProjectId &&
-          token === config.DAITokenAddress &&
-          amount === donateAmount
-        );
-      });
-
-      return found ? status.SUCCESSFUL : status.CANCELED;
-    }
-
-    return status.NOTHING;
+    return events.length > 0;
   };
 
   const promise = new Promise(resolve => {
@@ -60,15 +37,12 @@ const monitorTransaction = async (web3, originalTransactionHash, donateAmount) =
     }, 100);
 
     subscription = web3.eth
-      .subscribe('newBlockHeaders')
-      .on('data', block => {
-        if (!block.number) return;
-
+      .subscribe('logs', {}, () => {
         checkTransactionIsDone()
           .then(result => {
-            if (result === status.SUCCESSFUL) {
+            if (result) {
               resolve(true);
-            } else if (result === status.CANCELED) {
+            } else {
               resolve(false);
             }
           })
