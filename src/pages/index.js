@@ -3,6 +3,7 @@ import help from './help';
 import whitelist from './whitelist';
 import desktop from './desktop';
 import burn from './burn';
+import cslove from './cslove';
 
 export default {
   contribute,
@@ -10,4 +11,5 @@ export default {
   help,
   desktop,
   burn,
+  cslove,
 };

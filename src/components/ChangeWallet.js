@@ -7,7 +7,7 @@ const ChangeWallet = () => {
   if (onboard && web3 && address) {
     return (
       <button type="button" className="button is-outlined is-success mx-3" onClick={changeWallet}>
-        Change Wallet
+        Connect Wallet
       </button>
     );
   }

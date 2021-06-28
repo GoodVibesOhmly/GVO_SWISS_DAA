@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useReducer } from 'react';
+import React, { useContext, useEffect, useReducer, useState } from 'react';
 import { connect } from 'react-redux';
 import ERC20Contract from 'erc20-contract-js';
 import Web3 from 'web3';
@@ -8,11 +8,18 @@ import GivethBridge from '../../../blockchain/contracts/GivethBridge';
 // import './DonateModal.sass';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import AllowanceHelper from '../../../blockchain/allowanceHelper';
+import monitorTransactionOnBridge from '../../../blockchain/monitorTransactionOnBridge';
+import monitorTransaction from '../../../blockchain/monitorTransaction';
 import spinner from '../../../assets/spinner.svg';
 import Success from './Success';
 import DAI from '../../../assets/dai.svg';
 import CSTK from '../../../assets/cstk.svg';
+import CSTKToken from '../../../blockchain/contracts/CSTKToken';
+import CSLoveToken from '../../../blockchain/contracts/CSLoveToken';
+import donationConfirmed from '../../../assets/donation-confirmed.svg';
 
+const CSTKContract = new CSTKToken().contract;
+const CSLOVEContract = new CSLoveToken().contract;
 const { DAITokenAddress, givethBridgeAddress } = config;
 
 const VIEW_STATES = {
@@ -75,7 +82,7 @@ const reducerWrapper = (_state, _action) => {
   // return _state
 
   const reducer = (state, action) => {
-    const { type, web3, amount, allowance } = action;
+    const { type, web3, amountDAI, allowance } = action;
     switch (type) {
       case ACTION_INIT:
         return {
@@ -87,7 +94,7 @@ const reducerWrapper = (_state, _action) => {
 
       case ACTION_UPDATE_AMOUNT: {
         let { viewState } = state;
-        const amountWei = toWei(amount);
+        const amountWei = toWei(amountDAI);
         const amountBN = toBN(amountWei);
 
         if (state.viewState !== VIEW_LOADING) {
@@ -97,13 +104,13 @@ const reducerWrapper = (_state, _action) => {
         }
         return {
           ...state,
-          amount,
+          amountDAI,
           viewState,
         };
       }
 
       case ACTION_UPDATE_ALLOWANCE: {
-        const amountBN = toBN(toWei(state.amount));
+        const amountBN = toBN(toWei(state.amountDAI));
         return {
           ...state,
           allowance,
@@ -152,14 +159,17 @@ const reducerWrapper = (_state, _action) => {
 };
 
 const DonateModal = props => {
-  const { onClose, amount, onDonate } = props;
+  const { onClose, amountDAI, amountCSTK, onDonate } = props;
   const { web3, address, network } = useContext(OnboardContext);
+  const [alreadyReceivedCSLOVE, setAlreadyReceivedCSLOVE] = useState(false);
+  const [CSLOVETransferred, setCSLOVETransferred] = useState(false);
+  const [CSTKTransferred, setCSTKTransferred] = useState(false);
 
   const [state, dispatch] = useReducer(reducerWrapper, {
     viewState: initialViewState,
     daiTokenContract: new ERC20Contract(web3, DAITokenAddress),
     givethBridge: new GivethBridge(web3, givethBridgeAddress),
-    amount,
+    amountDAI,
     allowance: 0,
   });
 
@@ -179,12 +189,27 @@ const DonateModal = props => {
   }, [address]);
 
   useEffect(() => {
-    dispatch({ type: ACTION_UPDATE_AMOUNT, amount });
-  }, [amount]);
+    dispatch({ type: ACTION_UPDATE_AMOUNT, amountDAI });
+  }, [amountDAI]);
 
   useEffect(() => {
     if (network !== config.networkId) onClose();
   }, [network, onClose]);
+
+  useEffect(() => {
+    const checkPastEvents = async () => {
+      const events = await CSLOVEContract.peTransfer({
+        fromBlock: 0,
+        toBlock: 'latest',
+        filter: {
+          _from: config.CSLOVESender,
+          _to: address,
+        },
+      });
+      if (events.length > 0) setAlreadyReceivedCSLOVE(true);
+    };
+    checkPastEvents();
+  }, [address]);
 
   if (!web3) return null;
 
@@ -203,18 +228,88 @@ const DonateModal = props => {
   };
 
   const donate = async () => {
+    let cancelMonitorBridge = () => {};
+    let cancelMonitorCSLOVE = () => {};
+    let cancelMonitorCSTK = () => {};
+    const web3Rinkeby = new Web3(config.ETH.rpcEndpointRinkeby);
+    const web3XDAI = new Web3(config.ETH.rpcEndpointXdai);
     dispatch({ type: ACTION_DONATE });
     try {
-      await givethBridge.donateAndCreateGiver(
-        address,
-        config.targetProjectId,
-        DAITokenAddress,
-        toWei(amount),
-      );
-      dispatch({ type: ACTION_DONATE_SUCCESS });
-      onDonate();
+      const CSLOVEPromise = new Promise((resolve, reject) => {
+        monitorTransaction(web3Rinkeby, address, toWei(1).toString(), CSLOVEContract).then(
+          monitor => {
+            cancelMonitorCSLOVE = monitor.cancelMonitor;
+            monitor.promise
+              .then(donationWasSuccessful => {
+                if (donationWasSuccessful) {
+                  setCSLOVETransferred(true);
+                  resolve();
+                } else {
+                  reject();
+                }
+              })
+              .catch(reject);
+          },
+        );
+      });
+      const CSTKPromise = new Promise((resolve, reject) => {
+        monitorTransaction(web3XDAI, address, toWei(amountCSTK).toString(), CSTKContract).then(
+          monitor => {
+            cancelMonitorCSTK = monitor.cancelMonitor;
+            monitor.promise
+              .then(donationWasSuccessful => {
+                if (donationWasSuccessful) {
+                  setCSTKTransferred(true);
+                  resolve();
+                } else {
+                  reject();
+                }
+              })
+              .catch(console.error);
+          },
+        );
+      });
+      const bridgePromise = new Promise((resolve, reject) => {
+        givethBridge
+          .donateAndCreateGiver(address, config.targetProjectId, DAITokenAddress, toWei(amountDAI))
+          .on('transactionHash', async transactionHash => {
+            const monitor = await monitorTransactionOnBridge(
+              web3,
+              transactionHash,
+              toWei(amountDAI).toString(),
+            );
+            cancelMonitorBridge = monitor.cancelMonitor;
+            monitor.promise
+              .then(donationWasSuccessful => {
+                if (donationWasSuccessful) {
+                  resolve();
+                } else {
+                  reject();
+                }
+              })
+              .catch(console.error);
+          })
+          .then(resolve)
+          .catch(reject);
+      });
+      const promises = [bridgePromise, CSLOVEPromise];
+      if (!alreadyReceivedCSLOVE) promises.push(CSTKPromise);
+      Promise.allSettled(promises).then(results => {
+        if (results[0].status === 'rejected') {
+          dispatch({ type: ACTION_DONATE_FAIL });
+        } else {
+          setTimeout(() => {
+            dispatch({ type: ACTION_DONATE_SUCCESS });
+            onDonate();
+          }, 4000);
+        }
+      });
     } catch (e) {
       dispatch({ type: ACTION_DONATE_FAIL });
+    } finally {
+      cancelMonitorBridge();
+      cancelMonitorCSLOVE();
+      cancelMonitorCSTK();
     }
   };
 
@@ -286,6 +381,7 @@ const DonateModal = props => {
             <div className="is-overlay">
               <Player
                 autoplay
+                keepLastFrame
                 src="https://assets2.lottiefiles.com/packages/lf20_h3Bz5a.json"
                 style={{ height: '64px', width: '64px' }}
               />
@@ -320,11 +416,7 @@ const DonateModal = props => {
               <p className="image is-64x64">{/* <img src={DAI} alt="DAI logo" /> */}</p>
             </div>
             <div className="is-overlay">
-              <Player
-                autoplay
-                src="https://assets2.lottiefiles.com/packages/lf20_tAtUrg.json"
-                style={{ height: '64px', width: '64px' }}
-              />
+              <img src={donationConfirmed} className="image is-64x64" alt="Donation confirmed" />
             </div>
           </div>
         </div>
@@ -357,11 +449,11 @@ const DonateModal = props => {
           </div>
         </div>
       </div>
-      <p className="is-size-5 has-text-centered has-text-weight-bold">Transaction sent</p>
+      <p className="is-size-5 has-text-centered has-text-weight-bold">Minting tokens</p>
       <br />
       <h2 className="has-text-centered mb-2">
-        Please be patient while the Ethereum miners add your transaction to the blockchain. If there
-        is an issue please reach out to us on{' '}
+        Please be patient while the your tokens are mined to the blockchain. If there is an issue
+        please reach out to us on{' '}
         <a
           target="_blank"
           rel="noreferrer"
@@ -372,6 +464,38 @@ const DonateModal = props => {
         </a>
         .
       </h2>
+      <div className="level-item mb-1">
+        <div className="is-flex-direction-column">
+          {!alreadyReceivedCSLOVE && (
+            <div className="is-flex is-align-items-center">
+              {CSLOVETransferred ? (
+                <span className="icon has-text-success">
+                  <i className="fas fa-check-circle" />
+                </span>
+              ) : (
+                <figure className="image is-32x32 mr-1">
+                  <img alt="spinner" src={spinner} />
+                </figure>
+              )}
+              <div>1 CSLOVE Token</div>
+            </div>
+          )}
+          {amountCSTK > 0 && (
+            <div className="is-flex is-align-items-center">
+              {CSTKTransferred ? (
+                <span className="icon has-text-success">
+                  <i className="fas fa-check-circle" />
+                </span>
+              ) : (
+                <figure className="image is-32x32 mr-1">
+                  <img alt="spinner" src={spinner} />
+                </figure>
+              )}
+              <div>{amountCSTK} CSTK Tokens</div>
+            </div>
+          )}
+        </div>
+      </div>
     </>
   );
 
@@ -388,6 +512,7 @@ const DonateModal = props => {
             <div className="is-overlay">
               <Player
                 autoplay
+                keepLastFrame
                 src="https://assets2.lottiefiles.com/packages/lf20_h3Bz5a.json"
                 style={{ height: '64px', width: '64px' }}
               />
@@ -420,9 +545,7 @@ const DonateModal = props => {
   );
 
   const enableDonateButton = [VIEW_ENOUGH_ALLOWANCE, VIEW_DONATING_FAILED].includes(viewState);
-  const showDonateButton = [VIEW_ENOUGH_ALLOWANCE, VIEW_DONATING_FAILED, VIEW_DONATING].includes(
-    viewState,
-  );
+  const showDonateButton = [VIEW_ENOUGH_ALLOWANCE, VIEW_DONATING_FAILED].includes(viewState);
 
   const enableApproveButton = viewState === VIEW_READY_TO_APPROVE;
   const showApproveButton = [VIEW_APPROVING, VIEW_READY_TO_APPROVE].includes(viewState);
@@ -435,7 +558,7 @@ const DonateModal = props => {
           <p className="modal-card-title" />
           <button className="delete" aria-label="close" onClick={onClose} />
         </header>
-        <section className="modal-card-body">
+        <section className="px-5 py-5">
           {/* This is to show all states in one screen  - should be replaces  bythe function above modalContent()
           in the final version after Kay has done his work ! */}
           {/* {Object.keys(contents).map(k => {
@@ -448,26 +571,28 @@ const DonateModal = props => {
           })} */}
           {contents[viewState]}
         </section>
-        <footer className="modal-card-foot">
-          {showApproveButton && (
-            <button
-              className={`button is-primary ${viewState === VIEW_APPROVING ? 'is-loading' : ''}`}
-              disabled={!enableApproveButton}
-              onClick={approve}
-            >
-              Approve
-            </button>
-          )}
-          {showDonateButton && (
-            <button
-              className={`button is-success ${viewState === VIEW_DONATING ? 'is-loading' : ''}`}
-              disabled={!enableDonateButton}
-              onClick={donate}
-            >
-              Pay dues
-            </button>
-          )}
-        </footer>
+        {showApproveButton || showDonateButton ? (
+          <footer className="modal-card-foot">
+            {showApproveButton && (
+              <button
+                className={`button is-primary ${viewState === VIEW_APPROVING ? 'is-loading' : ''}`}
+                disabled={!enableApproveButton}
+                onClick={approve}
+              >
+                Approve
+              </button>
+            )}
+            {showDonateButton && (
+              <button
+                className={`button is-success ${viewState === VIEW_DONATING ? 'is-loading' : ''}`}
+                disabled={!enableDonateButton}
+                onClick={donate}
+              >
+                Pay dues
+              </button>
+            )}
+          </footer>
+        ) : null}
       </div>
     </div>
   );

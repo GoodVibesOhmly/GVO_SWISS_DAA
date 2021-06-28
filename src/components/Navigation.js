@@ -20,6 +20,9 @@ const Comp = () => {
       case '/help':
         setActiveNavItem(3);
         break;
+      case '/cslove':
+        setActiveNavItem(4);
+        break;
       default:
         break;
     }
@@ -59,6 +62,11 @@ const Comp = () => {
               <div className={activeNavItem === 3 ? 'navbar-item is-active' : 'navbar-item'}>
                 <Link to="/help">
                   <span>FAQ</span>
+                </Link>
+              </div>
+              <div className={activeNavItem === 4 ? 'navbar-item is-active' : 'navbar-item'}>
+                <Link to="/cslove">
+                  <span>CSLOVE TOKEN</span>
                 </Link>
               </div>
             </div>

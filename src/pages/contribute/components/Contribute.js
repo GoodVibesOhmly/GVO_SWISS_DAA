@@ -14,6 +14,7 @@ import ContributeForm from './ContributeForm';
 import { OnboardContext } from '../../../components/OnboardProvider';
 import donationConfirmed from '../../../assets/donation-confirmed.svg';
 import WelcomeModal from './WelcomeModal';
+import shoppingCart from '../../../assets/shopping-cart-solid.svg';
 
 const Comp = ({
   showwelcome,
@@ -216,20 +217,42 @@ const Comp = ({
                       <i className="fas fa-check-circle" />
                     </span>
                     Your membership dues are paid. By paying more membership dues you will further
-                    help the mission of the organization.
+                    help the mission of the organization. You can acquire DAI on{' '}
+                    <a
+                      className="exchange"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      href="https://1inch.exchange/#/r/0x8110d1D04ac316fdCACe8f24fD60C86b810AB15A"
+                    >
+                      1inch.exchange
+                    </a>
+                    .
                   </>
                 ) : (
-                  'Membership dues are paid with DAI.'
-                )}{' '}
-                You can acquire DAI on{' '}
-                <a
-                  className="exchange"
-                  rel="noopener noreferrer"
-                  target="_blank"
-                  href="https://1inch.exchange/#/r/0x8110d1D04ac316fdCACe8f24fD60C86b810AB15A"
-                >
-                  1inch.exchange
-                </a>
+                  <>
+                    Membership dues are paid with DAI. You can acquire DAI on{' '}
+                    <a
+                      className="exchange"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      href="https://1inch.exchange/#/r/0x8110d1D04ac316fdCACe8f24fD60C86b810AB15A"
+                    >
+                      1inch.exchange
+                    </a>
+                    .
+                    <br />
+                    Paying the membership dues also earns you{' '}
+                    <a
+                      className="exchange"
+                      rel="noopener noreferrer"
+                      target="_blank"
+                      href="/cslove"
+                    >
+                      CSLove tokens
+                    </a>{' '}
+                    you can use to claim free swag!
+                  </>
+                )}
               </p>
 
               {viewState === viewStates.STARTDONATING && (
@@ -288,7 +311,26 @@ const Comp = ({
                       <br />
                       <br />
                       <p className="has-text-centered is-size-5">
-                        Your CSTK score will be updated soon!
+                        If you received CSLove tokens, don't forget to redeem your Commons Stack
+                        Swag!
+                      </p>
+                      <p className="control has-text-centered mt-6">
+                        <button
+                          aria-label="store"
+                          className="react-share__ShareButton button is-primary"
+                          onClick={() => {
+                            window.location.href = 'https://cslove.commonsstack.org/';
+                          }}
+                        >
+                          <span className="icon">
+                            <img
+                              src={shoppingCart}
+                              className="image is-16x16"
+                              alt="Donation confirmed"
+                            />
+                          </span>
+                          <span>Go to swag shop</span>
+                        </button>
                       </p>
                     </section>
                     <footer className="modal-card-foot">
