@@ -29,21 +29,21 @@ const TSMembers = () => {
         </div>
         <div className="is-divider mb-4" />
         <div className="is-size-1 has-text-weight-light	">
-          {members.group1.split(',').map(member => {
-            return <span className="mr-5">{member}</span>;
-          })}
+          {members.group1.split(',').map(member => (
+            <span className="mr-5">{member}</span>
+          ))}
         </div>
         <div className="is-divider mb-5 mt-5" />
         <div className="is-size-2 has-text-weight-light	">
-          {members.group2.split(',').map(member => {
-            return <span className="mr-5">{member}</span>;
-          })}
+          {members.group2.split(',').map(member => (
+            <span className="mr-5">{member}</span>
+          ))}
         </div>
         <div className="is-divider mt-5 mb-5" />
         <div className="is-size-3 has-text-weight-light	">
-          {members.group3.split(',').map(member => {
-            return <span className="mr-5">{member}</span>;
-          })}
+          {members.group3.split(',').map(member => (
+            <span className="mr-5">{member}</span>
+          ))}
         </div>
       </div>
     </>
