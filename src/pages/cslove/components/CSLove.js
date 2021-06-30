@@ -39,7 +39,7 @@ const Comp = ({ balances, getBalancesFor }) => {
 
   return (
     <>
-      <article className="notification is-primary has-text-left">
+      <div className="container is-max-desktop notification is-primary has-text-left p-6">
         {web3 && address && (
           <>
             <p className="subtitle mb-2">YOUR CSLOVE BALANCE</p>
@@ -122,7 +122,7 @@ const Comp = ({ balances, getBalancesFor }) => {
             )}
           </>
         )}
-      </article>
+      </div>
     </>
   );
 };

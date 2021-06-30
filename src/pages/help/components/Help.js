@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 const Comp = () => {
   return (
     <>
-      <section className="notification is-primary">
+      <div className="container is-max-desktop notification is-primary has-text-left p-6">
         <div className="tile is-horizontal is-parent">
           <article className="tile is-child">
             <p className="heading is-size-2 title has-text-weight-bold">FAQ</p>
@@ -85,7 +85,7 @@ const Comp = () => {
             </div>
           </article>
         </div>
-      </section>
+      </div>
     </>
   );
 };
