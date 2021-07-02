@@ -20,15 +20,39 @@ const TSMembers = () => {
         <div className="columns">
           <div className="column ">
             <div className="subtitle is-uppercase mb-1">Member count</div>
-            <div className="is-size-1 has-text-weight-light	">{members.member_count}</div>
+            <div className="is-size-1">{members.member_count}</div>
           </div>
           <div className="column">
             <div className="subtitle is-uppercase mb-1">Total Number of CSTK Tokens</div>
-            <div className="is-size-1 has-text-weight-light	">1,265,148</div>
+            <div className="is-size-1">1,265,148</div>
           </div>
         </div>
         <div className="is-divider mb-4" />
-        <div className="is-size-1 has-text-weight-light	">
+        <div>
+          {members.group1.split(',').map(member => (
+            <div className="is-inline-block" style={{ width: '50%' }}>
+              {member}
+            </div>
+          ))}
+        </div>
+        <div className="is-divider mb-4 mt-4" />
+        <div>
+          {members.group2.split(',').map(member => (
+            <div className="is-inline-block" style={{ width: '50%' }}>
+              {member}
+            </div>
+          ))}
+        </div>
+        <div className="is-divider mb-4 mt-4" />
+        <div>
+          {members.group3.split(',').map(member => (
+            <div className="is-inline-block" style={{ width: '50%' }}>
+              {member}
+            </div>
+          ))}
+        </div>
+
+        {/* <div className="is-size-1 has-text-weight-light	">
           {members.group1.split(',').map(member => (
             <span className="mr-5">{member}</span>
           ))}
@@ -44,7 +68,7 @@ const TSMembers = () => {
           {members.group3.split(',').map(member => (
             <span className="mr-5">{member}</span>
           ))}
-        </div>
+        </div> */}
       </div>
     </>
   );
