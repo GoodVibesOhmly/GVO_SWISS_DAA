@@ -1,7 +1,7 @@
 import React from 'react';
 import './Tooltip.sass';
 
-const Tooltip = ({ children, active, content }) => {
+const Tooltip = ({ children, active, content, forceShowOnActive }) => {
   const [showToolTip, setShowToolTip] = React.useState(true);
 
   const delayedClose = timeout => {
@@ -13,6 +13,12 @@ const Tooltip = ({ children, active, content }) => {
   React.useEffect(() => {
     delayedClose(1500);
   }, []);
+
+  React.useEffect(() => {
+    if (active && forceShowOnActive) {
+      setShowToolTip(true);
+    }
+  }, [active, forceShowOnActive]);
 
   const handleMouseLeave = () => {
     delayedClose(500);
