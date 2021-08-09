@@ -39,7 +39,7 @@ const Comp = ({
       If you send that much DAI, you will have reached your Max Trust Score. To increase your Max
       Trust Score, and be able to get a higher CSTK Score, please reach out to the&nbsp;
       <a
-        href="https://discord.gg/tXYmXVJx"
+        href="https://discord.tecommons.org/"
         target="_blank"
         rel="noreferrer"
         className="support-link"
@@ -250,6 +250,7 @@ const Comp = ({
                     <Tooltip
                       className="control"
                       active={showMaxTrustScoreTooltip}
+                      forceShowOnActive
                       content={<TooltipMaxTrustScoreContent />}
                     >
                       <input

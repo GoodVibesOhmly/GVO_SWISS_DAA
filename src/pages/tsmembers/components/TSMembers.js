@@ -10,9 +10,9 @@ const TSMembers = () => {
         <div className="subtitle mb-5 is-uppercase">Updated: {members.updated}</div>
         <div className="columns">
           <div className="column is-two-thirds">
-            Members of the Trusted Seed put skin in the game by contributing to the Commons Stack, 
-            entitling them to a CSTK Score which denotes their reputation in the Trusted Seed. They 
-            will use their expertise to help steward new forms of sustainably funded Commons 
+            Members of the Trusted Seed put skin in the game by contributing to the Commons Stack,
+            entitling them to a CSTK Score which denotes their reputation in the Trusted Seed. They
+            will use their expertise to help steward new forms of sustainably funded Commons
             ecosystems, especially in the period immediately following their launch.
           </div>
         </div>
