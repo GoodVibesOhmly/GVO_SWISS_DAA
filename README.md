@@ -32,7 +32,7 @@ Yearly membership fee is 450 DAI. You can also pay more than 450 :)! By paying m
 
 ### Auto-deploys
 
-Commits to the develop branch builds to https://tech-dapp.netlify.com/
+Pull requests and commits to the `production`branch are auto deployed on Netlify. 
 
 ### Run locally
 
