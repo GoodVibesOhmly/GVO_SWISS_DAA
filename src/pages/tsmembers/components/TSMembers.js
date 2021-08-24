@@ -24,7 +24,7 @@ const TSMembers = () => {
           </div>
           <div className="column">
             <div className="subtitle is-uppercase mb-1">Total Number of CSTK</div>
-            <div className="is-size-1">1,635,247</div>
+            <div className="is-size-1">{members.ctsk_total}</div>
           </div>
         </div>
         <div className="is-divider mb-4" />
