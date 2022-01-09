@@ -1,4 +1,18 @@
-# Commons Stack Membership DApp
+# GVO Membership DApp
+
+# Contributing to the Project
+GVO welcomes contributors to our open source DAA app. Join GVO's discord server to get more help from other contributors on our Engineering Workstream channels. Please refer to the project's style and contribution guidelines for submitting patches and additions. In general, we follow the "fork-and-pull" Git workflow. For creating branches, we prefer to format it this way: [ISSUE-TAG]/[ISSUE-NUMBER]-[A-MEANINGFUL-TITLE]. So for example, we have an issue called "Update README" with a tag of "enhancement" and issue number of 1, the ideal branch name could be: enhancement/1-update-readme
+
+# Steps for Contributing with the "fork-and-pull" workflow:
+
+Fork the repo on GitHub
+Clone the project to your own machine
+Commit changes to your own branch
+Push your work back up to your fork
+Submit a Pull request so that we can review your changes
+NOTE: Be sure to merge the latest from "upstream" before making a pull request!
+
+Credits:
 
 #### 🔗 https://member.commonsstack.foundation/
 
